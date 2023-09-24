@@ -26,7 +26,7 @@ public class WebSecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/api/auth/**",
-            "/api/twilio/**",
+            "/api/category/**",
             "/api/test/**",
     };
     //                .requestMatchers("/v2/api-docs",
