@@ -27,7 +27,8 @@ public class WebSecurityConfig {
             "/swagger-ui.html",
             "/api/auth/**",
             "/api/category/**",
-            "/api/test/**",
+            "/api/product/**",
+            "/api/test/**"
     };
     //                .requestMatchers("/v2/api-docs",
 //                        "/api/users/**",

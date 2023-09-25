@@ -5,6 +5,7 @@ import com.hcmute.drink.common.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,11 +21,14 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserServiceImpl userService;
 
+    @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserCollection user = userService.findByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException(ErrorConstant.USER_NOT_FOUND);
+        } else if(user.isVerifiedEmail() == false) {
+            throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
         }
 
         List<String> roleNames = Arrays.stream(user.getRoles())

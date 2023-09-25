@@ -69,10 +69,7 @@ public class AuthServiceImpl implements AuthService {
             throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
         UserCollection newUser = UserCollection.builder()
-                .id(UUID.randomUUID().toString())
                 .roles((new Role[]{Role.ROLE_USER}))
-                .createdAt(now)
-                .updatedAt(now)
                 .build();
         modelMapper.map(body, newUser);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));

@@ -24,7 +24,8 @@ public class ExceptionHandlerController {
     private static final List<String> error400= Arrays.asList(
             USER_NOT_FOUND,
             REGISTERED_EMAIL,
-            EMAIL_UNVERIFIED
+            EMAIL_UNVERIFIED,
+            NOT_FOUND
     );
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
