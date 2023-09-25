@@ -90,7 +90,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/{productId}")
+    @PostMapping("/{productId}")
     public ResponseEntity<ApiResponse> updateProductById(@PathVariable("productId") String id, @ModelAttribute UpdateProductRequest body) {
         try {
             ProductCollection data = modelMapper.map(body, ProductCollection.class);

@@ -10,6 +10,7 @@ import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.dto.RegisterRequest;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.service.AuthService;
+import com.hcmute.drink.utils.EmailUtils;
 import com.hcmute.drink.utils.JwtUtils;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -31,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-    private final EmailServiceImpl emailService;
+    private final EmailUtils emailService;
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtIssuer;

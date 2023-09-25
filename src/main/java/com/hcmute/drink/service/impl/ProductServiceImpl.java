@@ -7,9 +7,12 @@ import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.CreateProductRequest;
 import com.hcmute.drink.repository.ProductRepository;
+import com.hcmute.drink.service.ProductService;
 import com.hcmute.drink.utils.CloudinaryUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,10 +22,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl {
+public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CloudinaryUtils cloudinaryUtils;
     private final ModelMapper modelMapper;
+    @Autowired
+    @Qualifier("modelMapperNotNull")
+    private ModelMapper modelMapperNotNull;
 
     public ProductCollection createProduct(ProductCollection data, List<MultipartFile> images) throws Exception {
         int size = images.size();
@@ -75,12 +81,13 @@ public class ProductServiceImpl {
         if(product == null) {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
+
         List<ImageModel> imagesList = new ArrayList<ImageModel>();
-//        ProductCollection newProductCol = product.clone();
-        // FIXME: chỗ update cretedAt bị null khi update: https://stackoverflow.com/questions/35584271/spring-data-mongodb-annotation-createddate-isnt-working-when-id-is-assigned-m
+        modelMapperNotNull.map(data, product);
         int size = images.size();
+
         List<ImageModel> oldImages = product.getImagesList();
-        modelMapper.map(data, product);
+
         for (int i = 0; i < size; i++) {
             cloudinaryUtils.deleteImage(oldImages.get(i).getId());
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH, data.getName(), images.get(i));
