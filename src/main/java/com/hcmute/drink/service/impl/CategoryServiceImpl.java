@@ -1,6 +1,7 @@
 package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.CategoryCollection;
+import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.CreateCategoryRequest;
@@ -28,9 +29,9 @@ public class CategoryServiceImpl implements CategoryService {
             throw new Exception(ErrorConstant.CATEGORY_EXISTED);
         }
         HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, cgrName, data.getImage());
+        ImageModel imageModel = new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
         CategoryCollection category = CategoryCollection.builder()
-                .imageUrl(fileUploaded.get(CloudinaryConstant.URL_PROPERTY))
-                .publicId(fileUploaded.get(CloudinaryConstant.PUBLIC_ID))
+                .image(imageModel)
                 .name(data.getName())
                 .build();
         CategoryCollection newCategory = categoryRepository.save(category);
@@ -57,11 +58,11 @@ public class CategoryServiceImpl implements CategoryService {
         if(category == null) {
             throw new Exception(ErrorConstant.CATEGORY_NOT_FOUND);
         }
-        cloudinaryUtils.deleteImage(category.getPublicId());
+        cloudinaryUtils.deleteImage(category.getImage().getId());
         HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, data.getName(), data.getImage());
         category.setName(data.getName());
-        category.setPublicId(fileUploaded.get(CloudinaryConstant.PUBLIC_ID));
-        category.setImageUrl(fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+        ImageModel imageModel = new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+        category.setImage(imageModel);
         CategoryCollection newCategory = categoryRepository.save(category);
 
         if(newCategory != null) {
@@ -75,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(category == null) {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
-        cloudinaryUtils.deleteImage(category.getPublicId());
+        cloudinaryUtils.deleteImage(category.getImage().getId());
         categoryRepository.deleteById(id);
         return true;
     }

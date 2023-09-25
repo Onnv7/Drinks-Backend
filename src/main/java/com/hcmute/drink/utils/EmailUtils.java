@@ -1,15 +1,6 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.utils;
 
-import com.hcmute.drink.service.EmailService;
-import com.sun.mail.smtp.SMTPAddressFailedException;
-import jakarta.activation.DataHandler;
-import jakarta.activation.DataSource;
-import jakarta.activation.FileDataSource;
-import jakarta.mail.BodyPart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,7 +14,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class EmailUtils {
 
     public static final String NEW_USER_ACCOUNT_VERIFICATION = "New User Account Verification";
     public static final String UTF_8_ENCODING = "UTF-8";
@@ -37,7 +28,6 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Override
     @Async
     public void sendHtmlVerifyEmail(String name, String to, String token) {
         try {

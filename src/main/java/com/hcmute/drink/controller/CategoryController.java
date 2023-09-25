@@ -54,7 +54,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/list")
+    @GetMapping()
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<CategoryCollection> list = categoryService.getAllCategories();
@@ -71,7 +71,7 @@ public class CategoryController {
         }
     }
 
-    @PatchMapping("/update/{categoryId}")
+    @PutMapping("/update/{categoryId}")
     public ResponseEntity<ApiResponse> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
                                                       @PathVariable("categoryId") String id) {
         try {

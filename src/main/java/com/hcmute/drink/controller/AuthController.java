@@ -5,7 +5,7 @@ import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ApiResponse;
 import com.hcmute.drink.service.impl.AuthServiceImpl;
-import com.hcmute.drink.service.impl.EmailServiceImpl;
+import com.hcmute.drink.utils.EmailUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.Date;
 @Slf4j
 public class AuthController {
     private final AuthServiceImpl authService;
-    private final EmailServiceImpl emailService;
+    private final EmailUtils emailService;
 
 
     @PostMapping("/login")
