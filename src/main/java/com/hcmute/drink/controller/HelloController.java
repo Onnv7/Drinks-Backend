@@ -14,6 +14,10 @@ public class HelloController {
     private String greeting() {
         return "Hello";
     }
+    @GetMapping("/ok")
+    private String ok() {
+        return "Veridied";
+    }
 //
 //    @GetMapping("/secured")
 //    public String secured(@AuthenticationPrincipal UserPrincipal principal) {

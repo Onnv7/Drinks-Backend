@@ -51,6 +51,11 @@
             <artifactId>java-jwt</artifactId>
             <version>4.2.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>io.springfox</groupId>-->
 <!--            <artifactId>springfox-boot-starter</artifactId>-->
@@ -86,10 +91,19 @@
             <artifactId>twilio</artifactId>
             <version>7.34.0</version>
         </dependency>
+
+<!--        cloud store-->
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
             <version>1.33.0</version>
+        </dependency>
+
+<!--        payment-->
+        <dependency>
+            <groupId>io.github.momo-wallet</groupId>
+            <artifactId>momopayment</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     <build>

@@ -7,8 +7,12 @@ import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.ChangePasswordRequest;
 import com.hcmute.drink.dto.UpdateUserRequest;
 import com.hcmute.drink.dto.UpdateUserResponse;
-import com.hcmute.drink.model.ApiResponse;
+import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static com.hcmute.drink.constant.SwaggerConstant.*;
+
+@Tag(name = USER_CONTROLLER_TITLE)
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -25,11 +32,13 @@ public class UserController {
     private final ModelMapper modelMapper;
 
 
+    @Operation(summary = USER_GET_BY_ID_SUM, description = USER_GET_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_USER, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse> getUserById(@PathVariable String userId) {
+    public ResponseEntity<ResponseAPI> getUserById(@PathVariable String userId) {
         try {
             UserCollection user = userService.findUserById(userId);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET_USER)
                     .data(user)
                     .build();
@@ -38,13 +47,14 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
-
+    @Operation(summary = USER_CHANGE_PWD_SUM, description = USER_CHANGE_PWD_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping("/change-password/{userId}")
-    public ResponseEntity<ApiResponse> changePassword(@PathVariable String userId,
+    public ResponseEntity<ResponseAPI> changePassword(@PathVariable String userId,
                                                       @RequestBody @Validated ChangePasswordRequest body) {
         try {
             userService.updatePassword(userId, body.getPassword());
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .success(true)
                     .message(SuccessConstant.UPDATED)
@@ -55,15 +65,17 @@ public class UserController {
         }
     }
 
+    @Operation(summary = USER_UPDATE_BY_ID_SUM, description = USER_UPDATE_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping("/update/{userId}")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable("userId") String userId,
+    public ResponseEntity<ResponseAPI> updateUser(@PathVariable("userId") String userId,
                                                   @RequestBody @Validated UpdateUserRequest body
     ) {
         try {
             UserCollection data = userService.updateUser(userId, body);
             UpdateUserResponse resData = new UpdateUserResponse();
             modelMapper.map(data, resData);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.UPDATED)
                     .data(resData)
