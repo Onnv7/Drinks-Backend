@@ -17,6 +17,5 @@ public class UpdateUserResponse {
     private String lastName;
     private Date birthDate;
     private Gender gender;
-    @Pattern(regexp = "^\\d{10}$")
     private String phoneNumber;
 }

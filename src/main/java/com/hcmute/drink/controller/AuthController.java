@@ -3,9 +3,13 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
-import com.hcmute.drink.model.ApiResponse;
+import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.AuthServiceImpl;
 import com.hcmute.drink.utils.EmailUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static com.hcmute.drink.constant.SwaggerConstant.*;
+
+@Tag(name = AUTH_CONTROLLER_TITLE)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -23,11 +30,13 @@ public class AuthController {
     private final EmailUtils emailService;
 
 
+    @Operation(summary = AUTH_LOGIN_SUM, description = AUTH_LOGIN_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody @Validated LoginRequest body) {
+    public ResponseEntity<ResponseAPI> login(@RequestBody @Validated LoginRequest body) {
         try {
             LoginResponse data = authService.attemptLogin(body.getEmail(), body.getPassword());
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .success(true)
                     .message(SuccessConstant.LOGIN)
@@ -40,11 +49,13 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = AUTH_REGISTER_SUM, description = AUTH_REGISTER_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@RequestBody @Validated RegisterRequest body) {
+    public ResponseEntity<ResponseAPI> register(@RequestBody @Validated RegisterRequest body) {
         try {
             authService.registerUser(body);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .success(true)
                     .message(SuccessConstant.CREATED)
@@ -56,11 +67,13 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = AUTH_VERIFY_EMAIL_SUM, description = AUTH_VERIFY_EMAIL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping("/verify-email")
-    public ResponseEntity<ApiResponse> verifyEmail(@RequestParam("token") String token) {
+    public ResponseEntity<ResponseAPI> verifyEmail(@RequestParam("token") String token) {
         try {
             authService.verifyEmail(token);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.EMAIL_VERIFIED)
                     .build();
@@ -71,11 +84,13 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = AUTH_RE_SEND_EMAIL_SUM, description = AUTH_RE_SEND_EMAIL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping("/resend-email")
-    public ResponseEntity<ApiResponse> resendEmail(@RequestBody ResendEmailRequest body) {
+    public ResponseEntity<ResponseAPI> resendEmail(@RequestBody ResendEmailRequest body) {
         try {
             authService.resendTokenToEmail(body.getEmail());
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.SEND_TOKEN_TO_EMAIL)
                     .build();
@@ -86,11 +101,13 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_SUM, description = AUTH_SEND_CODE_TO_EMAIL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping("/send-code")
-    public ResponseEntity<ApiResponse> sendCode(@RequestBody SendCodeRequest body) {
+    public ResponseEntity<ResponseAPI> sendCode(@RequestBody SendCodeRequest body) {
         try {
             authService.sendCodeToEmail(body.getEmail(), body.getCode());
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.SEND_TOKEN_TO_EMAIL)
                     .build();
@@ -100,13 +117,14 @@ public class AuthController {
             throw new RuntimeException(e);
         }
     }
+    @Operation(summary = AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM, description = AUTH_SEND_OTP_TO_PHONE_NUMBER_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping("/send-opt")
-    public ResponseEntity<ApiResponse> sendOTP(@RequestBody @Validated VerifyPhoneNumberRequest body) {
+    public ResponseEntity<ResponseAPI> sendOTP(@RequestBody @Validated VerifyPhoneNumberRequest body) {
         try {
             log.info("YOUR CODE: " + body.getMessage());
 //            authService.sendMessageToPhoneNumber(body.getPhoneNumber(), body.getMessage());
-            ApiResponse res = ApiResponse.builder()
-                    .success(true)
+            ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.SEND_OTP)
                     .timestamp(new Date())
                     .build();

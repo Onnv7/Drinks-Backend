@@ -9,4 +9,5 @@ public class ErrorConstant {
     public static final String CATEGORY_EXISTED = "Category name were existed";
     public static final String CATEGORY_NOT_FOUND = "CATEGORY NOT FOUND";
     public static final String NOT_FOUND = "Not found";
+    public static final String ACCESS_DENIED = "Access Denied";
 }

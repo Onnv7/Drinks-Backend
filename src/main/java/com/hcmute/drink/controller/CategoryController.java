@@ -5,29 +5,39 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.CreateCategoryRequest;
 import com.hcmute.drink.dto.UpdateCategoryRequest;
-import com.hcmute.drink.model.ApiResponse;
+import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.CategoryServiceImpl;
-import com.hcmute.drink.utils.CloudinaryUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
+import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
+import static com.hcmute.drink.constant.SwaggerConstant.*;
+
+@Tag(name = CATEGORY_CONTROLLER_TITLE)
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryServiceImpl categoryService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> createCategory(@ModelAttribute CreateCategoryRequest body) {
+    @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Validated CreateCategoryRequest body) {
         try {
             CategoryCollection category = categoryService.createCategory(body);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(category)
                     .message(SuccessConstant.CREATED)
@@ -38,11 +48,14 @@ public class CategoryController {
             throw new RuntimeException(e);
         }
     }
+
+    @Operation(summary = CATEGORY_GET_BY_ID_SUM, description = CATEGORY_GET_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable("categoryId") String categoryId) {
+    public ResponseEntity<ResponseAPI> getCategoryById(@PathVariable("categoryId") String categoryId) {
         try {
             CategoryCollection category = categoryService.getCategoryById(categoryId);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
                     .data(category)
@@ -54,12 +67,14 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = CATEGORY_GET_ALL_SUM, description = CATEGORY_GET_ALL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping()
-    public ResponseEntity<ApiResponse> getAllCategories() {
+    public ResponseEntity<ResponseAPI> getAllCategories() {
         try {
             List<CategoryCollection> list = categoryService.getAllCategories();
 
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
                     .data(list)
@@ -71,12 +86,14 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/update/{categoryId}")
-    public ResponseEntity<ApiResponse> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
+    @Operation(summary = CATEGORY_UPDATE_BY_ID_SUM, description = CATEGORY_UPDATE_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PutMapping(name = "/update/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseAPI> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
                                                       @PathVariable("categoryId") String id) {
         try {
             CategoryCollection data = categoryService.updateCategory(body, id);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.UPDATED)
                     .data(data)
@@ -88,11 +105,13 @@ public class CategoryController {
         }
     }
 
+    @Operation(summary = CATEGORY_DELETE_BY_ID_SUM, description = CATEGORY_DELETE_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse> deleteCategoryById(@PathVariable("categoryId") String id) {
+    public ResponseEntity<ResponseAPI> deleteCategoryById(@PathVariable("categoryId") String id) {
         try {
             categoryService.deleteCategoryById(id);
-            ApiResponse res = ApiResponse.builder()
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.DELETED)
                     .build();

@@ -1,4 +1,4 @@
-//package com.hcmute.config;
+//package com.hcmute.drink.config;
 //
 //
 //import org.springframework.context.annotation.Bean;
