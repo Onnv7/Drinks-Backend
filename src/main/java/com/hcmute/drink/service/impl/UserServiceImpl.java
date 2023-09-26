@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,10 @@ public class UserServiceImpl implements UserService {
     public UserCollection findByEmail(String email) {
         UserCollection user = userRepository.findByEmail(email);
         return user;
+    }
+
+    public List<UserCollection> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override

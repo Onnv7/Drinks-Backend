@@ -21,35 +21,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.hcmute.drink.constant.SecurityConstant.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-//@SecurityScheme(name = "nva", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
     @Autowired
     private CustomOidcUserService customOidcUserService;
-    private static final String[] AUTH_WHITELIST = {
-            "/openapi/**",
-            "/v3/api-docs/**",
-            "/openapi/swagger-config/**",
-            "/v3/api-docs.yaml",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/api/auth/**",
-            "/api/category/**",
-            "/api/product/**",
-            "/api/test/**"
-    };
-    private static final String[] USER_PATH = {
-            "/api/user/**",
-            "/api/product"
-    };
-    private static final String[] ADMIN_PATH = {
-    };
+
+
+
     //                .requestMatchers("/v2/api-docs",
 //                        "/api/users/**",
 //                        "/v3/api-docs",

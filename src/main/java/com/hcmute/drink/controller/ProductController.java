@@ -15,12 +15,14 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
+import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = PRODUCT_CONTROLLER_TITLE)
@@ -34,6 +36,7 @@ public class ProductController {
     @Operation(summary = PRODUCT_CREATE_SUM, description = PRODUCT_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize(SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> createProduct(@ModelAttribute @Validated CreateProductRequest body) {
         try {
             ProductCollection product = new ProductCollection();
@@ -88,6 +91,7 @@ public class ProductController {
     @Operation(summary = PRODUCT_DELETE_BY_ID_SUM, description = PRODUCT_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping("/{productId}")
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     protected ResponseEntity<ResponseAPI> deleteProductById(@PathVariable("productId") String id) {
         try {
             productService.deleteProductById(id);
@@ -105,6 +109,7 @@ public class ProductController {
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(name = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> updateProductById(@PathVariable("productId") String id, @ModelAttribute UpdateProductRequest body) {
         try {
             ProductCollection data = modelMapper.map(body, ProductCollection.class);

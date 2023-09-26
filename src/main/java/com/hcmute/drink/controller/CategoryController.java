@@ -89,6 +89,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_UPDATE_BY_ID_SUM, description = CATEGORY_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(name = "/update/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
                                                       @PathVariable("categoryId") String id) {
         try {
@@ -108,6 +109,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_DELETE_BY_ID_SUM, description = CATEGORY_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping("/{categoryId}")
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> deleteCategoryById(@PathVariable("categoryId") String id) {
         try {
             categoryService.deleteCategoryById(id);

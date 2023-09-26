@@ -7,6 +7,7 @@ public class SwaggerConstant {
     public static final int PRODUCT_PRICE_MIN = 5000;
     public static final int PASSWORD_LENGTH_MIN = 6;
     public static final int PASSWORD_LENGTH_MAX = 32;
+    public static final int ORDER_QUANTITY_MIN = 1;
     public static final String PHONE_NUMBER_REGEX = "^\\d{10}$";
     private static final String NOTIFICATION_NOT_DATA = "This endpoint returns message and no data";
 
@@ -32,6 +33,8 @@ public class SwaggerConstant {
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";
     public static final String USER_GET_BY_ID_SUM = "Get a user by user id";
     public static final String USER_GET_BY_ID_DES= "This endpoint returns a user info";
+    public static final String USER_GET_ALL_SUM = "Get all users";
+    public static final String USER_GET_ALL_DES= "This endpoint returns all users info";
     public static final String USER_CHANGE_PWD_SUM = "Change password by user id";
     public static final String USER_CHANGE_PWD_DES= NOTIFICATION_NOT_DATA;
     public static final String USER_UPDATE_BY_ID_SUM = "Update user's profile by user id";
@@ -66,6 +69,15 @@ public class SwaggerConstant {
     public static final String CATEGORY_UPDATE_BY_ID_DES= "This endpoint returns new category's information after it were updated";
     public static final String CATEGORY_DELETE_BY_ID_SUM = "Delete a category by category id";
     public static final String CATEGORY_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
+
+    // For transaction =======================================================
+
+    public static final String TRANSACTION_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
+    public static final String TRANSACTION_CREATE_SUM = "Create a new transaction";
+    public static final String TRANSACTION_CREATE_DES = "This endpoint returns new transaction after saved on database";
+    public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by category id";
+    public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
+
 
 
     // For schema properties

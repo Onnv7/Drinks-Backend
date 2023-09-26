@@ -18,7 +18,7 @@ public class RegisterRequest {
     @NotBlank
     private String email;
 
-    @Schema(example = EMAIL_EX, description = PASSWORD_DES)
+    @Schema(example = PASSWORD_EX, description = PASSWORD_DES)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;

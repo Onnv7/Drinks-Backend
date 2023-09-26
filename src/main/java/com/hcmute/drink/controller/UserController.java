@@ -16,11 +16,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
+import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = USER_CONTROLLER_TITLE)
@@ -31,7 +35,23 @@ public class UserController {
     private final UserServiceImpl userService;
     private final ModelMapper modelMapper;
 
-
+    @Operation(summary = USER_GET_ALL_SUM, description = USER_GET_ALL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_USER, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping()
+//    @PreAuthorize(SET_ADMIN_ROLE)
+    public ResponseEntity<ResponseAPI> getAllUser() {
+        try {
+//            SecurityContextHolder.getContext().getAuthentication().getCredentials();
+            List<UserCollection> users = userService.getAllUsers();
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET_USER)
+                    .data(users)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Operation(summary = USER_GET_BY_ID_SUM, description = USER_GET_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_USER, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping("/{userId}")
