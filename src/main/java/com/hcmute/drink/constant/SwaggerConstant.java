@@ -80,6 +80,28 @@ public class SwaggerConstant {
 
 
 
+
+    // For Employee =============================================================
+    public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
+    public static final String EMPLOYEE_UPDATE_BY_ID_SUM = "Update employee's information by employee id";
+    public static final String EMPLOYEE_UPDATE_BY_ID_DES= "This endpoint returns new employee's information after it were updated";
+
+    public static final String EMPLOYEE_DELETE_BY_ID_SUM = "Delete a employee by employee id";
+    public static final String EMPLOYEE_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
+    public static final String EMPLOYEE_LOGIN_SUM = "Login to get token";
+    public static final String EMPLOYEE_LOGIN_DES= "This endpoint returns a token";
+    public static final String EMPLOYEE_REGISTER_SUM = "Register new employee account with some information";
+    public static final String EMPLOYEE_REGISTER_DES= NOTIFICATION_NOT_DATA;
+
+    public static final String EMPLOYEE_GET_BY_ID_SUM = "Get a employee by employee id";
+    public static final String EMPLOYEE_GET_BY_ID_DES= "This endpoint returns a employee's information";
+    public static final String EMPLOYEE_GET_ALL_SUM = "Get all employees";
+    public static final String EMPLOYEE_GET_ALL_DES= "This endpoint returns all employees";
+
+
+
+
+
     // For schema properties
 
     public static final String NOT_EMPTY_DES = "Cannot be empty";
@@ -97,11 +119,11 @@ public class SwaggerConstant {
     public static final String PASSWORD_DES = MIN_LENGTH_DES + PASSWORD_LENGTH_MIN + ", " + MAX_LENGTH_DES + PASSWORD_LENGTH_MAX;
     public static final String CATEGORY_NAME_EX = "Coffee";
     // Product
-    public static final String PRODUCT_NAME_EX = "Coca-cola";
+    public static final String PRODUCT_NAME_EX = "Coca cola";
     public static final String PRODUCT_PRICE_EX = "100000";
 
-    public static final String PRODUCT_SIZE_EX = "L";
-    public static final String PRODUCT_DESCRIPTION_EX = "Coca-Cola is made from Pepsi";
+    public static final String PRODUCT_SIZE_EX = "Size L";
+    public static final String PRODUCT_DESCRIPTION_EX = "Coca Cola is made from Pepsi";
 
     public static final String TOPPING_NAME_EX = "Ca cao" ;
 
@@ -110,9 +132,13 @@ public class SwaggerConstant {
     public static final String EMAIL_EX = "nva@gmail.com" ;
     public static final String FIRST_NAME_EX = "An" ;
     public static final String LAST_NAME_EX = "Nguyen" ;
+    public static final String FIRST_NAME_EMPLOYEE_EX = "Tao" ;
+    public static final String LAST_NAME_EMPLOYEE_EX = "Thao" ;
     public static final String BIRTH_DATE_EX = "2002-01-01";
     public static final String GENDER_EX = "FEMALE";
     public static final String PHONE_NUMBER_EX = "0123456789";
     public static final String CODE_EX = "0000";
     public static final String VERIFY_NUMBER_MSG_EX = "Your authentication code is: 0000";
+    public static final String USERNAME_EMPLOYEE_EX = "nva6112002";
+    public static final String PASSWORD_EMPLOYEE_EX = "112233";
 }

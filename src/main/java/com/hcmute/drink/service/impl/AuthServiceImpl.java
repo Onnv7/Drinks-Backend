@@ -2,13 +2,14 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.ConfirmationCollection;
 import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.common.Role;
+import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
 import com.hcmute.drink.repository.ConfirmationRepository;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.dto.RegisterRequest;
 import com.hcmute.drink.security.UserPrincipal;
+import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.service.AuthService;
 import com.hcmute.drink.utils.EmailUtils;
 import com.hcmute.drink.utils.JwtUtils;
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,21 +44,29 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse attemptLogin(String email, String password) throws Exception {
+        UserPrincipal principal = UserPrincipal.builder()
+                .username(email)
+                .password(password)
+                .build();
+
+        Authentication userCredential = new UserUsernamePasswordAuthenticationToken(principal);
         var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+//                new UsernamePasswordAuthenticationToken(email, password)
+                userCredential
         );
 
-        var principal = (UserPrincipal) authentication.getPrincipal();
-        UserCollection user = userRepository.findByEmail(principal.getEmail());
+//        var principal = (UserPrincipal) authentication.getPrincipal();
+        var principalAuthenticated = (UserPrincipal) authentication.getPrincipal();
+        UserCollection user = userRepository.findByEmail(principalAuthenticated.getUsername());
         if (!user.isVerifiedEmail()) {
             throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        var roles = principal.getAuthorities()
+        var roles = authentication.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var token = jwtIssuer.issue(principal.getUserId(), principal.getEmail(), roles);
+        var token = jwtIssuer.issue(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
         return LoginResponse.builder().accessToken(token).build();
     }
 
@@ -129,4 +138,5 @@ public class AuthServiceImpl implements AuthService {
         }
         return false;
     }
+
 }

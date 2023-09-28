@@ -1,4 +1,4 @@
-package com.hcmute.drink.security;
+package com.hcmute.drink.security.jwt;
 
 import com.hcmute.drink.utils.JwtUtils;
 import jakarta.servlet.FilterChain;

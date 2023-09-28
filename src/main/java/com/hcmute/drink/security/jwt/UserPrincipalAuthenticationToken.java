@@ -1,5 +1,6 @@
-package com.hcmute.drink.security;
+package com.hcmute.drink.security.jwt;
 
+import com.hcmute.drink.security.UserPrincipal;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 public class UserPrincipalAuthenticationToken extends AbstractAuthenticationToken {

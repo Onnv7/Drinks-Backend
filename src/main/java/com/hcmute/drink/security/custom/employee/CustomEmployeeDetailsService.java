@@ -1,9 +1,10 @@
-package com.hcmute.drink.security;
+package com.hcmute.drink.security.custom.employee;
 
-import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.common.Role;
+import com.hcmute.drink.collection.EmployeeCollection;
+import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.service.impl.UserServiceImpl;
+import com.hcmute.drink.security.UserPrincipal;
+import com.hcmute.drink.service.impl.EmployeeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,18 +19,19 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
-    private final UserServiceImpl userService;
+public class CustomEmployeeDetailsService implements UserDetailsService {
+    private final EmployeeServiceImpl employeeService;
 
     @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserCollection user = userService.findByEmail(username);
+        EmployeeCollection user = employeeService.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(ErrorConstant.USER_NOT_FOUND);
-        } else if(user.isVerifiedEmail() == false) {
-            throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
         }
+//        else if(user.isVerifiedEmail() == false) {
+//            throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
+//        }
 
         List<String> roleNames = Arrays.stream(user.getRoles())
                 .map(Role::name)
@@ -41,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return UserPrincipal.builder()
                 .userId(user.getId())
-                .email(user.getEmail())
+                .username(user.getUsername())
                 .authorities(authorities)
                 .password(user.getPassword())
                 .build();

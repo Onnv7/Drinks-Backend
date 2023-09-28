@@ -27,7 +27,8 @@ public class CreateProductRequest {
 
     private List<MultipartFile> images;
 
-    @Schema(example = PRODUCT_SIZE_EX, description = OPTIONAL_DES)
+    // example = PRODUCT_SIZE_EX
+    @Schema(description = OPTIONAL_DES)
     private List<String> size;
 
     @Schema(example = PRODUCT_DESCRIPTION_EX, description = NOT_BLANK_DES)

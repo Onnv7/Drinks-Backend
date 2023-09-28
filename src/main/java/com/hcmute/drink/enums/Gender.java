@@ -1,4 +1,4 @@
-package com.hcmute.drink.common;
+package com.hcmute.drink.enums;
 
 public enum Gender {
         FEMALE,

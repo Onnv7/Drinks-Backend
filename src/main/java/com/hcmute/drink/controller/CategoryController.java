@@ -34,6 +34,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Validated CreateCategoryRequest body) {
         try {
             CategoryCollection category = categoryService.createCategory(body);
@@ -87,9 +88,8 @@ public class CategoryController {
     }
 
     @Operation(summary = CATEGORY_UPDATE_BY_ID_SUM, description = CATEGORY_UPDATE_BY_ID_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping(name = "/update/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PutMapping(path = "/update/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
                                                       @PathVariable("categoryId") String id) {
         try {

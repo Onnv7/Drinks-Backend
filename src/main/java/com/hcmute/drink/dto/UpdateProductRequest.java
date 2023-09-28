@@ -23,13 +23,15 @@ public class UpdateProductRequest {
     @Schema(example = PRODUCT_NAME_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String name;
+
     private List<MultipartFile> images;
 
     @Schema(example = PRODUCT_PRICE_EX, description = MIN_VALUE_DES + PRODUCT_PRICE_MIN)
     @Min(PRODUCT_PRICE_MIN)
     private double price;
 
-    @Schema(example = PRODUCT_SIZE_EX, description = OPTIONAL_DES)
+    // example = PRODUCT_SIZE_EX,
+    @Schema(description = OPTIONAL_DES)
     private List<String> size;
 
     @Schema(example = PRODUCT_DESCRIPTION_EX, description = NOT_BLANK_DES)

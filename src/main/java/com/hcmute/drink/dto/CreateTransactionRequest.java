@@ -1,7 +1,7 @@
 package com.hcmute.drink.dto;
 
 import com.hcmute.drink.common.OrderDetailsModel;
-import com.hcmute.drink.common.OrderStatus;
+import com.hcmute.drink.enums.OrderStatus;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

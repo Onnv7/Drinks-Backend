@@ -3,8 +3,8 @@ package com.hcmute.drink.collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hcmute.drink.common.Gender;
-import com.hcmute.drink.common.Role;
+import com.hcmute.drink.enums.Gender;
+import com.hcmute.drink.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 
@@ -40,7 +39,6 @@ public class UserCollection {
     private String introduction;
     @Builder.Default
     private Role[] roles = {Role.ROLE_USER};
-    private int star;
 
     @Builder.Default
     private boolean enabled = true;

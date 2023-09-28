@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +35,7 @@ public class ExceptionHandlerController {
         ErrorResponse errorResponse = new ErrorResponse(new Date(), false, ex.getMessage(), Arrays.toString(ex.getStackTrace()));
         return new ResponseEntity<>(errorResponse, StatusCode.BAD_REQUEST);
     }
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         Throwable throwable = ex.getCause();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

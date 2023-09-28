@@ -1,4 +1,4 @@
-package com.hcmute.drink.security;
+package com.hcmute.drink.security.oauth;
 
 import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.repository.UserRepository;
@@ -9,8 +9,6 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CustomOidcUserService extends OidcUserService {

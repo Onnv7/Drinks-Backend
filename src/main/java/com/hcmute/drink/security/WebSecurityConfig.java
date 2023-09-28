@@ -1,17 +1,20 @@
 package com.hcmute.drink.security;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import com.hcmute.drink.security.custom.CustomAuthenticationManager;
+import com.hcmute.drink.security.custom.MyAuthenticationFilter;
+import com.hcmute.drink.security.custom.employee.EmployeeCustomAuthenticationProvider;
+import com.hcmute.drink.security.custom.user.UserCustomAuthenticationProvider;
+import com.hcmute.drink.security.jwt.JwtAuthenticationFilter;
+import com.hcmute.drink.security.oauth.CustomOidcUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,71 +29,41 @@ import static com.hcmute.drink.constant.SecurityConstant.*;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig {
+@EnableMethodSecurity(prePostEnabled = true) //EnableGlobalMethodSecurity
+public class WebSecurityConfig  {
+
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final String ADMIN = "ADMIN";
+    private final String EMPLOYEE = "EMPLOYEE";
+    private final String USER = "USER";
+
     @Autowired
     private CustomOidcUserService customOidcUserService;
 
 
+    @Autowired
+    private EmployeeCustomAuthenticationProvider adminCustomAuthenticationProvider;
 
-    //                .requestMatchers("/v2/api-docs",
-//                        "/api/users/**",
-//                        "/v3/api-docs",
-//                        "/v3/api-docs/**",
-//                        "/swagger-resources",
-//                        "/swagger-resources/**",
-//                        "/configuration/ui",
-//                        "/configuration/security",
-//                        "/swagger-ui/**",
-//                        "/webjars/**",
-//                        "/swagger-ui.html"
-//                        ).permitAll()
+    @Autowired
+    private UserCustomAuthenticationProvider userCustomAuthenticationProvider;
 
     @Bean
-    public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
-        System.out.println("filter chain");
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http
-                .cors().and()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .formLogin().disable()
-                .securityMatcher("/**")
-                .authorizeHttpRequests(register -> register
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers(USER_PATH).hasRole("USER")
-                        .requestMatchers(ADMIN_PATH).hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-//                .oauth2Login()
-//                .defaultSuccessUrl("/api/test/ok")
-//                .userInfoEndpoint()
-//                .oidcUserService(customOidcUserService);
+    public MyAuthenticationFilter myAuthenticationFilter() throws Exception
+    {
+        MyAuthenticationFilter authenticationFilter = new MyAuthenticationFilter();
 
-        ;
-
-//                .securityMatcher("/**")
-//                .authorizeHttpRequests(register -> register
-//                        .requestMatchers("/").permitAll()
-//                        .requestMatchers("/pow-wow/v3/api-docs/**").permitAll()
-//                        .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs và /webjars/** ").permitAll()
-//                        .requestMatchers("/api/users/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
-//                );
-        return http.build();
+        return authenticationFilter;
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         System.out.println("Pwd");
         return new BCryptPasswordEncoder();
     }
-    // lắng nghe sự kiện auth gg thành công hoặc dùng Oidc
+
     @Bean
     ApplicationListener<AuthenticationSuccessEvent> doSomething() {
         return new ApplicationListener<AuthenticationSuccessEvent>() {
@@ -103,11 +76,62 @@ public class WebSecurityConfig {
     }
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        System.out.println("Auth manager");
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder())
-                .and()
-                .build();
+        // Tự custom
+        CustomAuthenticationManager authenticationManager = new CustomAuthenticationManager();
+        authenticationManager.addProvider(adminCustomAuthenticationProvider);
+        authenticationManager.addProvider(userCustomAuthenticationProvider);
+        return  authenticationManager;
+        // Dùng mặc định không custom
+//        return http.getSharedObject(AuthenticationManagerBuilder.class)
+//                .authenticationProvider(adminCustomAuthenticationProvider)
+//                .authenticationProvider(userCustomAuthenticationProvider)
+//                .build();
     }
+
+    @Bean
+    public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
+        System.out.println("filter chain");
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(myAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        // set route sẽ ăn từ trên xuống (ưu tiên cái đầu tiên)
+        http
+                .cors().and()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .formLogin().disable()
+                .securityMatcher("/**")
+                .authorizeHttpRequests(register -> register
+
+
+                        // ALL
+                        .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
+                        .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
+
+                        // Only USER
+                        .requestMatchers(HttpMethod.PATCH, PATCH_USER_PATH).hasRole(USER)
+
+
+                        // Only ADMIN
+                        .requestMatchers(HttpMethod.GET, GET_ADMIN_PATH).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_PATH).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, POST_ADMIN_PATH).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, DELETE_ADMIN_PATH).hasRole(ADMIN)
+
+
+                        // ADMIN + EMPLOYEE
+                        .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+
+                        // ADMIN + USER
+                        .requestMatchers(HttpMethod.GET, GET_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                        .requestMatchers(HttpMethod.POST, POST_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+
+                        .anyRequest().authenticated()
+                );
+
+        return http.build();
+    }
+
 }

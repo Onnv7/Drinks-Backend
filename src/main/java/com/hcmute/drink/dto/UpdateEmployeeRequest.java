@@ -2,23 +2,22 @@ package com.hcmute.drink.dto;
 
 import com.hcmute.drink.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
-import lombok.Builder;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Date;
 
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
-
 @Data
-@Builder
-public class UpdateUserRequest {
-    @Schema(example = FIRST_NAME_EX, description = NOT_BLANK_DES)
+public class UpdateEmployeeRequest {
+
+    @Schema(example = FIRST_NAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String firstName;
 
-    @Schema(example = LAST_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = LAST_NAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String lastName;
 
@@ -29,9 +28,4 @@ public class UpdateUserRequest {
     @Schema(example = GENDER_EX, description = NOT_NULL_DES)
     @NotNull
     private Gender gender;
-
-    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
-    @NotBlank
-    @Pattern(regexp = PHONE_NUMBER_REGEX)
-    private String phoneNumber;
 }

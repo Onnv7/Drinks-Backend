@@ -108,13 +108,14 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping(name = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    @PreAuthorize(value = SET_ADMIN_ROLE)
-    public ResponseEntity<ResponseAPI> updateProductById(@PathVariable("productId") String id, @ModelAttribute UpdateProductRequest body) {
+    public ResponseEntity<ResponseAPI> updateProductById( @ModelAttribute @Validated UpdateProductRequest body,
+                                                          @PathVariable("productId") String id) {
         try {
             ProductCollection data = modelMapper.map(body, ProductCollection.class);
             data.setId(id);
-            ProductCollection resData = productService.updateProductById( data, body.getImages());
+            ProductCollection resData = productService.updateProductById(data, body.getImages());
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)

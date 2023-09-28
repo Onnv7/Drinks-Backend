@@ -16,10 +16,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = TRANSACTION_CONTROLLER_TITLE)
@@ -53,7 +55,8 @@ public class TransactionController {
     }
     @Operation(summary = TRANSACTION_UPDATE_BY_ID_SUM, description = TRANSACTION_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/{transId}")
+    @PutMapping("/{transId}")
+//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody UpdateTransactionRequest body) {
         try {
             TransactionCollection data =  TransactionCollection.builder()

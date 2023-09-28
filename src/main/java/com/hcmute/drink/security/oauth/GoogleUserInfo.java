@@ -1,4 +1,4 @@
-package com.hcmute.drink.security;
+package com.hcmute.drink.security.oauth;
 
 import java.util.Map;
 

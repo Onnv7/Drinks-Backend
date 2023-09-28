@@ -11,10 +11,15 @@ import java.util.Collection;
 @Getter
 @Builder
 public class UserPrincipal implements UserDetails {
-    private final String userId;
-    private final String email;
+    private  String userId;
+    private final String username;
     @JsonIgnore
     private final String password;
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     private final Collection<? extends GrantedAuthority> authorities;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -28,7 +33,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

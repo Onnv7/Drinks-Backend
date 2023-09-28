@@ -31,7 +31,7 @@ public class JwtUtils {
     public UserPrincipal convert(DecodedJWT jwt) {
         return UserPrincipal.builder()
                 .userId(jwt.getSubject())
-                .email(jwt.getClaim("email").asString())
+                .username(jwt.getClaim("email").asString())
                 .authorities(extractAuthoritiesFromClaim(jwt))
                 .build();
 
