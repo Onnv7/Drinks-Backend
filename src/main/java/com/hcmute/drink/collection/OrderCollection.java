@@ -1,10 +1,11 @@
 package com.hcmute.drink.collection;
 
+
 import com.hcmute.drink.common.OrderDetailsModel;
+import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.common.ReviewModel;
 import com.hcmute.drink.enums.OrderStatus;
-import com.hcmute.drink.enums.PaymentStatus;
-import com.hcmute.drink.enums.PaymentType;
+import com.hcmute.drink.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,15 +23,24 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-@Document(collection = "transaction")
-public class TransactionCollection {
+@Document(collection = "order")
+public class OrderCollection {
     @Id
     private String id;
-    private String invoiceCode;
-    @Builder.Default
-    private PaymentStatus status = PaymentStatus.UNPAID;
-    private PaymentType paymentType;
-    private double totalPaid;
+    private ObjectId userId;
+
+    private List<OrderDetailsModel> products;
+    private String note;
+
+    private long total;
+    private OrderType orderType;
+
+    private List<OrderLogModel> eventLogs;
+
+
+    private ReviewModel review;
+
+    private ObjectId transactionId;
 
     @CreatedDate
     private Date createdAt;

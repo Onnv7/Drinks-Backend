@@ -36,7 +36,6 @@ public class ProductController {
     @Operation(summary = PRODUCT_CREATE_SUM, description = PRODUCT_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @PreAuthorize(SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> createProduct(@ModelAttribute @Validated CreateProductRequest body) {
         try {
             ProductCollection product = new ProductCollection();
@@ -91,7 +90,6 @@ public class ProductController {
     @Operation(summary = PRODUCT_DELETE_BY_ID_SUM, description = PRODUCT_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping("/{productId}")
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
     protected ResponseEntity<ResponseAPI> deleteProductById(@PathVariable("productId") String id) {
         try {
             productService.deleteProductById(id);
@@ -109,7 +107,6 @@ public class ProductController {
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(path = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> updateProductById( @ModelAttribute @Validated UpdateProductRequest body,
                                                           @PathVariable("productId") String id) {
         try {

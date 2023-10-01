@@ -19,6 +19,6 @@ public class CreateTransactionRequest {
     private List<OrderDetailsModel> products;
 
     @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus status = OrderStatus.CREATED;
     private String note;
 }

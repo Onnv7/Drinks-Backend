@@ -10,12 +10,14 @@ public class SecurityConstant {
     public static final String CATEGORY_BASE_PATH = "/api/category";
     public static final String PRODUCT_BASE_PATH = "/api/product";
     public static final String EMPLOYEE_BASE_PATH = "/api/employee";
+    public static final String ORDER_BASE_PATH = "/api/order";
     public static final String TRANSACTION_BASE_PATH = "/api/transaction";
     // =================================================
     public static final String USER_ALL_PATH = USER_BASE_PATH + "/**";
     public static final String AUTH_ALL_PATH = AUTH_BASE_PATH + "/**";
     public static final String CATEGORY_ALL_PATH = CATEGORY_BASE_PATH + "/**";
     public static final String PRODUCT_ALL_PATH = PRODUCT_BASE_PATH + "/**";
+    public static final String ORDER_ALL_PATH = PRODUCT_BASE_PATH + "/**";
 
     // ENDPOINT URL USER =================================================================
 
@@ -55,13 +57,18 @@ public class SecurityConstant {
     public static final String CATEGORY_DELETE_BY_ID_PATH = CATEGORY_BASE_PATH + "/" + CATEGORY_ID;
     public static final String CATEGORY_CREATE_PATH = CATEGORY_BASE_PATH;
 
+    // ENDPOINT URL ORDER =================================================================
+    public static final String ORDER_ID = "{orderId}";
+    public static final String ORDER_CREATE_PATH = ORDER_BASE_PATH;
+    public static final String ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + "/" + ORDER_ID;
+
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";
 
     public static final String TRANSACTION_GET_BY_ID_PATH = TRANSACTION_BASE_PATH + "/" + TRANSACTION_ID;
     public static final String TRANSACTION_GET_ALL_PATH = TRANSACTION_BASE_PATH;
     public static final String TRANSACTION_UPDATE_BY_ID_PATH = TRANSACTION_BASE_PATH + "/update/" + TRANSACTION_ID;
-    public static final String TRANSACTION_CREATE_PATH = TRANSACTION_BASE_PATH;
+//    public static final String TRANSACTION_CREATE_PATH = TRANSACTION_BASE_PATH;
 
 
     // ENDPOINT URL AUTH =================================================================
@@ -95,6 +102,10 @@ public class SecurityConstant {
 
     // ALL =================================================================
     public static final String[] GET_AUTH_WHITELIST = {
+            "/api/test/**",
+            "/api/payment/**",
+            "/create_payment",
+            "/IPN/**",
             "/openapi/**", "/v3/api-docs/**", "/openapi/swagger-config/**",
             "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html",
             PRODUCT_GET_ALL_PATH, PRODUCT_GET_BY_ID_PATH,
@@ -102,6 +113,8 @@ public class SecurityConstant {
             AUTH_VERIFY_EMAIL_PATH
     };
     public static final String[] POST_AUTH_WHITELIST = {
+            "/refund",
+            "/IPN/**", "/api/order",
             EMPLOYEE_LOGIN_PATH,
             AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_PATH, AUTH_RE_SEND_EMAIL_PATH,
                 AUTH_REGISTER_PATH, AUTH_LOGIN_PATH
@@ -150,6 +163,9 @@ public class SecurityConstant {
             EMPLOYEE_UPDATE_BY_ID_PATH,
             TRANSACTION_UPDATE_BY_ID_PATH
     };
+    public static final String[] PATCH_ADMIN_EMPLOYEE_PATH = {
+            ORDER_UPDATE_STATUS_PATH
+    };
 
 
     // ADMIN + USER =================================================================
@@ -158,7 +174,8 @@ public class SecurityConstant {
     };
 
     public static final String[] POST_ADMIN_USER_PATH = {
-            TRANSACTION_CREATE_PATH,
+//            TRANSACTION_CREATE_PATH,
+            ORDER_CREATE_PATH,
     };
 
     public static final String[] PUT_ADMIN_USER_PATH = {

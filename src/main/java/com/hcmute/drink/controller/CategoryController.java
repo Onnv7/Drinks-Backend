@@ -34,7 +34,6 @@ public class CategoryController {
     @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Validated CreateCategoryRequest body) {
         try {
             CategoryCollection category = categoryService.createCategory(body);
@@ -109,7 +108,6 @@ public class CategoryController {
     @Operation(summary = CATEGORY_DELETE_BY_ID_SUM, description = CATEGORY_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping("/{categoryId}")
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> deleteCategoryById(@PathVariable("categoryId") String id) {
         try {
             categoryService.deleteCategoryById(id);

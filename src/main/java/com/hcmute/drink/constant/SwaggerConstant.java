@@ -141,4 +141,6 @@ public class SwaggerConstant {
     public static final String VERIFY_NUMBER_MSG_EX = "Your authentication code is: 0000";
     public static final String USERNAME_EMPLOYEE_EX = "nva6112002";
     public static final String PASSWORD_EMPLOYEE_EX = "112233";
+    public static final String RATING_EX = "4";
+    public static final String CONTENT_EX = "It's so good";
 }

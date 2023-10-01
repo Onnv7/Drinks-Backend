@@ -38,7 +38,6 @@ public class UserController {
     @Operation(summary = USER_GET_ALL_SUM, description = USER_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_USER, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping()
-//    @PreAuthorize(SET_ADMIN_ROLE)
     public ResponseEntity<ResponseAPI> getAllUser() {
         try {
 //            SecurityContextHolder.getContext().getAuthentication().getCredentials();

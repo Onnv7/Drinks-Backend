@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,36 +36,35 @@ public class TransactionController {
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
 
-    @Operation(summary = TRANSACTION_CREATE_SUM, description = TRANSACTION_CREATE_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping()
-    public ResponseEntity<ResponseAPI> createTransaction(@RequestBody @Validated CreateTransactionRequest body) {
-        try {
-            TransactionCollection data = modelMapper.map(body, TransactionCollection.class);
-            TransactionCollection savedData = transactionService.createTransaction(data);
-
-            ResponseAPI res = ResponseAPI.builder()
-                    .message(SuccessConstant.CREATED)
-                    .data(savedData)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.CREATED);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Operation(summary = TRANSACTION_CREATE_SUM, description = TRANSACTION_CREATE_DES)
+//    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+//    @PostMapping()
+//    public ResponseEntity<ResponseAPI> createTransaction(@RequestBody @Validated CreateTransactionRequest body) {
+//        try {
+//            TransactionCollection data = modelMapper.map(body, TransactionCollection.class);
+//            TransactionCollection savedData = transactionService.createTransaction(data);
+//
+//            ResponseAPI res = ResponseAPI.builder()
+//                    .message(SuccessConstant.CREATED)
+//                    .data(savedData)
+//                    .build();
+//            return new ResponseEntity<>(res, StatusCode.CREATED);
+//        }
+//        catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     @Operation(summary = TRANSACTION_UPDATE_BY_ID_SUM, description = TRANSACTION_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping("/{transId}")
-//    @PreAuthorize(value = SET_ADMIN_ROLE)
-    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody UpdateTransactionRequest body) {
+    @PatchMapping("/{transId}")
+    // sau khi thanh toán (thành công/thất bại) => update transaction
+    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody UpdateTransactionRequest body, HttpServletRequest request) {
         try {
             TransactionCollection data =  TransactionCollection.builder()
                     .id(id)
                     .build();
             modelMapper.map(body, data);
-            TransactionCollection newData =  transactionService.updateTransaction(data);
-
+            TransactionCollection newData =  transactionService.updateTransaction(data, body.getTransactionTimeCode(), request);
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)

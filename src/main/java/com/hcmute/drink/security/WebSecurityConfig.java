@@ -23,6 +23,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import static com.hcmute.drink.constant.SecurityConstant.*;
 
@@ -87,7 +91,24 @@ public class WebSecurityConfig  {
 //                .authenticationProvider(userCustomAuthenticationProvider)
 //                .build();
     }
-
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("*"); // Cho phép tất cả các nguồn (origin)
+//        configuration.addAllowedMethod("*"); // Cho phép tất cả các HTTP method
+//        configuration.addAllowedHeader("*"); // Cho phép tất cả các header
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return source;
+//    }
+//
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        CorsFilter filter = new CorsFilter(corsConfigurationSource());
+//        return filter;
+//    }
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
         System.out.println("filter chain");
@@ -103,7 +124,7 @@ public class WebSecurityConfig  {
                 .securityMatcher("/**")
                 .authorizeHttpRequests(register -> register
 
-
+                        .requestMatchers("/vnpay/refund/**").permitAll()
                         // ALL
                         .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
@@ -122,6 +143,7 @@ public class WebSecurityConfig  {
                         // ADMIN + EMPLOYEE
                         .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
                         .requestMatchers(HttpMethod.PUT, PUT_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+                        .requestMatchers(HttpMethod.PATCH, PATCH_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
 
                         // ADMIN + USER
                         .requestMatchers(HttpMethod.GET, GET_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)

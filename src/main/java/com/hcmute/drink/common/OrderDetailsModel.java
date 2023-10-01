@@ -17,4 +17,6 @@ public class OrderDetailsModel {
     @Min(ORDER_QUANTITY_MIN)
     private int quantity;
     private List<ToppingModel> toppings;
+    private double price;
+    private String note;
 }

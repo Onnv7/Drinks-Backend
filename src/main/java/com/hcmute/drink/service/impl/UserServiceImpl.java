@@ -28,6 +28,14 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    public boolean checkExistenceUserById(String id) throws Exception {
+        UserCollection user = userRepository.findById(id).orElse(null);
+        if(user == null) {
+            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+        }
+        return true;
+    }
+
     public List<UserCollection> getAllUsers() {
         return userRepository.findAll();
     }
