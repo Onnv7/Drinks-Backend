@@ -58,7 +58,7 @@ public class TransactionController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping("/{transId}")
     // sau khi thanh toán (thành công/thất bại) => update transaction
-    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody UpdateTransactionRequest body, HttpServletRequest request) {
+    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody @Validated UpdateTransactionRequest body, HttpServletRequest request) {
         try {
             TransactionCollection data =  TransactionCollection.builder()
                     .id(id)

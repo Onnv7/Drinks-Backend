@@ -7,7 +7,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -60,10 +59,10 @@ public class EmailUtils {
     }
 
     @Async
-    public void sendHtmlVerifyCode(String name, String to, String code) {
+    public void sendHtmlVerifyCodeToRegister(String to, String code) {
         try {
             Context context = new Context();
-            context.setVariables(Map.of("name", name, "code", code));
+            context.setVariables(Map.of( "code", code));
             String text = templateEngine.process(CODE_TEMPLATE, context);
             MimeMessage message = getMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);

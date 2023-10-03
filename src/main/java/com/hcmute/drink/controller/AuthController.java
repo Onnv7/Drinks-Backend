@@ -1,10 +1,12 @@
 package com.hcmute.drink.controller;
 
+import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.AuthServiceImpl;
+import com.hcmute.drink.service.impl.UserServiceImpl;
 import com.hcmute.drink.utils.EmailUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,27 +14,31 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static com.hcmute.drink.constant.SecurityConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = AUTH_CONTROLLER_TITLE)
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping(AUTH_BASE_PATH)
 @Slf4j
 public class AuthController {
     private final AuthServiceImpl authService;
-    private final EmailUtils emailService;
+    private final UserServiceImpl userService;
+    private final EmailUtils emailUtils;
+    private final ModelMapper modelMapper;
 
 
     @Operation(summary = AUTH_LOGIN_SUM, description = AUTH_LOGIN_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/login")
+    @PostMapping(AUTH_LOGIN_SUB_PATH)
     public ResponseEntity<ResponseAPI> login(@RequestBody @Validated LoginRequest body) {
         try {
             LoginResponse data = authService.attemptLogin(body.getEmail(), body.getPassword());
@@ -51,13 +57,15 @@ public class AuthController {
 
     @Operation(summary = AUTH_REGISTER_SUM, description = AUTH_REGISTER_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/register")
+    @PostMapping(AUTH_REGISTER_SUB_PATH)
     public ResponseEntity<ResponseAPI> register(@RequestBody @Validated RegisterRequest body) {
         try {
-            authService.registerUser(body);
+            UserCollection data = modelMapper.map(body, UserCollection.class);
+            RegisterResponse resDate = authService.registerUser(data);
+
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .success(true)
+                    .data(resDate)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
@@ -67,32 +75,15 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = AUTH_VERIFY_EMAIL_SUM, description = AUTH_VERIFY_EMAIL_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping("/verify-email")
-    public ResponseEntity<ResponseAPI> verifyEmail(@RequestParam("token") String token) {
-        try {
-            authService.verifyEmail(token);
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .message(SuccessConstant.EMAIL_VERIFIED)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Operation(summary = AUTH_RE_SEND_EMAIL_SUM, description = AUTH_RE_SEND_EMAIL_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/resend-email")
-    public ResponseEntity<ResponseAPI> resendEmail(@RequestBody ResendEmailRequest body) {
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(AUTH_RE_SEND_EMAIL_SUB_PATH)
+    public ResponseEntity<ResponseAPI> resendEmail(@RequestBody @Validated ResendEmailRequest body) {
         try {
-            authService.resendTokenToEmail(body.getEmail());
+            authService.resendCode(body.getEmail());
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .message(SuccessConstant.SEND_TOKEN_TO_EMAIL)
+                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         }
@@ -101,15 +92,15 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_SUM, description = AUTH_SEND_CODE_TO_EMAIL_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/send-code")
-    public ResponseEntity<ResponseAPI> sendCode(@RequestBody SendCodeRequest body) {
+    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM, description = AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(AUTH_SEND_CODE_TO_REGISTER_SUB_PATH)
+    public ResponseEntity<ResponseAPI> sendCodeToRegister(@RequestBody @Validated SendCodeRequest body) {
         try {
-            authService.sendCodeToEmail(body.getEmail(), body.getCode());
+            authService.sendCodeToRegister(body.getEmail());
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .message(SuccessConstant.SEND_TOKEN_TO_EMAIL)
+                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         }
@@ -117,15 +108,70 @@ public class AuthController {
             throw new RuntimeException(e);
         }
     }
+
+    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM, description = AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(AUTH_SEND_CODE_TO_GET_PWD_SUB_PATH)
+    public ResponseEntity<ResponseAPI> sendCodeToGetPassword(@RequestBody @Validated SendCodeRequest body) {
+        try {
+            authService.sendCodeToGetPassword(body.getEmail());
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Operation(summary = AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM, description = AUTH_SEND_OTP_TO_PHONE_NUMBER_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_TOKEN_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/send-opt")
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(AUTH_SEND_OPT_SUB_PATH)
     public ResponseEntity<ResponseAPI> sendOTP(@RequestBody @Validated VerifyPhoneNumberRequest body) {
         try {
             log.info("YOUR CODE: " + body.getMessage());
 //            authService.sendMessageToPhoneNumber(body.getPhoneNumber(), body.getMessage());
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.SEND_OTP)
+                    .timestamp(new Date())
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = AUTH_VERIFY_EMAIL_SUM, description = AUTH_VERIFY_EMAIL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(AUTH_VERIFY_EMAIL_SUB_PATH)
+    public ResponseEntity<ResponseAPI> verifyCodeByEmail(@RequestBody @Validated VerifyEmailRequest body) {
+        try {
+            log.info("YOUR CODE: " + body.getCode());
+            boolean result = authService.verifyCodeByEmail(body.getCode(), body.getEmail());
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.EMAIL_VERIFIED)
+                    .timestamp(new Date())
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = AUTH_CHANGE_PASSWORD_SUM, description = AUTH_CHANGE_PASSWORD_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(AUTH_CHANGE_PASSWORD_SUB_PATH)
+    public ResponseEntity<ResponseAPI> changePassword(@RequestBody @Validated ChangePasswordRequest body) {
+        try {
+            userService.updatePasswordByEmail(body.getEmail(), body.getPassword());
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.UPDATED)
                     .timestamp(new Date())
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);

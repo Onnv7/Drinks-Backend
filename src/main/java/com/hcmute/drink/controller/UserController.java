@@ -4,7 +4,7 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.ChangePasswordRequest;
+import com.hcmute.drink.dto.UpdatePasswordRequest;
 import com.hcmute.drink.dto.UpdateUserRequest;
 import com.hcmute.drink.dto.UpdateUserResponse;
 import com.hcmute.drink.model.ResponseAPI;
@@ -16,15 +16,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
-import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = USER_CONTROLLER_TITLE)
@@ -70,7 +67,7 @@ public class UserController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping("/change-password/{userId}")
     public ResponseEntity<ResponseAPI> changePassword(@PathVariable String userId,
-                                                      @RequestBody @Validated ChangePasswordRequest body) {
+                                                      @RequestBody @Validated UpdatePasswordRequest body) {
         try {
             userService.updatePassword(userId, body.getPassword());
             ResponseAPI res = ResponseAPI.builder()

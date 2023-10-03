@@ -21,7 +21,7 @@ public class ConfirmationCollection {
     @Id
     private String id;
     @Indexed(unique = true)
-    private String token;
+    private String code;
     @Indexed(unique = true)
     private String email;
 

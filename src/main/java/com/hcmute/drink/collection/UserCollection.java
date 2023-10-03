@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,16 +36,13 @@ public class UserCollection {
     @Indexed(unique = true)
     private String email;
     private String phoneNumber;
-    private String address;
-    private String introduction;
+    private List<AddressCollection> address;
+
     @Builder.Default
     private Role[] roles = {Role.ROLE_USER};
 
     @Builder.Default
     private boolean enabled = true;
-
-    @Builder.Default
-    private boolean verifiedEmail = false;
 
     @CreatedDate
     private Date createdAt;

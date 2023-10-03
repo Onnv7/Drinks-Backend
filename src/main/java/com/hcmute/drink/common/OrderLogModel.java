@@ -11,4 +11,5 @@ import java.util.Date;
 public class OrderLogModel {
     private OrderStatus orderStatus;
     private Date time;
+    private String description;
 }

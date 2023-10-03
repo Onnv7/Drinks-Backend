@@ -31,16 +31,4 @@ public class RegisterRequest {
     @NotBlank
     private String lastName;
 
-    @Schema(example = BIRTH_DATE_EX, description = NOT_NULL_DES)
-    @NotNull
-    private Date birthDate;
-
-    @Schema(example = GENDER_EX, description = NOT_NULL_DES)
-    @NotNull
-    private Gender gender;
-
-    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
-    @NotBlank
-    @Pattern(regexp = PHONE_NUMBER_REGEX)
-    private String phoneNumber;
 }

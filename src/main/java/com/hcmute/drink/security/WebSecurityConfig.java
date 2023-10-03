@@ -128,6 +128,7 @@ public class WebSecurityConfig  {
                         // ALL
                         .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
+                        .requestMatchers(HttpMethod.PATCH, PATCH_AUTH_WHITELIST).permitAll()
 
                         // Only USER
                         .requestMatchers(HttpMethod.PATCH, PATCH_USER_PATH).hasRole(USER)

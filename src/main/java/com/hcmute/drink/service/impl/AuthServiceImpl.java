@@ -2,17 +2,18 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.ConfirmationCollection;
 import com.hcmute.drink.collection.UserCollection;
+import com.hcmute.drink.dto.RegisterResponse;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
 import com.hcmute.drink.repository.ConfirmationRepository;
 import com.hcmute.drink.repository.UserRepository;
-import com.hcmute.drink.dto.RegisterRequest;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.service.AuthService;
 import com.hcmute.drink.utils.EmailUtils;
 import com.hcmute.drink.utils.JwtUtils;
+import com.hcmute.drink.utils.RandomCodeUtils;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import lombok.RequiredArgsConstructor;
@@ -26,19 +27,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
+    private final RandomCodeUtils randomCodeUtils;
     private final EmailUtils emailService;
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtIssuer;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AuthenticationManager authenticationManager;
+    private final ConfirmationServiceImpl confirmationService;
+    private final UserServiceImpl userService;
     @Value("${twilio.trial_number}")
     private String trialNumber;
 
@@ -51,16 +55,12 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication userCredential = new UserUsernamePasswordAuthenticationToken(principal);
         var authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(email, password)
                 userCredential
         );
 
-//        var principal = (UserPrincipal) authentication.getPrincipal();
         var principalAuthenticated = (UserPrincipal) authentication.getPrincipal();
         UserCollection user = userRepository.findByEmail(principalAuthenticated.getUsername());
-        if (!user.isVerifiedEmail()) {
-            throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
-        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var roles = authentication.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)
@@ -71,72 +71,80 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void registerUser(RegisterRequest body) throws Exception {
-        Date now = new Date();
-        UserCollection existedUser = userRepository.findByEmail(body.getEmail());
+    public RegisterResponse registerUser(UserCollection data) throws Exception {
+        UserCollection existedUser = userRepository.findByEmail(data.getEmail());
 
         if (existedUser != null) {
             throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
-        UserCollection newUser = UserCollection.builder()
-                .roles((new Role[]{Role.ROLE_USER}))
-                .build();
-        modelMapper.map(body, newUser);
-        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        if (userRepository.save(newUser) != null) {
-            ConfirmationCollection confirmation = ConfirmationCollection.builder()
-                    .email(newUser.getEmail())
-                    .token(UUID.randomUUID().toString())
-                    .build();
-            confirmationRepository.save(confirmation);
-            emailService.sendHtmlVerifyEmail(newUser.getFirstName(), newUser.getEmail(), confirmation.getToken());
-            return;
+        RegisterResponse resData = new RegisterResponse();
+        modelMapper.map(data, resData);
+
+        data.setRoles(new Role[]{Role.ROLE_USER});
+        data.setPassword(passwordEncoder.encode(data.getPassword()));
+        UserCollection savedUser = userRepository.save(data);
+        if (savedUser == null) {
+            throw new Exception(ErrorConstant.CREATED_FAILED);
         }
-        throw new Exception(ErrorConstant.CREATED_FAILED);
+        List<String> roleList = new ArrayList<>();
+        for (Role role : savedUser.getRoles()) {
+            roleList.add(role.name());
+        }
+        var token = jwtIssuer.issue(savedUser.getId(), savedUser.getEmail(), roleList);
+        resData.setAccessToken(token);
+        resData.setId(savedUser.getId());
+        return resData;
+    }
+
+    public void resendCode(String email) throws Exception {
+        ConfirmationCollection confirmation = confirmationRepository.findByEmail(email);
+        if(confirmation == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + email);
+        }
+
+        String code = randomCodeUtils.generateRandomCode(6);
+        confirmation.setCode(code);
+        confirmationService.updateConfirmationInfo(confirmation);
+        emailService.sendHtmlVerifyCodeToRegister(email, code);
+
     }
 
     @Override
-    public void resendTokenToEmail(String email) throws Exception {
+    public void sendCodeToRegister(String email) throws Exception {
         UserCollection user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+        if (user != null) {
+            throw new Exception(ErrorConstant.EMPLOYEE_IS_EXISTED);
         }
-        ConfirmationCollection confirmation = confirmationRepository.findByEmail(user.getEmail());
-        String token = UUID.randomUUID().toString();
-        confirmation.setToken(token);
-        confirmationRepository.save(confirmation);
-        emailService.sendHtmlVerifyEmail(user.getFirstName(), user.getEmail(), token);
+        String code = randomCodeUtils.generateRandomCode(6);
+        confirmationService.createConfirmationInfo(email, code);
+        emailService.sendHtmlVerifyCodeToRegister(email, code);
+    }
 
+    public void sendCodeToGetPassword(String email) throws Exception {
+        userService.exceptionIfNotExistedUserByEmail(email);
+        String code = randomCodeUtils.generateRandomCode(6);
+        confirmationService.createConfirmationInfo(email, code);
+        emailService.sendHtmlVerifyCodeToRegister(email, code);
     }
 
     @Override
-    public void sendCodeToEmail(String email, String code) throws Exception {
-        UserCollection user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
-        }
-        emailService.sendHtmlVerifyCode(user.getFirstName(), user.getEmail(), code);
-
-    }
-
-    @Override
-    public void sendMessageToPhoneNumber(String phoneNumber, String text) throws Exception {
+    public void sendMessageToPhoneNumber(String phoneNumber, String text) {
         PhoneNumber to = new PhoneNumber(phoneNumber);
         PhoneNumber from = new PhoneNumber(trialNumber);
         Message message = Message.creator(to, from, text).create();
     }
 
-    @Override
-    public boolean verifyEmail(String token) {
-        ConfirmationCollection confirmationCollection = confirmationRepository.findByToken(token);
-        if (confirmationCollection != null && token.equals(confirmationCollection.getToken())) {
+    public boolean verifyCodeByEmail(String code, String email) throws Exception {
+        ConfirmationCollection confirmationCollection = confirmationRepository.findByEmail(email);
+        if (confirmationCollection != null && code.equals(confirmationCollection.getCode())) {
             confirmationRepository.deleteById(confirmationCollection.getId());
-            UserCollection user = userRepository.findByEmail(confirmationCollection.getEmail());
-            user.setVerifiedEmail(true);
-            userRepository.save(user);
             return true;
         }
-        return false;
+        if (confirmationCollection == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND);
+        }
+
+        throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
     }
 
 }

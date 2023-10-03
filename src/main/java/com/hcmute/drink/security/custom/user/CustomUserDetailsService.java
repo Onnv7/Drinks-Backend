@@ -28,9 +28,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserCollection user = userService.findByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException(ErrorConstant.USER_NOT_FOUND);
-        } else if(user.isVerifiedEmail() == false) {
-            throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
         }
+
 
         List<String> roleNames = Arrays.stream(user.getRoles())
                 .map(Role::name)

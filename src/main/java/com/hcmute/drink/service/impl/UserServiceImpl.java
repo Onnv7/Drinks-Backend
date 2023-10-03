@@ -28,9 +28,23 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public boolean checkExistenceUserById(String id) throws Exception {
+    public boolean exceptionIfNotExistedUserById(String id) throws Exception {
         UserCollection user = userRepository.findById(id).orElse(null);
         if(user == null) {
+            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+        }
+        return true;
+    }
+    public boolean exceptionIfNotExistedUserByEmail(String email) throws Exception {
+        UserCollection user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+        }
+        return true;
+    }
+    public boolean exceptionIfExistsUserByEmail(String email) throws Exception {
+        UserCollection user = userRepository.findByEmail(email);
+        if(user != null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
         return true;
@@ -66,6 +80,16 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         throw new Exception(ErrorConstant.CREATED_FAILED);
+    }
+
+    public boolean updatePasswordByEmail(String email, String password) throws Exception {
+        UserCollection user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return true;
     }
 
     @Override

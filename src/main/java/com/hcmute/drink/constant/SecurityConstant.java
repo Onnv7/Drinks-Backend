@@ -73,12 +73,23 @@ public class SecurityConstant {
 
     // ENDPOINT URL AUTH =================================================================
 
-    public static final String AUTH_SEND_OPT_PATH = AUTH_BASE_PATH + "/send-opt";
-    public static final String AUTH_SEND_CODE_PATH = AUTH_BASE_PATH + "/send-code";
-    public static final String AUTH_RE_SEND_EMAIL_PATH = AUTH_BASE_PATH + "/resend-email";
-    public static final String AUTH_REGISTER_PATH = AUTH_BASE_PATH + "/register";
-    public static final String AUTH_LOGIN_PATH = AUTH_BASE_PATH + "/login";
-    public static final String AUTH_VERIFY_EMAIL_PATH = AUTH_BASE_PATH + "/verify";
+    public static final String AUTH_SEND_OPT_SUB_PATH = "/send-opt";
+    public static final String AUTH_SEND_OPT_PATH = AUTH_BASE_PATH + AUTH_SEND_OPT_SUB_PATH;
+    public static final String AUTH_SEND_CODE_TO_REGISTER_SUB_PATH = "/register/send-code";
+    public static final String AUTH_SEND_CODE_TO_REGISTER_PATH = AUTH_BASE_PATH + AUTH_SEND_CODE_TO_REGISTER_SUB_PATH;
+    public static final String AUTH_SEND_CODE_TO_GET_PWD_SUB_PATH = "/password/send-code";
+    public static final String AUTH_SEND_CODE_TO_GET_PWD_PATH = AUTH_BASE_PATH + AUTH_SEND_CODE_TO_GET_PWD_SUB_PATH;
+    public static final String AUTH_RE_SEND_EMAIL_SUB_PATH = "/resend-email";
+    public static final String AUTH_RE_SEND_EMAIL_PATH = AUTH_BASE_PATH + AUTH_RE_SEND_EMAIL_SUB_PATH;
+    public static final String AUTH_REGISTER_SUB_PATH = "/register";
+    public static final String AUTH_REGISTER_PATH = AUTH_BASE_PATH + AUTH_REGISTER_SUB_PATH;
+    public static final String AUTH_LOGIN_SUB_PATH = "/login";
+    public static final String AUTH_LOGIN_PATH = AUTH_BASE_PATH + AUTH_LOGIN_SUB_PATH;
+    public static final String AUTH_VERIFY_EMAIL_SUB_PATH = "/verify";
+    public static final String AUTH_VERIFY_EMAIL_PATH = AUTH_BASE_PATH + AUTH_VERIFY_EMAIL_SUB_PATH;
+
+    public static final String AUTH_CHANGE_PASSWORD_SUB_PATH = "/change-password";
+    public static final String AUTH_CHANGE_PASSWORD_PATH = AUTH_BASE_PATH + AUTH_CHANGE_PASSWORD_SUB_PATH;
 
 
 
@@ -110,16 +121,19 @@ public class SecurityConstant {
             "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html",
             PRODUCT_GET_ALL_PATH, PRODUCT_GET_BY_ID_PATH,
             CATEGORY_GET_ALL_PATH, CATEGORY_GET_BY_ID_PATH,
-            AUTH_VERIFY_EMAIL_PATH
+
     };
     public static final String[] POST_AUTH_WHITELIST = {
             "/refund",
             "/IPN/**", "/api/order",
             EMPLOYEE_LOGIN_PATH,
-            AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_PATH, AUTH_RE_SEND_EMAIL_PATH,
-                AUTH_REGISTER_PATH, AUTH_LOGIN_PATH
+            AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_TO_REGISTER_PATH, AUTH_RE_SEND_EMAIL_PATH,
+                AUTH_REGISTER_PATH, AUTH_LOGIN_PATH, AUTH_VERIFY_EMAIL_PATH, AUTH_SEND_CODE_TO_GET_PWD_PATH
     };
 
+    public static final String[] PATCH_AUTH_WHITELIST = {
+            AUTH_CHANGE_PASSWORD_PATH
+    };
     // Only USER =================================================================
     public static final String[] PATCH_USER_PATH = {
             USER_CHANGE_PASSWORD_PATH

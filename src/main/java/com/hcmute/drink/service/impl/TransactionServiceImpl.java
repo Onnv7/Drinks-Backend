@@ -55,8 +55,10 @@ public class TransactionServiceImpl {
             // nếu số tiền vnpay nhận được = total của order
             if(transInfo.get("vnp_Amount").equals(String.valueOf(order.getTotal()))) {
                 transaction.setInvoiceCode(transInfo.get("vnp_TxnRef").toString());
+                transaction.setStatus(PaymentStatus.PAID);
             } else {
-                orderService.updateOrderStatus(order.getId(), OrderStatus.CANCELED);
+                orderService.updateOrderEvent(order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+                transaction.setStatus(PaymentStatus.UNPAID);
             }
         }
         else {

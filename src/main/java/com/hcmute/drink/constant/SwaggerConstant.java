@@ -1,7 +1,5 @@
 package com.hcmute.drink.constant;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 public class SwaggerConstant {
     public static final int TOPPING_PRICE_MIN = 5000;
     public static final int PRODUCT_PRICE_MIN = 5000;
@@ -19,15 +17,20 @@ public class SwaggerConstant {
     public static final String AUTH_LOGIN_SUM = "Login to get token";
     public static final String AUTH_LOGIN_DES= "This endpoint returns a token";
     public static final String AUTH_REGISTER_SUM = "Register new user account with some information";
-    public static final String AUTH_REGISTER_DES= NOTIFICATION_NOT_DATA;
-    public static final String AUTH_VERIFY_EMAIL_SUM = "Send email confirmation link for the first time";
+    public static final String AUTH_REGISTER_DES= "This endpoint returns a token and a user id";
+    public static final String AUTH_VERIFY_EMAIL_SUM = "Send email confirmation code";
     public static final String AUTH_VERIFY_EMAIL_DES= NOTIFICATION_NOT_DATA;
-    public static final String AUTH_RE_SEND_EMAIL_SUM = "Send email confirmation link a second time or later to update the Confirmation collection";
+    public static final String AUTH_RE_SEND_EMAIL_SUM = "Send email confirmation code a second time or later to update the Confirmation collection";
     public static final String AUTH_RE_SEND_EMAIL_DES = NOTIFICATION_NOT_DATA;
-    public static final String AUTH_SEND_CODE_TO_EMAIL_SUM = "Send email confirmation code";
-    public static final String AUTH_SEND_CODE_TO_EMAIL_DES= NOTIFICATION_NOT_DATA;
+    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM = "Send email confirmation code to register account";
+    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_DES = NOTIFICATION_NOT_DATA;
+    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM = "Send email confirmation code to get password";
+    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM = "Send OTP code to phone number (The function is under maintenance)";
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_DES= NOTIFICATION_NOT_DATA;
+
+    public static final String AUTH_CHANGE_PASSWORD_SUM = "Change password by email";
+    public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
 
     // For user =================================================================
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";
@@ -75,11 +78,22 @@ public class SwaggerConstant {
     public static final String TRANSACTION_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
     public static final String TRANSACTION_CREATE_SUM = "Create a new transaction";
     public static final String TRANSACTION_CREATE_DES = "This endpoint returns new transaction after saved on database";
-    public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by category id";
+    public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by transaction id";
     public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
 
 
+    // For Order =============================================================
 
+    public static final String ORDER_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
+
+    public static final String ORDER_UPDATE_BY_ID_SUM = "Update order's information by order id";
+    public static final String ORDER_UPDATE_BY_ID_DES= "This endpoint returns new order's information after it were updated";
+
+
+    public static final String ORDER_UPDATE_EVENT_SUM = "Add an order event to the status line";
+    public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
+    public static final String ORDER_CREATE_SUM = "Create a new order";
+    public static final String ORDER_CREATE_DES = "This endpoint returns new order after saved on database";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
@@ -143,4 +157,10 @@ public class SwaggerConstant {
     public static final String PASSWORD_EMPLOYEE_EX = "112233";
     public static final String RATING_EX = "4";
     public static final String CONTENT_EX = "It's so good";
+    public static final String ORDER_STATUS_EX = "CREATED";
+    public static final String ORDER_STATUS_DES_EX = "Order is created";
+    public static final String PRODUCT_QUANTITY_EX = "3";
+    public static final String PRODUCT_NOTE_EX = "This is note";
+    public static final String INVOICE_NOTE_EX = "23654128";
+    public static final String TOTAL_PAID_EX = "10234";
 }

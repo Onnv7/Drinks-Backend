@@ -3,7 +3,6 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.TransactionCollection;
-import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.common.OrderDetailsModel;
 import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -11,11 +10,10 @@ import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
 import com.hcmute.drink.repository.OrderRepository;
-import com.hcmute.drink.repository.ProductRepository;
-import com.hcmute.drink.repository.UserRepository;
-import com.hcmute.drink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,21 +21,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static java.util.Arrays.*;
-
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl {
     private final OrderRepository orderRepository;
     private final UserServiceImpl userService;
     private final ProductServiceImpl productService;
-    private final TransactionServiceImpl transactionService;
 
-    public OrderCollection createOrder(OrderCollection data, PaymentType paymentType) throws Exception {
-        userService.checkExistenceUserById(data.getUserId().toString());
+    @Autowired
+    @Lazy
+    private TransactionServiceImpl transactionService;
+
+    public OrderCollection createShippingOrder(OrderCollection data, PaymentType paymentType) throws Exception {
+        userService.exceptionIfNotExistedUserById(data.getUserId().toString());
 
         List<OrderDetailsModel> products = data.getProducts();
-        double totalPrice = 0;
+        long totalPrice = 0;
         for (OrderDetailsModel product : products) {
             ProductCollection productInfo = productService.getProductById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
             if (productInfo == null) {
@@ -68,18 +67,19 @@ public class OrderServiceImpl {
         return order;
     }
 
-    public OrderCollection updateOrderStatus(String id, OrderStatus orderStatus) throws Exception {
+    public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
         OrderCollection order = orderRepository.findById(id).orElse(null);
-        if(order == null) {
+        if (order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
         order.getEventLogs().add(OrderLogModel.builder()
                 .orderStatus(orderStatus)
+                .description(description)
                 .time(new Date())
                 .build()
         );
         OrderCollection updatedOrder = orderRepository.save(order);
-        if(updatedOrder == null) {
+        if (updatedOrder == null) {
             throw new Exception(ErrorConstant.UPDATE_FAILED);
         }
         return updatedOrder;

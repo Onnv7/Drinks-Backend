@@ -14,7 +14,4 @@ public class SendCodeRequest {
     @NotBlank
     private String email;
 
-    @Schema(example = CODE_EX, description = NOT_BLANK_DES)
-    @NotBlank
-    private String code;
 }
