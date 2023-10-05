@@ -100,6 +100,7 @@ public class EmployeeServiceImpl {
         if(employee == null) {
             throw new Exception(ErrorConstant.EMPLOYEE_NOT_FOUND);
         }
+        employee.setPassword(null);
         return employee;
     }
 }

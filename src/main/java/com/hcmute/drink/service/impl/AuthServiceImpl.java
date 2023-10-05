@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 .toList();
 
         var token = jwtIssuer.issue(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        return LoginResponse.builder().accessToken(token).build();
+        return LoginResponse.builder().accessToken(token).userId(principalAuthenticated.getUserId()).build();
     }
 
     @Override
@@ -116,14 +116,14 @@ public class AuthServiceImpl implements AuthService {
             throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
         String code = randomCodeUtils.generateRandomCode(6);
-        confirmationService.createConfirmationInfo(email, code);
+        confirmationService.createOrUpdateConfirmationInfo(email, code);
         emailService.sendHtmlVerifyCodeToRegister(email, code);
     }
 
     public void sendCodeToGetPassword(String email) throws Exception {
         userService.exceptionIfNotExistedUserByEmail(email);
         String code = randomCodeUtils.generateRandomCode(6);
-        confirmationService.createConfirmationInfo(email, code);
+        confirmationService.createOrUpdateConfirmationInfo(email, code);
         emailService.sendHtmlVerifyCodeToRegister(email, code);
     }
 

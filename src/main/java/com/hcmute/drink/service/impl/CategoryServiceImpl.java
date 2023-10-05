@@ -1,6 +1,7 @@
 package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.CategoryCollection;
+import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -29,9 +30,9 @@ public class CategoryServiceImpl implements CategoryService {
             throw new Exception(ErrorConstant.CATEGORY_EXISTED);
         }
         HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, cgrName, data.getImage());
-        ImageModel imageModel = new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+        ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
         CategoryCollection category = CategoryCollection.builder()
-                .image(imageModel)
+                .image(imageEmbedded)
                 .name(data.getName())
                 .build();
         CategoryCollection newCategory = categoryRepository.save(category);
@@ -61,8 +62,8 @@ public class CategoryServiceImpl implements CategoryService {
         cloudinaryUtils.deleteImage(category.getImage().getId());
         HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, data.getName(), data.getImage());
         category.setName(data.getName());
-        ImageModel imageModel = new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
-        category.setImage(imageModel);
+        ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+        category.setImage(imageEmbedded);
         CategoryCollection newCategory = categoryRepository.save(category);
 
         if(newCategory != null) {

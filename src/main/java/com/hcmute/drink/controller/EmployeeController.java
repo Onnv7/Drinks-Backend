@@ -37,7 +37,7 @@ public class EmployeeController {
     @Operation(summary = EMPLOYEE_GET_ALL_SUM, description = EMPLOYEE_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = EMPLOYEE_GET_ALL_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllEmployee() {
+    public ResponseEntity<ResponseAPI> getAllEmployees() {
         try {
             List<EmployeeCollection> data = employeeService.getAllEmployees();
 

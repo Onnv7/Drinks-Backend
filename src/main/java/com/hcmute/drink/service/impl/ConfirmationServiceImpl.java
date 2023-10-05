@@ -18,12 +18,19 @@ public class ConfirmationServiceImpl {
     @Autowired
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
-    public void createConfirmationInfo(String email, String code) {
-        ConfirmationCollection confirmation = ConfirmationCollection.builder()
-                .email(email)
-                .code(code)
-                .build();
-        confirmationRepository.save(confirmation);
+    public void createOrUpdateConfirmationInfo(String email, String code) {
+        ConfirmationCollection oldConfirmation = confirmationRepository.findByEmail(email);
+        if(oldConfirmation == null) {
+            ConfirmationCollection confirmation = ConfirmationCollection.builder()
+                    .email(email)
+                    .code(code)
+                    .build();
+            confirmationRepository.save(confirmation);
+        }
+        else {
+            oldConfirmation.setCode(code);
+            confirmationRepository.save(oldConfirmation);
+        }
     }
 
     public void updateConfirmationInfo(ConfirmationCollection confirmation) throws Exception {

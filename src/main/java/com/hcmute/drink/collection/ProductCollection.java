@@ -1,6 +1,8 @@
 package com.hcmute.drink.collection;
 
 
+import com.hcmute.drink.collection.embedded.ImageEmbedded;
+import com.hcmute.drink.collection.embedded.ToppingEmbedded;
 import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.common.ToppingModel;
 import lombok.AllArgsConstructor;
@@ -30,12 +32,12 @@ public class ProductCollection{
     @Id
     private String id;
     private String name;
-    private List<ImageModel> imagesList;
+    private List<ImageEmbedded> imagesList;
     private double price;
     private List<String> size;
     private String description;
     @UniqueElements
-    private List<ToppingModel> toppingList;
+    private List<ToppingEmbedded> toppingList;
 
     private ObjectId categoryId;
 

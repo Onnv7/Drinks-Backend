@@ -46,7 +46,7 @@ public class ExceptionHandlerController {
         ErrorResponse errorResponse = new ErrorResponse(new Date(), false, ex.getMessage(), Arrays.toString(ex.getStackTrace()));
         return new ResponseEntity<>(errorResponse, StatusCode.BAD_REQUEST);
     }
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         Throwable throwable = ex.getCause();
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -73,6 +73,7 @@ public class ExceptionHandlerController {
                 httpStatus = StatusCode.NOT_FOUND;
             }
         }
+        ex.printStackTrace();
 
         ErrorResponse errorResponse = new ErrorResponse(new Date(), false, msg, Arrays.toString(ex.getStackTrace()));
 

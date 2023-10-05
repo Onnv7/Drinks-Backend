@@ -43,7 +43,7 @@ public class SwaggerConstant {
     public static final String USER_UPDATE_BY_ID_SUM = "Update user's profile by user id";
     public static final String USER_UPDATE_BY_ID_DES = "This endpoint returns new user's profile after it were updated";
     public static final String USER_CHECK_EXISTED_BY_EMAIL_SUM = "Check user existence by email";
-    public static final String USER_CHECK_EXISTED_BY_EMAIL_DES = "This endpoint returns true or false";
+    public static final String USER_CHECK_EXISTED_BY_EMAIL_DES = "This endpoint returns user name or null";
     // For address =================================================================
     public static final String ADDRESS_CONTROLLER_TITLE = "ADDRESS MANAGEMENT";
     public static final String ADDRESS_ADD_ADDRESS_BY_ID_SUM = "Add new address for user";

@@ -1,8 +1,5 @@
 package com.hcmute.drink.collection;
 
-import com.hcmute.drink.common.OrderDetailsModel;
-import com.hcmute.drink.common.ReviewModel;
-import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
 import lombok.AllArgsConstructor;
@@ -12,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 

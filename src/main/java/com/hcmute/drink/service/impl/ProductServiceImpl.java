@@ -2,6 +2,7 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.CategoryCollection;
 import com.hcmute.drink.collection.ProductCollection;
+import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -35,14 +36,14 @@ public class ProductServiceImpl implements ProductService {
         int size = images.size();
         categoryService.exceptionIfNotFoundById(data.getCategoryId().toString());
 
-        List<ImageModel> imagesList = new ArrayList<ImageModel>();
+        List<ImageEmbedded> imagesList = new ArrayList<ImageEmbedded>();
         for (int i = 0; i < size; i++) {
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(
                     CloudinaryConstant.PRODUCT_PATH,
                     data.getName() + (i + 1),
                     images.get(i)
             );
-            imagesList.add(new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
+            imagesList.add(new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
         }
 
         data.setImagesList(imagesList);
@@ -70,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
         if(product == null) {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
-        List<ImageModel> images = product.getImagesList();
+        List<ImageEmbedded> images = product.getImagesList();
         int size = images.size();
         for (int i = 0; i < size; i++) {
             cloudinaryUtils.deleteImage(images.get(i).getId());
@@ -86,16 +87,16 @@ public class ProductServiceImpl implements ProductService {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
 
-        List<ImageModel> imagesList = new ArrayList<ImageModel>();
+        List<ImageEmbedded> imagesList = new ArrayList<ImageEmbedded>();
         modelMapperNotNull.map(data, product);
         int size = images.size();
 
-        List<ImageModel> oldImages = product.getImagesList();
+        List<ImageEmbedded> oldImages = product.getImagesList();
 
         for (int i = 0; i < size; i++) {
             cloudinaryUtils.deleteImage(oldImages.get(i).getId());
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH, data.getName(), images.get(i));
-            imagesList.add(new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
+            imagesList.add(new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
         }
         product.setImagesList(imagesList);
         ProductCollection newProduct = productRepository.save(product);

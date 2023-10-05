@@ -1,5 +1,6 @@
 package com.hcmute.drink.collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hcmute.drink.enums.Gender;
 import com.hcmute.drink.enums.Role;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class EmployeeCollection {
     private String id;
     @Indexed(unique = true)
     private String username;
+    @JsonIgnore
     private String password;
 
     private String firstName;

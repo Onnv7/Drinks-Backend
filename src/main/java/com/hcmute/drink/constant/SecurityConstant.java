@@ -79,7 +79,9 @@ public class SecurityConstant {
 
     // ADMIN + EMPLOYEE =================================================================
     public static final String[] GET_ADMIN_EMPLOYEE_PATH = {
-            EMPLOYEE_GET_BY_ID_PATH
+            EMPLOYEE_GET_BY_ID_PATH,
+            ORDER_GET_ALL_SHIPPING_PATH,
+            ORDER_GET_DETAILS_BY_ID_PATH
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {

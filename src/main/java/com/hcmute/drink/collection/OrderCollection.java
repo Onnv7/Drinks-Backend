@@ -1,9 +1,9 @@
 package com.hcmute.drink.collection;
 
 
-import com.hcmute.drink.common.OrderDetailsModel;
-import com.hcmute.drink.common.OrderLogModel;
-import com.hcmute.drink.common.ReviewModel;
+import com.hcmute.drink.collection.embedded.OrderDetailsEmbedded;
+import com.hcmute.drink.collection.embedded.OrderLogEmbedded;
+import com.hcmute.drink.collection.embedded.ReviewEmbedded;
 import com.hcmute.drink.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,16 +28,16 @@ public class OrderCollection {
     private String id;
     private ObjectId userId;
 
-    private List<OrderDetailsModel> products;
+    private List<OrderDetailsEmbedded> products;
     private String note;
 
     private long total;
     private OrderType orderType;
 
-    private List<OrderLogModel> eventLogs;
+    private List<OrderLogEmbedded> eventLogs;
 
 
-    private ReviewModel review;
+    private ReviewEmbedded review;
 
     private ObjectId transactionId;
     private AddressCollection address;

@@ -1,7 +1,7 @@
 package com.hcmute.drink.collection;
 
 
-import com.hcmute.drink.common.ImageModel;
+import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class CategoryCollection {
     private String id;
     @Indexed(unique = true)
     private String name;
-    private ImageModel image;
+    private ImageEmbedded image;
 
 
     @CreatedDate

@@ -4,6 +4,8 @@ import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.CreateOrderRequest;
+import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
+import com.hcmute.drink.dto.GetOrderDetailsResponse;
 import com.hcmute.drink.dto.UpdateOrderStatusRequest;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.payment.VNPayUtils;
@@ -58,7 +60,7 @@ public class OrderController {
     @Operation(summary = ORDER_UPDATE_EVENT_SUM, description = ORDER_UPDATE_EVENT_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = ORDER_UPDATE_STATUS_SUB_PATH)
-    // nhân viên cập nhật trạng thái order
+    // nhân viên cập nhật trạng thái order vào event logs
     public ResponseEntity<ResponseAPI> updateOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {
             OrderCollection savedData =  orderService.updateOrderEvent(id, body.getOrderStatus(), body.getDescription());
@@ -76,11 +78,27 @@ public class OrderController {
 
     @Operation(summary = ORDER_GET_ALL_SUM, description = ORDER_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping(path = ORDER_GET_ALL_PATH)
-    // nhân viên cập nhật trạng thái order
-    public ResponseEntity<ResponseAPI> getAllOrder() {
+    @GetMapping(path = ORDER_GET_ALL_SHIPPING_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getAllShippingOrdersQueueForEmployee() {
         try {
-            List<OrderCollection> savedData =  orderService.getAllOrders();
+            List<GetAllShippingOrdersResponse> savedData =  orderService.getAllShippingOrdersQueueForEmployee();
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(savedData)
+                    .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Operation(summary = ORDER_GET_ALL_SUM, description = ORDER_GET_ALL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_DETAILS_BY_ID_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getDetailsOrder(@PathVariable("orderId") String id) {
+        try {
+            GetOrderDetailsResponse savedData =  orderService.getOrderDetailsById(id);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(savedData)
