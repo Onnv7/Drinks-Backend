@@ -119,7 +119,7 @@ public class UserController {
     @GetMapping(path = USER_CHECK_EXISTED_SUB_PATH)
     public ResponseEntity<ResponseAPI> isExistedUser(@RequestParam("email") String email) {
         try {
-            boolean result = userService.isExistedUser(email);
+            String result = userService.isExistedUser(email);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)

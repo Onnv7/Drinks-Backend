@@ -82,6 +82,9 @@ public class OrderServiceImpl {
         }
         return updatedOrder;
     }
+    public List<OrderCollection> getAllOrders() throws Exception {
+        return orderRepository.findAll();
+    }
 
     public OrderCollection getOrderInfoByTransId(String id) throws Exception {
         OrderCollection order = orderRepository.findByTransactionId(id);

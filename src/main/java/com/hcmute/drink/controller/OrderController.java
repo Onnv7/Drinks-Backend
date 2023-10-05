@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
@@ -65,6 +66,25 @@ public class OrderController {
                     .timestamp(new Date())
                     .data(savedData)
                     .message(SuccessConstant.CREATED)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = ORDER_GET_ALL_SUM, description = ORDER_GET_ALL_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_ALL_PATH)
+    // nhân viên cập nhật trạng thái order
+    public ResponseEntity<ResponseAPI> getAllOrder() {
+        try {
+            List<OrderCollection> savedData =  orderService.getAllOrders();
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(savedData)
+                    .message(SuccessConstant.GET)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
         }

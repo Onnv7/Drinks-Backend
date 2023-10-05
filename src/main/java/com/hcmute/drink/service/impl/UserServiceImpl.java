@@ -112,12 +112,12 @@ public class UserServiceImpl implements UserService {
         }
         throw new Exception(ErrorConstant.UPDATE_FAILED);
     }
-    public boolean isExistedUser(String email) throws Exception {
+    public String isExistedUser(String email) throws Exception {
         UserCollection user = userRepository.findByEmail(email);
         if (user == null) {
-            return false;
+            return user.getLastName() + user.getFirstName();
         }
-        return true;
+        return null;
     }
 
 }

@@ -29,7 +29,7 @@ public class RouterConstant {
     public static final String USER_GET_BY_ID_PATH = USER_BASE_PATH + USER_GET_BY_ID_SUB_PATH;
     public static final String USER_GET_ALL_SUB_PATH = "";
     public static final String USER_GET_ALL_PATH = USER_BASE_PATH + USER_GET_ALL_SUB_PATH;
-    public static final String USER_CHECK_EXISTED_SUB_PATH = "/existed/" + USER_ID;
+    public static final String USER_CHECK_EXISTED_SUB_PATH = "/existed";
     public static final String USER_CHECK_EXISTED_PATH = USER_BASE_PATH + USER_CHECK_EXISTED_SUB_PATH;
 
     // ENDPOINT URL ADDRESS =================================================================
@@ -92,6 +92,8 @@ public class RouterConstant {
     public static final String ORDER_CREATE_PATH = ORDER_BASE_PATH + ORDER_CREATE_SUB_PATH;
     public static final String ORDER_UPDATE_STATUS_SUB_PATH = "/" + ORDER_ID;
     public static final String ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + ORDER_UPDATE_STATUS_SUB_PATH;
+    public static final String ORDER_GET_ALL_SUB_PATH = "";
+    public static final String ORDER_GET_ALL_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_SUB_PATH;
 
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";

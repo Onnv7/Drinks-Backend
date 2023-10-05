@@ -104,6 +104,8 @@ public class SwaggerConstant {
     public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
     public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
     public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
+    public static final String ORDER_GET_ALL_SUM = "Get all orders";
+    public static final String ORDER_GET_ALL_DES= "This endpoint returns all orders";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
@@ -126,7 +128,7 @@ public class SwaggerConstant {
 
 
 
-    // For schema properties
+    // For schema properties =====================================================
 
     public static final String NOT_EMPTY_DES = "Cannot be empty";
     public static final String NOT_BLANK_DES = "Cannot be blank";
@@ -142,7 +144,6 @@ public class SwaggerConstant {
     public static final String PASSWORD_EX = "123456";
     public static final String PASSWORD_DES = MIN_LENGTH_DES + PASSWORD_LENGTH_MIN + ", " + MAX_LENGTH_DES + PASSWORD_LENGTH_MAX;
     public static final String CATEGORY_NAME_EX = "Coffee";
-    // Product
     public static final String PRODUCT_NAME_EX = "Coca cola";
     public static final String PRODUCT_PRICE_EX = "100000";
 

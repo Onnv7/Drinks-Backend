@@ -18,7 +18,7 @@ public class LoginRequest {
     @NotBlank
     private String email;
 
-    @Schema(example = PASSWORD_EX, description = MIN_LENGTH_DES + PASSWORD_LENGTH_MIN + ", " + MAX_LENGTH_DES + PASSWORD_LENGTH_MAX)
+    @Schema(example = PASSWORD_EX, description = PASSWORD_DES)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;
