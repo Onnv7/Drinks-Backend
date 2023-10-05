@@ -16,32 +16,32 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = ORDER_CONTROLLER_TITLE)
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/order")
+@RequestMapping(ORDER_BASE_PATH)
 public class OrderController {
     private final ModelMapper modelMapper;
     private final VNPayUtils vnPayUtils;
     private final OrderServiceImpl orderService;
 
 
-    @Operation(summary = ORDER_CREATE_SUM, description = ORDER_CREATE_DES)
+    @Operation(summary = ORDER_CREATE_SHIPPING_SUM, description = ORDER_CREATE_SHIPPING_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping()
+    @PostMapping(path = ORDER_CREATE_SUB_PATH)
     public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Validated CreateOrderRequest body) {
         try {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
             OrderCollection savedData =  orderService.createShippingOrder(data, body.getPaymentType());
-            String urlPayment = vnPayUtils.createPayment(request, savedData.getTotal(), "Order Info");
+            String urlPayment = vnPayUtils.createPayment(request, savedData.getTotal(), "Shipping Order Info");
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(urlPayment)
@@ -56,7 +56,7 @@ public class OrderController {
 
     @Operation(summary = ORDER_UPDATE_EVENT_SUM, description = ORDER_UPDATE_EVENT_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PatchMapping("/{orderId}")
+    @PatchMapping(path = ORDER_UPDATE_STATUS_SUB_PATH)
     // nhân viên cập nhật trạng thái order
     public ResponseEntity<ResponseAPI> updateOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {

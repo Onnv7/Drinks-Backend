@@ -7,5 +7,5 @@ public interface UserService {
     public UserCollection findByEmail(String email);
     public UserCollection findUserById(String userId) throws Exception;
     public boolean updatePassword(String userId, String password) throws Exception;
-    public UserCollection updateUser(String userId, UpdateUserRequest body) throws Exception;
+    public UserCollection updateUser(String userId, UserCollection body) throws Exception;
 }

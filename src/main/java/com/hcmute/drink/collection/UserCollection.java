@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -36,7 +37,7 @@ public class UserCollection {
     @Indexed(unique = true)
     private String email;
     private String phoneNumber;
-    private List<AddressCollection> address;
+    private List<ObjectId> addressIds;
 
     @Builder.Default
     private Role[] roles = {Role.ROLE_USER};

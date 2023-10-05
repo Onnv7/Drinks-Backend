@@ -113,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
     public void sendCodeToRegister(String email) throws Exception {
         UserCollection user = userRepository.findByEmail(email);
         if (user != null) {
-            throw new Exception(ErrorConstant.EMPLOYEE_IS_EXISTED);
+            throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
         String code = randomCodeUtils.generateRandomCode(6);
         confirmationService.createConfirmationInfo(email, code);

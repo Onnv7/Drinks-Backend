@@ -1,11 +1,13 @@
 package com.hcmute.drink.controller;
 
 import com.hcmute.drink.utils.CloudinaryUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@Hidden
 @RequiredArgsConstructor
 @RequestMapping("/api/test")
 public class HelloController {

@@ -21,19 +21,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
+import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = CATEGORY_CONTROLLER_TITLE)
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping(CATEGORY_BASE_PATH)
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryServiceImpl categoryService;
 
     @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = CATEGORY_CREATE_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Validated CreateCategoryRequest body) {
         try {
             CategoryCollection category = categoryService.createCategory(body);
@@ -51,7 +51,7 @@ public class CategoryController {
 
     @Operation(summary = CATEGORY_GET_BY_ID_SUM, description = CATEGORY_GET_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping("/{categoryId}")
+    @GetMapping(CATEGORY_GET_BY_SUB_ID_PATH)
     public ResponseEntity<ResponseAPI> getCategoryById(@PathVariable("categoryId") String categoryId) {
         try {
             CategoryCollection category = categoryService.getCategoryById(categoryId);
@@ -69,7 +69,7 @@ public class CategoryController {
 
     @Operation(summary = CATEGORY_GET_ALL_SUM, description = CATEGORY_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping()
+    @GetMapping(path = CATEGORY_GET_ALL_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllCategories() {
         try {
             List<CategoryCollection> list = categoryService.getAllCategories();
@@ -88,7 +88,7 @@ public class CategoryController {
 
     @Operation(summary = CATEGORY_UPDATE_BY_ID_SUM, description = CATEGORY_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping(path = "/update/{categoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = CATEGORY_UPDATE_BY_ID_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> updateCategory(@ModelAttribute @Validated UpdateCategoryRequest body,
                                                       @PathVariable("categoryId") String id) {
         try {
@@ -107,7 +107,7 @@ public class CategoryController {
 
     @Operation(summary = CATEGORY_DELETE_BY_ID_SUM, description = CATEGORY_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @DeleteMapping("/{categoryId}")
+    @DeleteMapping(path = CATEGORY_DELETE_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> deleteCategoryById(@PathVariable("categoryId") String id) {
         try {
             categoryService.deleteCategoryById(id);

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
-import static com.hcmute.drink.constant.SecurityConstant.*;
+import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = AUTH_CONTROLLER_TITLE)

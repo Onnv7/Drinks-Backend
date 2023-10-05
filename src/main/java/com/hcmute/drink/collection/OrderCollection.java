@@ -4,7 +4,6 @@ package com.hcmute.drink.collection;
 import com.hcmute.drink.common.OrderDetailsModel;
 import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.common.ReviewModel;
-import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +40,7 @@ public class OrderCollection {
     private ReviewModel review;
 
     private ObjectId transactionId;
+    private AddressCollection address;
 
     @CreatedDate
     private Date createdAt;

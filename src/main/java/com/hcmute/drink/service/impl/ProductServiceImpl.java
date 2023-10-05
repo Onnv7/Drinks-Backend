@@ -25,6 +25,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CloudinaryUtils cloudinaryUtils;
+    private final CategoryServiceImpl categoryService;
     private final ModelMapper modelMapper;
     @Autowired
     @Qualifier("modelMapperNotNull")
@@ -32,6 +33,8 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductCollection createProduct(ProductCollection data, List<MultipartFile> images) throws Exception {
         int size = images.size();
+        categoryService.exceptionIfNotFoundById(data.getCategoryId().toString());
+
         List<ImageModel> imagesList = new ArrayList<ImageModel>();
         for (int i = 0; i < size; i++) {
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(
@@ -41,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
             );
             imagesList.add(new ImageModel(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
         }
+
         data.setImagesList(imagesList);
         ProductCollection product = productRepository.save(data);
         if (product != null) {

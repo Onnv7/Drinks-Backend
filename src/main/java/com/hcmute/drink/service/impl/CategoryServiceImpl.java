@@ -80,4 +80,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(id);
         return true;
     }
+
+    public CategoryCollection exceptionIfNotFoundById(String id) throws Exception {
+        CategoryCollection category = categoryRepository.findById(id).orElse(null);
+        if(category == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + id);
+        }
+        return category;
+    }
 }

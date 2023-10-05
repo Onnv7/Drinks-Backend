@@ -18,13 +18,13 @@ public class SwaggerConstant {
     public static final String AUTH_LOGIN_DES= "This endpoint returns a token";
     public static final String AUTH_REGISTER_SUM = "Register new user account with some information";
     public static final String AUTH_REGISTER_DES= "This endpoint returns a token and a user id";
-    public static final String AUTH_VERIFY_EMAIL_SUM = "Send email confirmation code";
+    public static final String AUTH_VERIFY_EMAIL_SUM = "Verify confirmation code by email";
     public static final String AUTH_VERIFY_EMAIL_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_RE_SEND_EMAIL_SUM = "Send email confirmation code a second time or later to update the Confirmation collection";
     public static final String AUTH_RE_SEND_EMAIL_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM = "Send email confirmation code to register account";
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_DES = NOTIFICATION_NOT_DATA;
-    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM = "Send email confirmation code to get password";
+    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM = "Send email confirmation code to change password";
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM = "Send OTP code to phone number (The function is under maintenance)";
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_DES= NOTIFICATION_NOT_DATA;
@@ -42,6 +42,16 @@ public class SwaggerConstant {
     public static final String USER_CHANGE_PWD_DES= NOTIFICATION_NOT_DATA;
     public static final String USER_UPDATE_BY_ID_SUM = "Update user's profile by user id";
     public static final String USER_UPDATE_BY_ID_DES = "This endpoint returns new user's profile after it were updated";
+    public static final String USER_CHECK_EXISTED_BY_EMAIL_SUM = "Check user existence by email";
+    public static final String USER_CHECK_EXISTED_BY_EMAIL_DES = "This endpoint returns true or false";
+    // For address =================================================================
+    public static final String ADDRESS_CONTROLLER_TITLE = "ADDRESS MANAGEMENT";
+    public static final String ADDRESS_ADD_ADDRESS_BY_ID_SUM = "Add new address for user";
+    public static final String ADDRESS_ADD_ADDRESS_BY_ID_DES = "This endpoint returns a list of addresses";
+    public static final String ADDRESS_UPDATE_ADDRESS_BY_ID_SUM = "Update address by address id";
+    public static final String ADDRESS_UPDATE_ADDRESS_BY_ID_DES = "This endpoint returns new user's address after it were updated";
+    public static final String ADDRESS_DELETE_ADDRESS_BY_ID_SUM = "Delete address by address id";
+    public static final String ADDRESS_DELETE_ADDRESS_BY_ID_DES = NOTIFICATION_NOT_DATA;
 
 
     // For product =================================================================
@@ -84,7 +94,7 @@ public class SwaggerConstant {
 
     // For Order =============================================================
 
-    public static final String ORDER_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
+    public static final String ORDER_CONTROLLER_TITLE = "ORDER MANAGEMENT";
 
     public static final String ORDER_UPDATE_BY_ID_SUM = "Update order's information by order id";
     public static final String ORDER_UPDATE_BY_ID_DES= "This endpoint returns new order's information after it were updated";
@@ -92,8 +102,8 @@ public class SwaggerConstant {
 
     public static final String ORDER_UPDATE_EVENT_SUM = "Add an order event to the status line";
     public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
-    public static final String ORDER_CREATE_SUM = "Create a new order";
-    public static final String ORDER_CREATE_DES = "This endpoint returns new order after saved on database";
+    public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
+    public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
@@ -141,7 +151,7 @@ public class SwaggerConstant {
 
     public static final String TOPPING_NAME_EX = "Ca cao" ;
 
-    public static final String OBJECT_ID_EX = "35045034518405345" ;
+    public static final String OBJECT_ID_EX = "3504503451AV8405345" ;
     public static final String TOPPING_PRICE_EX = TOPPING_PRICE_MIN + 1000 + "" ;
     public static final String EMAIL_EX = "nva@gmail.com" ;
     public static final String FIRST_NAME_EX = "An" ;
@@ -163,4 +173,11 @@ public class SwaggerConstant {
     public static final String PRODUCT_NOTE_EX = "This is note";
     public static final String INVOICE_NOTE_EX = "23654128";
     public static final String TOTAL_PAID_EX = "10234";
+    public static final String LONGITUDE_EX = "10234";
+    public static final String LATITUDE_EX = "10234";
+    public static final String ADDRESS_NOTE_EX = "This is my house";
+    public static final String RECIPIENT_NAME_EX = "Luu Bang";
+    public static final String ORDER_NOTE_EX = "Quickly";
+    public static final String PAYMENT_STATUS_EX = "PAID";
+    public static final String PAYMENT_TYPE_EX = "BANKING";
 }

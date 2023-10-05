@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-import static com.hcmute.drink.constant.SecurityConstant.SET_ADMIN_ROLE;
+import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = PRODUCT_CONTROLLER_TITLE)
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping(PRODUCT_BASE_PATH)
 @RequiredArgsConstructor
 public class ProductController {
     private final ModelMapper modelMapper;
@@ -35,7 +35,7 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_CREATE_SUM, description = PRODUCT_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = PRODUCT_CREATE_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> createProduct(@ModelAttribute @Validated CreateProductRequest body) {
         try {
             ProductCollection product = new ProductCollection();
@@ -54,7 +54,7 @@ public class ProductController {
     }
     @Operation(summary = PRODUCT_GET_BY_ID_SUM, description = PRODUCT_GET_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping("/{productId}")
+    @GetMapping(path = PRODUCT_GET_BY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getProductById(@PathVariable("productId") String id) {
         try {
             ProductCollection product = productService.getProductById(id);
@@ -71,7 +71,7 @@ public class ProductController {
     }
     @Operation(summary = PRODUCT_GET_ALL_SUM, description = PRODUCT_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping()
+    @GetMapping(path = PRODUCT_GET_ALL_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getAllProducts() {
         try {
             List<ProductCollection> products = productService.getAllProducts();
@@ -89,7 +89,7 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_DELETE_BY_ID_SUM, description = PRODUCT_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @DeleteMapping("/{productId}")
+    @DeleteMapping(path = PRODUCT_DELETE_BY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> deleteProductById(@PathVariable("productId") String id) {
         try {
             productService.deleteProductById(id);
@@ -106,7 +106,7 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping(path = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = PRODUCT_UPDATE_BY_ID_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> updateProductById( @ModelAttribute @Validated UpdateProductRequest body,
                                                           @PathVariable("productId") String id) {
         try {

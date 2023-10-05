@@ -1,18 +1,17 @@
 package com.hcmute.drink.collection;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
-@Document(collection = "address")
 public class AddressCollection {
+    @Id
+    private String id;
     private String details;
     private double longitude;
     private double latitude;
+    private String note;
+    private String recipientName;
+
+    private String phoneNumber;
 }

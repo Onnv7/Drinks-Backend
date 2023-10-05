@@ -24,7 +24,6 @@ public class PaymentController {
                                            @RequestParam("vnp_OrderInfo") String orderInfo
     ) {
         try {
-
             String url = vnPayUtils.createPayment(request, amount*100, orderInfo);
             PaymentResDTO paymentResDTO = new PaymentResDTO();
             paymentResDTO.setStatus("0k");

@@ -23,11 +23,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Tag(name = EMPLOYEE_CONTROLLER_TITLE)
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping(EMPLOYEE_BASE_PATH)
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeServiceImpl employeeService;
@@ -35,7 +36,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_GET_ALL_SUM, description = EMPLOYEE_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping()
+    @GetMapping(path = EMPLOYEE_GET_ALL_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllEmployee() {
         try {
             List<EmployeeCollection> data = employeeService.getAllEmployees();
@@ -55,7 +56,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_GET_BY_ID_SUM, description = EMPLOYEE_GET_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping("/{employeeId}")
+    @GetMapping(path = EMPLOYEE_GET_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> getEmployeeById(@PathVariable("employeeId") String id) {
         try {
             EmployeeCollection data = employeeService.getEmployeeById(id);
@@ -75,7 +76,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_REGISTER_SUM, description = EMPLOYEE_REGISTER_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/register")
+    @PostMapping(path = EMPLOYEE_REGISTER_SUB_PATH)
     public ResponseEntity<ResponseAPI> registerEmployee(@RequestBody @Validated CreateEmployeeRequest body) {
         try {
             EmployeeCollection data = modelMapper.map(body, EmployeeCollection.class);
@@ -94,7 +95,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_LOGIN_SUM, description = EMPLOYEE_LOGIN_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping("/login")
+    @PostMapping(path = EMPLOYEE_LOGIN_SUB_PATH)
     public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated CreateEmployeeRequest body) {
         try {
             LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
@@ -113,7 +114,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_UPDATE_BY_ID_SUM, description = EMPLOYEE_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PutMapping("/{employeeId}")
+    @PutMapping(path = EMPLOYEE_UPDATE_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> updateEmployeeById(@PathVariable("employeeId") String id, @RequestBody @Validated  UpdateEmployeeRequest body) {
         try {
             EmployeeCollection data = modelMapper.map(body, EmployeeCollection.class);
@@ -134,7 +135,7 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_DELETE_BY_ID_SUM, description = EMPLOYEE_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @DeleteMapping("/{employeeId}")
+    @DeleteMapping(path = EMPLOYEE_DELETE_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> deleteEmployeeById(@PathVariable("employeeId") String id) {
         try {
             employeeService.deleteEmployeeById(id);

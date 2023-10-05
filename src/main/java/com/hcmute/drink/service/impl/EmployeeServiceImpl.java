@@ -51,7 +51,7 @@ public class EmployeeServiceImpl {
     public void registerEmployee(EmployeeCollection data) throws Exception {
         EmployeeCollection existedEmployee = employeeRepository.findByUsername(data.getUsername());
         if (existedEmployee != null) {
-            throw new Exception(ErrorConstant.EMPLOYEE_IS_EXISTED);
+            throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
         EmployeeCollection newEmployee = employeeRepository.save(data);
         if (newEmployee == null) {

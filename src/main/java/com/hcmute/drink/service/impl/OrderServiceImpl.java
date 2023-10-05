@@ -7,6 +7,7 @@ import com.hcmute.drink.common.OrderDetailsModel;
 import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.enums.OrderStatus;
+import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
 import com.hcmute.drink.repository.OrderRepository;
@@ -53,6 +54,7 @@ public class OrderServiceImpl {
                 .build();
         TransactionCollection savedData = transactionService.createTransaction(transData);
 
+        data.setOrderType(OrderType.SHIPPING);
         data.setTransactionId(new ObjectId(savedData.getId()));
 
         OrderLogModel log = OrderLogModel.builder()
@@ -60,10 +62,6 @@ public class OrderServiceImpl {
                 .time(new Date()).build();
         data.setEventLogs(new ArrayList<>(Arrays.<OrderLogModel>asList(log)));
         OrderCollection order = orderRepository.save(data);
-        if (data == null) {
-            throw new Exception(ErrorConstant.CREATED_FAILED);
-        }
-
         return order;
     }
 

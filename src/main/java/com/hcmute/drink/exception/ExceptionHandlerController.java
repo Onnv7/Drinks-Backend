@@ -1,15 +1,11 @@
 package com.hcmute.drink.exception;
 
-import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.constant.ErrorConstant.*;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,14 +20,29 @@ import static com.hcmute.drink.constant.ErrorConstant.*;
 @Slf4j
 public class ExceptionHandlerController {
     private static final List<String> error400= Arrays.asList(
-            USER_NOT_FOUND,
-            REGISTERED_EMAIL,
             EMAIL_UNVERIFIED,
-            NOT_FOUND
+            REGISTERED_EMAIL,
+            CREATED_FAILED,
+            UPDATE_FAILED,
+            CATEGORY_EXISTED,
+            ACCOUNT_BLOCKED,
+            THREE_ADDRESS
     );
+    private static final List<String> error404= Arrays.asList(
+            USER_NOT_FOUND,
+            EMPLOYEE_NOT_FOUND,
+            NOT_FOUND,
+            CATEGORY_NOT_FOUND,
+            PRODUCT_NOT_FOUND
+    );
+    private static final List<String> error403= Arrays.asList(
+            ACCESS_DENIED
+    );
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException ex) {
+        ex.printStackTrace();
         ErrorResponse errorResponse = new ErrorResponse(new Date(), false, ex.getMessage(), Arrays.toString(ex.getStackTrace()));
         return new ResponseEntity<>(errorResponse, StatusCode.BAD_REQUEST);
     }
@@ -47,6 +58,8 @@ public class ExceptionHandlerController {
             if (ex instanceof AccessDeniedException) {
                 httpStatus = StatusCode.FORBIDDEN;
                 msg = ACCESS_DENIED;
+            } else {
+                log.error(ex.getMessage());
             }
         }
         // lỗi tự custom throw ra
@@ -54,6 +67,10 @@ public class ExceptionHandlerController {
             msg = throwable.getMessage();
             if(error400.contains(throwable.getMessage())) {
                 httpStatus = StatusCode.BAD_REQUEST;
+            } else if(error404.contains(throwable.getMessage())) {
+                httpStatus = StatusCode.NOT_FOUND;
+            } else if(error403.contains(throwable.getMessage())) {
+                httpStatus = StatusCode.NOT_FOUND;
             }
         }
 

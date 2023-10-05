@@ -1,10 +1,12 @@
 package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.UserCollection;
+import com.hcmute.drink.collection.AddressCollection;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.UpdateUserRequest;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.service.UserService;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ModelMapper modelMapper;
 
@@ -27,27 +30,29 @@ public class UserServiceImpl implements UserService {
         UserCollection user = userRepository.findByEmail(email);
         return user;
     }
+    public void exceptionIfNotMe(String userId) {
 
-    public boolean exceptionIfNotExistedUserById(String id) throws Exception {
+    }
+
+    public UserCollection exceptionIfNotExistedUserById(String id) throws Exception {
         UserCollection user = userRepository.findById(id).orElse(null);
         if(user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
-        return true;
+        return user;
     }
-    public boolean exceptionIfNotExistedUserByEmail(String email) throws Exception {
+    public UserCollection exceptionIfNotExistedUserByEmail(String email) throws Exception {
         UserCollection user = userRepository.findByEmail(email);
         if(user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
-        return true;
+        return user;
     }
-    public boolean exceptionIfExistsUserByEmail(String email) throws Exception {
+    public void exceptionIfExistsUserByEmail(String email) throws Exception {
         UserCollection user = userRepository.findByEmail(email);
         if(user != null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
-        return true;
     }
 
     public List<UserCollection> getAllUsers() {
@@ -93,7 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserCollection updateUser(String userId, UpdateUserRequest body) throws Exception {
+    public UserCollection updateUser(String userId, UserCollection body) throws Exception {
         UserCollection user = userRepository.findById(userId).orElseGet(() -> null);
         if (user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
@@ -107,4 +112,12 @@ public class UserServiceImpl implements UserService {
         }
         throw new Exception(ErrorConstant.UPDATE_FAILED);
     }
+    public boolean isExistedUser(String email) throws Exception {
+        UserCollection user = userRepository.findByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        return true;
+    }
+
 }
