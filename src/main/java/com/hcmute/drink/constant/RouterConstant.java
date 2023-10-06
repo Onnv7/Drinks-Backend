@@ -94,9 +94,12 @@ public class RouterConstant {
     public static final String ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + ORDER_UPDATE_STATUS_SUB_PATH;
     public static final String ORDER_GET_ALL_SHIPPING_SUB_PATH = "/shipping";
     public static final String ORDER_GET_ALL_SHIPPING_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_SHIPPING_SUB_PATH;
-
     public static final String ORDER_GET_DETAILS_BY_ID_SUB_PATH = "/details/" + ORDER_ID;
     public static final String ORDER_GET_DETAILS_BY_ID_PATH = ORDER_BASE_PATH + ORDER_GET_DETAILS_BY_ID_SUB_PATH;
+    public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH = "/history/user/" + USER_ID;
+    public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH;
+    public static final String ORDER_CREATE_REVIEW_SUB_PATH = "/rating/" + ORDER_ID;
+    public static final String ORDER_CREATE_REVIEW_PATH = ORDER_BASE_PATH + ORDER_CREATE_REVIEW_SUB_PATH;
 
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";
@@ -105,6 +108,8 @@ public class RouterConstant {
     public static final String TRANSACTION_GET_ALL_PATH = TRANSACTION_BASE_PATH;
     public static final String TRANSACTION_UPDATE_BY_ID_SUB_PATH = "/" + TRANSACTION_ID;
     public static final String TRANSACTION_UPDATE_BY_ID_PATH = TRANSACTION_BASE_PATH + TRANSACTION_UPDATE_BY_ID_SUB_PATH;
+    public static final String TRANSACTION_UPDATE_COMPLETE_SUB_PATH = "/complete/" + TRANSACTION_ID;
+    public static final String TRANSACTION_UPDATE_COMPLETE_PATH = TRANSACTION_BASE_PATH + TRANSACTION_UPDATE_COMPLETE_SUB_PATH;
 //    public static final String TRANSACTION_CREATE_PATH = TRANSACTION_BASE_PATH;
 
 

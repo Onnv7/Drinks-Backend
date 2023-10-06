@@ -1,12 +1,11 @@
 package com.hcmute.drink.controller;
 
 import com.hcmute.drink.collection.OrderCollection;
+import com.hcmute.drink.collection.embedded.ReviewEmbedded;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.CreateOrderRequest;
-import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
-import com.hcmute.drink.dto.GetOrderDetailsResponse;
-import com.hcmute.drink.dto.UpdateOrderStatusRequest;
+import com.hcmute.drink.dto.*;
+import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.service.impl.OrderServiceImpl;
@@ -93,7 +92,7 @@ public class OrderController {
             throw new RuntimeException(e);
         }
     }
-    @Operation(summary = ORDER_GET_ALL_SUM, description = ORDER_GET_ALL_DES)
+    @Operation(summary = ORDER_GET_DETAILS_BY_ID_SUM, description = ORDER_GET_DETAILS_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_DETAILS_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> getDetailsOrder(@PathVariable("orderId") String id) {
@@ -103,6 +102,45 @@ public class OrderController {
                     .timestamp(new Date())
                     .data(savedData)
                     .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM, description = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getOrdersHistoryByUserId(@PathVariable("userId") String id, @RequestParam("orderStatus") OrderStatus orderStatus) {
+        try {
+            List<GetAllOrderHistoryByUserIdResponse> savedData =  orderService.getOrdersHistoryByUserId(id, orderStatus);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(savedData)
+                    .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = ORDER_CREATE_REVIEW_SUM, description = ORDER_CREATE_REVIEW_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(path = ORDER_CREATE_REVIEW_SUB_PATH)
+    public ResponseEntity<ResponseAPI> createReviewForOrder(@PathVariable("orderId") String id, @RequestBody CreateReviewRequest body) {
+        try {
+            // FIXME: Check user
+            // FIXME: check trạng thái success mới được review
+            ReviewEmbedded review = modelMapper.map(body, ReviewEmbedded.class);
+            OrderCollection savedData =  orderService.createReviewForOrder(id, review);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(savedData)
+                    .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
         }

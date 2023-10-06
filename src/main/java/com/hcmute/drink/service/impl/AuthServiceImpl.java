@@ -92,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
         }
         var token = jwtIssuer.issue(savedUser.getId(), savedUser.getEmail(), roleList);
         resData.setAccessToken(token);
-        resData.setId(savedUser.getId());
+        resData.setUserId(savedUser.getId());
         return resData;
     }
 

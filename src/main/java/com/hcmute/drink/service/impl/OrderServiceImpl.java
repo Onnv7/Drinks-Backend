@@ -5,7 +5,10 @@ import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.collection.embedded.OrderDetailsEmbedded;
 import com.hcmute.drink.collection.embedded.OrderLogEmbedded;
+import com.hcmute.drink.collection.embedded.ReviewEmbedded;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.CreateReviewRequest;
+import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
 import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
 import com.hcmute.drink.dto.GetOrderDetailsResponse;
 import com.hcmute.drink.enums.OrderStatus;
@@ -43,7 +46,7 @@ public class OrderServiceImpl {
         List<OrderDetailsEmbedded> products = data.getProducts();
         long totalPrice = 0;
         for (OrderDetailsEmbedded product : products) {
-            ProductCollection productInfo = productService.getProductById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
+            ProductCollection productInfo = productService.findProductById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
             if (productInfo == null) {
                 throw new Exception(ErrorConstant.PRODUCT_NOT_FOUND + product.getProductId().toString());
             }
@@ -70,10 +73,7 @@ public class OrderServiceImpl {
     }
 
     public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
-        OrderCollection order = orderRepository.findById(id).orElse(null);
-        if (order == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND + id);
-        }
+        OrderCollection order = findOrderByTransactionId(id);
         order.getEventLogs().add(OrderLogEmbedded.builder()
                 .orderStatus(orderStatus)
                 .description(description)
@@ -95,8 +95,11 @@ public class OrderServiceImpl {
         return ordersCreatedOnDate;
     }
 
-    public OrderCollection getOrderInfoByTransId(String id) throws Exception {
-        OrderCollection order = orderRepository.findByTransactionId(id);
+    public OrderCollection findOrderByTransactionId(String id) throws Exception {
+        return orderRepository.findById(id).orElseThrow(() -> new Exception(ErrorConstant.NOT_FOUND + id));
+    }
+    public OrderCollection findOrderById(String id) throws Exception {
+        OrderCollection order = orderRepository.findByTransactionId(new ObjectId(id));
         if (order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
@@ -109,5 +112,26 @@ public class OrderServiceImpl {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
         return order;
+    }
+
+    public List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String userId, OrderStatus orderStatus) throws Exception {
+        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(userId, orderStatus);
+        if (order == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + userId);
+        }
+        return order;
+    }
+    public List<GetAllOrderHistoryByUserIdResponse> completeOrder(String userId, OrderStatus orderStatus) throws Exception {
+        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(userId, orderStatus);
+        if (order == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + userId);
+        }
+        return order;
+    }
+
+    public OrderCollection createReviewForOrder(String id, ReviewEmbedded data) throws Exception {
+        OrderCollection order = findOrderByTransactionId(id);
+        order.setReview(data);
+        return orderRepository.save(order);
     }
 }

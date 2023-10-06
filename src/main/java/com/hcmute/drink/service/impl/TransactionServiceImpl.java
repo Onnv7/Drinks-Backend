@@ -2,13 +2,11 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
-import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.TransactionRepository;
-import com.hcmute.drink.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,9 +27,13 @@ public class TransactionServiceImpl {
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
 
+    public TransactionCollection findTransactionById(String transId) {
+        return transactionRepository.findById(transId).orElseThrow();
+    }
+
     public TransactionCollection createTransaction(TransactionCollection data) throws Exception {
         TransactionCollection transaction = transactionRepository.save(data);
-        if(transaction == null) {
+        if (transaction == null) {
             throw new Exception(ErrorConstant.CREATED_FAILED);
         }
         return transaction;
@@ -39,10 +41,10 @@ public class TransactionServiceImpl {
 
     public TransactionCollection updateTransaction(TransactionCollection data, String timeCode, HttpServletRequest request) throws Exception {
         TransactionCollection transaction = transactionRepository.findById(data.getId()).orElse(null);
-        if(transaction == null) {
+        if (transaction == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + data.getId());
         }
-        OrderCollection order = orderService.getOrderInfoByTransId(transaction.getId());
+        OrderCollection order = orderService.findOrderByTransactionId(transaction.getId());
         // kiểm tra trạng thái transaction từ vnpay
 
 
@@ -51,41 +53,32 @@ public class TransactionServiceImpl {
 
         modelMapperNotNull.map(data, transaction);
         // nếu giao dịch vnpay thành công
-        if(transInfo.get("vnp_ResponseCode").equals("00")) {
+        if (transInfo.get("vnp_ResponseCode").equals("00")) {
             // nếu số tiền vnpay nhận được = total của order
-            if(transInfo.get("vnp_Amount").equals(String.valueOf(order.getTotal()))) {
+            if (transInfo.get("vnp_Amount").equals(String.valueOf(order.getTotal()))) {
                 transaction.setInvoiceCode(transInfo.get("vnp_TxnRef").toString());
                 transaction.setStatus(PaymentStatus.PAID);
             } else {
                 orderService.updateOrderEvent(order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
                 transaction.setStatus(PaymentStatus.UNPAID);
             }
-        }
-        else {
+        } else {
             transaction.setStatus(PaymentStatus.UNPAID);
         }
         // Cập nhật kết quả vào vnpay
         TransactionCollection updatedTransaction = transactionRepository.save(transaction);
-        if(updatedTransaction == null) {
+        if (updatedTransaction == null) {
             throw new Exception(ErrorConstant.UPDATE_FAILED);
         }
         return updatedTransaction;
     }
-//
-//    public TransactionCollection updateTransaction(TransactionCollection data) throws Exception {
-//        UserCollection buyer = userRepository.findById(data.getUserId().toString()).orElse(null);
-//        if(buyer == null) {
-//            throw new Exception(ErrorConstant.USER_NOT_FOUND);
-//        }
-//        TransactionCollection oldData = transactionRepository.findById(data.getId()).orElse(null);
-//        if(oldData == null) {
-//            throw new Exception(ErrorConstant.NOT_FOUND);
-//        }
-//        modelMapperNotNull.map(data, oldData);
-//        TransactionCollection newData = transactionRepository.save(oldData);
-//        if(newData != null) {
-//            return newData;
-//        }
-//        throw new Exception(ErrorConstant.UPDATE_FAILED);
-//    }
+
+    public TransactionCollection completeTransaction(String transId) throws Exception {
+        OrderCollection order = orderService.findOrderByTransactionId(transId);
+        TransactionCollection trans = findTransactionById(transId);
+        double totalPaid = order.getTotal();
+        trans.setStatus(PaymentStatus.PAID);
+        trans.setTotalPaid(totalPaid);
+        return transactionRepository.save(trans);
+    }
 }

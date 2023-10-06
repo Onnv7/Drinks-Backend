@@ -57,4 +57,21 @@ public class TransactionController {
             throw new RuntimeException(e);
         }
     }
+
+    @Operation(summary = TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM, description = TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = TRANSACTION_UPDATE_COMPLETE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> completeTransaction(@PathVariable("transId") String id) {
+        try {
+            TransactionCollection newData =  transactionService.completeTransaction(id);
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.UPDATED)
+                    .data(newData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

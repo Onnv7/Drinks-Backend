@@ -36,8 +36,8 @@ public class OrderCollection {
 
     private List<OrderLogEmbedded> eventLogs;
 
-
-    private ReviewEmbedded review;
+    @Builder.Default
+    private ReviewEmbedded review = null;
 
     private ObjectId transactionId;
     private AddressCollection address;

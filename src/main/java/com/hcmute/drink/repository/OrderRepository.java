@@ -1,10 +1,16 @@
 package com.hcmute.drink.repository;
 
 import com.hcmute.drink.collection.OrderCollection;
+import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
 import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
 import com.hcmute.drink.dto.GetOrderDetailsResponse;
+import com.hcmute.drink.enums.OrderStatus;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -12,7 +18,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends MongoRepository<OrderCollection, String> {
-    OrderCollection findByTransactionId(String transactionId);
+    OrderCollection findByTransactionId(ObjectId transactionId);
 
     @Aggregation(pipeline = {
             "{$match: {'createdAt': {$gte: ?0, $lt: ?1}}}",
@@ -30,12 +36,32 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
 
     @Aggregation(pipeline = {
             "{$match: {'_id': ?0}}",
-            "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
-            "{$unwind: '$transaction'}",
+            "{$unwind: '$products'}",
+            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
+            "{$unwind: '$products.productInfo'}",
+            "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: '$products' }}}",
             "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
             "{$unwind: '$user'}",
-//            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products'}}",
-//            "{$unwind: '$products'}",
+            "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
+            "{$unwind: '$transaction'}",
+            "{$project: {'products.productId': 0, 'userId': 0, 'transactionId': 0}}"
     })
     GetOrderDetailsResponse getOrderDetailsById(String id);
+    @Aggregation(pipeline = {
+            "{$match: {userId: ObjectId('651beee0cb49c553d299cb92')}}",
+            "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
+            "{$match: {'lastEventLog.orderStatus': ?1}}",
+            "{$unwind: '$products'}",
+            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
+            "{$unwind: '$products.productInfo'}",
+            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventLogs: {$first: '$eventLogs'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productInfo: {$first: {name: '$products.productInfo.name', image: {$arrayElemAt: ['$products.productInfo.imagesList', 0]}}}}}}",
+            "{$project: {userId: 0, note: 0, eventLogs: 0, transactionId: 0, address: 0, updatedAt: 0}}"
+    })
+    List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String id, OrderStatus orderStatus);
+
+
+    @Query("{'_id' : ?0}")
+    @Update("{$push: {eventLogs: ?1}}")
+    void completeOrder(String id, OrderStatus orderStatus);
+
 }

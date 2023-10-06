@@ -36,7 +36,8 @@ public class SecurityConstant {
     };
     // Only USER =================================================================
     public static final String[] POST_USER_PATH = {
-            ADDRESS_CREATE_PATH
+            ADDRESS_CREATE_PATH,
+            ORDER_CREATE_REVIEW_PATH
     };
     public static final String[] PATCH_USER_PATH = {
             USER_CHANGE_PASSWORD_PATH
@@ -46,6 +47,9 @@ public class SecurityConstant {
     };
     public static final String[] DELETE_USER_PATH = {
             ADDRESS_DELETE_PATH
+    };
+    public static final String[] GET_USER_PATH = {
+            ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH
     };
 
     // Only ADMIN =================================================================
@@ -75,13 +79,14 @@ public class SecurityConstant {
     // Only EMPLOYEE =================================================================
     public static final String[] EMPLOYEE_PATH = {};
 
-
+    public static final String[] PATCH_EMPLOYEE_PATH = {
+            TRANSACTION_UPDATE_COMPLETE_PATH
+    };
 
     // ADMIN + EMPLOYEE =================================================================
     public static final String[] GET_ADMIN_EMPLOYEE_PATH = {
             EMPLOYEE_GET_BY_ID_PATH,
             ORDER_GET_ALL_SHIPPING_PATH,
-            ORDER_GET_DETAILS_BY_ID_PATH
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {
@@ -89,7 +94,7 @@ public class SecurityConstant {
     };
     public static final String[] PATCH_ADMIN_EMPLOYEE_PATH = {
             ORDER_UPDATE_STATUS_PATH,
-            TRANSACTION_UPDATE_BY_ID_PATH
+            TRANSACTION_UPDATE_BY_ID_PATH,
     };
 
 
@@ -113,5 +118,10 @@ public class SecurityConstant {
 
     public static final String[] POST_EMPLOYEE_USER_PATH = {
             ORDER_CREATE_PATH,
+    };
+    // ADMIN + EMPLOYEE + USER =================================================================
+
+    public static final String[] GET_ADMIN_EMPLOYEE_USER_PATH = {
+            ORDER_GET_DETAILS_BY_ID_PATH,
     };
 }

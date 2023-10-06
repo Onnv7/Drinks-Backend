@@ -14,6 +14,6 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class RegisterResponse {
-    private String id;
+    private String userId;
     private String accessToken;
 }

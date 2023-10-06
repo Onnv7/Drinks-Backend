@@ -133,11 +133,14 @@ public class WebSecurityConfig  {
                         .requestMatchers(HttpMethod.PATCH, PATCH_AUTH_WHITELIST).permitAll()
 
                         // Only USER
+                        .requestMatchers(HttpMethod.GET, GET_USER_PATH).hasRole(USER)
                         .requestMatchers(HttpMethod.PATCH, PATCH_USER_PATH).hasRole(USER)
                         .requestMatchers(HttpMethod.PUT, PUT_USER_PATH).hasRole(USER)
                         .requestMatchers(HttpMethod.POST, POST_USER_PATH).hasRole(USER)
                         .requestMatchers(HttpMethod.DELETE, DELETE_USER_PATH).hasRole(USER)
 
+                        // Only USER
+                        .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_PATH).hasRole(EMPLOYEE)
 
                         // Only ADMIN
                         .requestMatchers(HttpMethod.GET, GET_ADMIN_PATH).hasRole(ADMIN)
@@ -158,6 +161,9 @@ public class WebSecurityConfig  {
 
                         // EMPLOYEE + USER
                         .requestMatchers(HttpMethod.POST, POST_EMPLOYEE_USER_PATH).hasAnyRole(EMPLOYEE, USER)
+
+                        // EMPLOYEE + USER
+                        .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_USER_PATH).hasAnyRole(ADMIN, EMPLOYEE, USER)
 
                         .anyRequest().authenticated()
                 );

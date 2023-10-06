@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +56,7 @@ public class ProductController {
     @GetMapping(path = PRODUCT_GET_BY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getProductById(@PathVariable("productId") String id) {
         try {
-            ProductCollection product = productService.getProductById(id);
+            ProductCollection product = productService.findProductById(id);
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)
@@ -74,7 +73,7 @@ public class ProductController {
     @GetMapping(path = PRODUCT_GET_ALL_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getAllProducts() {
         try {
-            List<ProductCollection> products = productService.getAllProducts();
+            List<ProductCollection> products = productService.findAllProducts();
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)

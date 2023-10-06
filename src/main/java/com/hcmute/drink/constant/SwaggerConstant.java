@@ -90,6 +90,8 @@ public class SwaggerConstant {
     public static final String TRANSACTION_CREATE_DES = "This endpoint returns new transaction after saved on database";
     public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by transaction id";
     public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
+    public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM = "Update transaction's status successfully by transaction id";
+    public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
 
 
     // For Order =============================================================
@@ -104,8 +106,14 @@ public class SwaggerConstant {
     public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
     public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
     public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
-    public static final String ORDER_GET_ALL_SUM = "Get all orders";
+    public static final String ORDER_GET_ALL_SUM = "Get all shipping orders for employee";
     public static final String ORDER_GET_ALL_DES= "This endpoint returns all orders";
+    public static final String ORDER_GET_DETAILS_BY_ID_SUM = "Get a details order by order id";
+    public static final String ORDER_GET_DETAILS_BY_ID_DES= "This endpoint returns a detail order";
+    public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM = "Get orders history by user id and order status";
+    public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_DES = "This endpoint returns orders history information";
+    public static final String ORDER_CREATE_REVIEW_SUM = "Create review for order by order id";
+    public static final String ORDER_CREATE_REVIEW_DES = "This endpoint returns new order information";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
@@ -181,4 +189,5 @@ public class SwaggerConstant {
     public static final String ORDER_NOTE_EX = "Quickly";
     public static final String PAYMENT_STATUS_EX = "PAID";
     public static final String PAYMENT_TYPE_EX = "BANKING";
+    public static final String REVIEW_DES_EX = "Good service";
 }

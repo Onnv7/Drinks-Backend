@@ -22,3 +22,5 @@ services:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
       ME_CONFIG_MONGODB_ADMINUSERNAME: hcmute
       ME_CONFIG_MONGODB_ADMINPASSWORD: hcmute
+#      docker exec -it mongodb bash
+#      mongosh -u hcmute -p hcmute --authenticationDatabase admin

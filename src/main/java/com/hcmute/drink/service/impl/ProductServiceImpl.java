@@ -1,12 +1,9 @@
 package com.hcmute.drink.service.impl;
 
-import com.hcmute.drink.collection.CategoryCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
-import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.CreateProductRequest;
 import com.hcmute.drink.repository.ProductRepository;
 import com.hcmute.drink.service.ProductService;
 import com.hcmute.drink.utils.CloudinaryUtils;
@@ -54,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
         throw new Exception(ErrorConstant.CREATED_FAILED);
     }
 
-    public ProductCollection getProductById(String id) throws Exception {
+    public ProductCollection findProductById(String id) throws Exception {
         ProductCollection product = productRepository.findById(id).orElse(null);
         if(product == null) {
             throw new Exception(ErrorConstant.NOT_FOUND);
@@ -62,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
-    public List<ProductCollection> getAllProducts() throws Exception {
+    public List<ProductCollection> findAllProducts() throws Exception {
         return productRepository.findAll();
     }
 

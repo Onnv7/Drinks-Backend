@@ -3,8 +3,6 @@ package com.hcmute.drink.collection;
 
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.collection.embedded.ToppingEmbedded;
-import com.hcmute.drink.common.ImageModel;
-import com.hcmute.drink.common.ToppingModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +12,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Date;
 import java.util.List;
@@ -41,6 +35,8 @@ public class ProductCollection{
 
     private ObjectId categoryId;
 
+    private boolean deleted = false;
+    
     @CreatedDate
     private Date createdAt;
 

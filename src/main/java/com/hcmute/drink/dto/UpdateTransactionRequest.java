@@ -19,7 +19,6 @@ public class UpdateTransactionRequest {
     @NotBlank
     private String invoiceCode;
 
-
     // xem có cần trường này không
     @Schema(description = OPTIONAL_DES)
     @Builder.Default
