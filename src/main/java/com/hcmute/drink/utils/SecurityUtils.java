@@ -25,4 +25,8 @@ public class SecurityUtils {
             throw new Exception(ErrorConstant.CANT_ACCESS);
         }
     }
+
+    public String getCurrentUserId() {
+        return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
+    }
 }

@@ -16,6 +16,7 @@ import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
 import com.hcmute.drink.repository.OrderRepository;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class OrderServiceImpl {
     private final OrderRepository orderRepository;
     private final UserServiceImpl userService;
     private final ProductServiceImpl productService;
+    private final SecurityUtils securityUtils;
 
     @Autowired
     @Lazy
@@ -74,9 +76,11 @@ public class OrderServiceImpl {
 
     public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
         OrderCollection order = findOrderByTransactionId(id);
+        String employeeId = securityUtils.getCurrentUserId();
         order.getEventLogs().add(OrderLogEmbedded.builder()
                 .orderStatus(orderStatus)
                 .description(description)
+                .employeeId(new ObjectId(employeeId))
                 .time(new Date())
                 .build()
         );
@@ -131,6 +135,10 @@ public class OrderServiceImpl {
 
     public OrderCollection createReviewForOrder(String id, ReviewEmbedded data) throws Exception {
         OrderCollection order = findOrderByTransactionId(id);
+        securityUtils.exceptionIfNotMe(order.getUserId().toString());
+        if(order.getEventLogs().get(order.getEventLogs().size()).getOrderStatus() != OrderStatus.SUCCEED) {
+            throw new Exception(ErrorConstant.ORDER_NOT_COMPLETED);
+        }
         order.setReview(data);
         return orderRepository.save(order);
     }

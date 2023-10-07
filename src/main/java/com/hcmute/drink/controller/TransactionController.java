@@ -61,6 +61,7 @@ public class TransactionController {
     @Operation(summary = TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM, description = TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = TRANSACTION_UPDATE_COMPLETE_SUB_PATH)
+    // FIXME: nên để ở order controller: shipper complete => cập nhật trạng thái order + transaction (nếu là cashing)
     public ResponseEntity<ResponseAPI> completeTransaction(@PathVariable("transId") String id) {
         try {
             TransactionCollection newData =  transactionService.completeTransaction(id);

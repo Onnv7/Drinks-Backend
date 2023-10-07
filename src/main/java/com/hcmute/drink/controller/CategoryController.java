@@ -3,8 +3,7 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.collection.CategoryCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.CreateCategoryRequest;
-import com.hcmute.drink.dto.UpdateCategoryRequest;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.CategoryServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,12 +11,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +29,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(CATEGORY_BASE_PATH)
 @RequiredArgsConstructor
 public class CategoryController {
+    private final ModelMapper modelMapper;
     private final CategoryServiceImpl categoryService;
 
     @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
@@ -37,14 +38,15 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Validated CreateCategoryRequest body) {
         try {
             CategoryCollection category = categoryService.createCategory(body);
+            CreateCategoryResponse resData = modelMapper.map(category, CreateCategoryResponse.class);
+
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(category)
+                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -55,14 +57,14 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> getCategoryById(@PathVariable("categoryId") String categoryId) {
         try {
             CategoryCollection category = categoryService.getCategoryById(categoryId);
+            GetCategoryResponse resData = modelMapper.map(category, GetCategoryResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
-                    .data(category)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -73,15 +75,17 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> getAllCategories() {
         try {
             List<CategoryCollection> list = categoryService.getAllCategories();
-
+            List<GetCategoryResponse> resData = new ArrayList<>();
+            for (CategoryCollection category : list) {
+                resData.add(modelMapper.map(category, GetCategoryResponse.class));
+            }
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
-                    .data(list)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -93,14 +97,14 @@ public class CategoryController {
                                                       @PathVariable("categoryId") String id) {
         try {
             CategoryCollection data = categoryService.updateCategory(body, id);
+            UpdateCategoryResponse resData = modelMapper.map(data, UpdateCategoryResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.UPDATED)
-                    .data(data)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -117,8 +121,7 @@ public class CategoryController {
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -150,7 +150,7 @@ public class AuthController {
     @PostMapping(AUTH_VERIFY_EMAIL_SUB_PATH)
     public ResponseEntity<ResponseAPI> verifyCodeByEmail(@RequestBody @Validated VerifyEmailRequest body) {
         try {
-            log.info("YOUR CODE: " + body.getCode());
+            log.debug("YOUR CODE: " + body.getCode());
             boolean result = authService.verifyCodeByEmail(body.getCode(), body.getEmail());
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.EMAIL_VERIFIED)

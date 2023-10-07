@@ -2,15 +2,10 @@ package com.hcmute.drink.controller;
 
 
 import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.AddAddressRequest;
-import com.hcmute.drink.dto.UpdatePasswordRequest;
-import com.hcmute.drink.dto.UpdateUserRequest;
-import com.hcmute.drink.dto.UpdateUserResponse;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.service.impl.UserServiceImpl;
 import com.hcmute.drink.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,9 +41,13 @@ public class UserController {
         try {
 //            SecurityContextHolder.getContext().getAuthentication().getCredentials();
             List<UserCollection> users = userService.getAllUsers();
+            List<GetAllUserResponse> resData = new ArrayList<>();
+            for (UserCollection user : users) {
+                resData.add(modelMapper.map(user, GetAllUserResponse.class));
+            }
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET_USER)
-                    .data(users)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {
@@ -63,9 +61,10 @@ public class UserController {
     public ResponseEntity<ResponseAPI> getUserById(@PathVariable String userId) {
         try {
             UserCollection user = userService.findUserById(userId);
+            GetUserByIdResponse resData = modelMapper.map(user, GetUserByIdResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET_USER)
-                    .data(user)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {

@@ -88,7 +88,7 @@ public class SwaggerConstant {
     public static final String TRANSACTION_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
     public static final String TRANSACTION_CREATE_SUM = "Create a new transaction";
     public static final String TRANSACTION_CREATE_DES = "This endpoint returns new transaction after saved on database";
-    public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by transaction id";
+    public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by transaction id after paid/canceled at vnpay page";
     public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
     public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM = "Update transaction's status successfully by transaction id";
     public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";

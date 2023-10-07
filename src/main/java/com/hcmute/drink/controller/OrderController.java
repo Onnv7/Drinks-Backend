@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -63,9 +64,10 @@ public class OrderController {
     public ResponseEntity<ResponseAPI> updateOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {
             OrderCollection savedData =  orderService.updateOrderEvent(id, body.getOrderStatus(), body.getDescription());
+            UpdateOrderStatusResponse resData = modelMapper.map(savedData, UpdateOrderStatusResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(savedData)
+                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
@@ -131,15 +133,15 @@ public class OrderController {
     @Operation(summary = ORDER_CREATE_REVIEW_SUM, description = ORDER_CREATE_REVIEW_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(path = ORDER_CREATE_REVIEW_SUB_PATH)
-    public ResponseEntity<ResponseAPI> createReviewForOrder(@PathVariable("orderId") String id, @RequestBody CreateReviewRequest body) {
+    public ResponseEntity<ResponseAPI> createReviewForOrder(@PathVariable("orderId") String id, @RequestBody CreateReviewRequest body,  Principal principal) {
         try {
-            // FIXME: Check user
-            // FIXME: check trạng thái success mới được review
             ReviewEmbedded review = modelMapper.map(body, ReviewEmbedded.class);
+
             OrderCollection savedData =  orderService.createReviewForOrder(id, review);
+            CreateReviewOrderResponse resData = modelMapper.map(savedData, CreateReviewOrderResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(savedData)
+                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);

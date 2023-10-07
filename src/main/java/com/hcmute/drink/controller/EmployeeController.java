@@ -3,9 +3,7 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.CreateEmployeeRequest;
-import com.hcmute.drink.dto.LoginResponse;
-import com.hcmute.drink.dto.UpdateEmployeeRequest;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.AuthServiceImpl;
 import com.hcmute.drink.service.impl.EmployeeServiceImpl;
@@ -20,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,16 +39,18 @@ public class EmployeeController {
     public ResponseEntity<ResponseAPI> getAllEmployees() {
         try {
             List<EmployeeCollection> data = employeeService.getAllEmployees();
-
+            List<GetAllEmployeeResponse> resData = new ArrayList<>();
+            for (EmployeeCollection employee : data) {
+                resData.add(modelMapper.map(employee, GetAllEmployeeResponse.class));
+            }
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(data)
+                    .data(resData)
                     .message(SuccessConstant.GET)
                     .build();
 
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,16 +61,16 @@ public class EmployeeController {
     public ResponseEntity<ResponseAPI> getEmployeeById(@PathVariable("employeeId") String id) {
         try {
             EmployeeCollection data = employeeService.getEmployeeById(id);
+            GetEmployeeByIdResponse resData = modelMapper.map(data, GetEmployeeByIdResponse.class);
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(data)
+                    .data(resData)
                     .message(SuccessConstant.GET)
                     .build();
 
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -115,15 +116,15 @@ public class EmployeeController {
     @Operation(summary = EMPLOYEE_UPDATE_BY_ID_SUM, description = EMPLOYEE_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(path = EMPLOYEE_UPDATE_BY_ID_SUB_PATH)
-    public ResponseEntity<ResponseAPI> updateEmployeeById(@PathVariable("employeeId") String id, @RequestBody @Validated  UpdateEmployeeRequest body) {
+    public ResponseEntity<ResponseAPI> updateEmployeeById(@PathVariable("employeeId") String id, @RequestBody @Validated UpdateEmployeeRequest body) {
         try {
             EmployeeCollection data = modelMapper.map(body, EmployeeCollection.class);
             data.setId(id);
             EmployeeCollection dataUpdated = employeeService.updateEmployee(data);
-
+            UpdateEmployeeResponse resData = modelMapper.map(dataUpdated, UpdateEmployeeResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(dataUpdated)
+                    .data(resData)
                     .message(SuccessConstant.UPDATED)
                     .build();
 

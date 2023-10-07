@@ -11,7 +11,6 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ImageModel {
-    @Id
     private String id;
     private String url;
 }

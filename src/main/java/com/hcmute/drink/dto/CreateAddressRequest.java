@@ -8,7 +8,7 @@ import lombok.Data;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
-public class AddAddressRequest {
+public class CreateAddressRequest {
     @Schema(example = CATEGORY_NAME_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String details;

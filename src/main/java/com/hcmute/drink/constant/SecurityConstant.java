@@ -93,14 +93,16 @@ public class SecurityConstant {
             EMPLOYEE_UPDATE_BY_ID_PATH,
     };
     public static final String[] PATCH_ADMIN_EMPLOYEE_PATH = {
-            ORDER_UPDATE_STATUS_PATH,
-            TRANSACTION_UPDATE_BY_ID_PATH,
     };
 
 
     // ADMIN + USER =================================================================
     public static final String[] GET_ADMIN_USER_PATH = {
             USER_GET_BY_ID_PATH,
+    };
+    public static final String[] PATCH_ADMIN_USER_PATH = {
+
+            TRANSACTION_UPDATE_BY_ID_PATH,
     };
 
     public static final String[] POST_ADMIN_USER_PATH = {
@@ -119,9 +121,13 @@ public class SecurityConstant {
     public static final String[] POST_EMPLOYEE_USER_PATH = {
             ORDER_CREATE_PATH,
     };
+    public static final String[] PATCH_EMPLOYEE_USER_PATH = {
+            ORDER_UPDATE_STATUS_PATH,
+    };
     // ADMIN + EMPLOYEE + USER =================================================================
 
     public static final String[] GET_ADMIN_EMPLOYEE_USER_PATH = {
             ORDER_GET_DETAILS_BY_ID_PATH,
     };
+
 }

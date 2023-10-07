@@ -16,4 +16,5 @@ public class ErrorConstant {
     public static final String ACCOUNT_BLOCKED = "Account has been locked";
     public static final String PRODUCT_NOT_FOUND = "PRODUCT NOT FOUND";
     public static final String THREE_ADDRESS = "Only add up to 3 addresses";
+    public static final String ORDER_NOT_COMPLETED = "Order not completed";
 }

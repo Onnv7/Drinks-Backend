@@ -3,8 +3,10 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.collection.AddressCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.AddAddressRequest;
+import com.hcmute.drink.dto.CreateAddressRequest;
+import com.hcmute.drink.dto.CreateAddressResponse;
 import com.hcmute.drink.dto.UpdateAddressRequest;
+import com.hcmute.drink.dto.UpdateAddressResponse;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.AddressServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,15 +36,16 @@ public class AddressController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(path = ADDRESS_CREATE_SUB_PATH)
     public ResponseEntity<ResponseAPI> addAddressToUserByUserId(@PathVariable("userId") String userId,
-                                                                @RequestBody @Validated AddAddressRequest body
+                                                                @RequestBody @Validated CreateAddressRequest body
     ) {
         try {
             AddressCollection data = modelMapper.map(body, AddressCollection.class);
             AddressCollection createdData = addressService.createAddressToUser(data, userId);
+            CreateAddressResponse resData = modelMapper.map(createdData, CreateAddressResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.CREATED)
-                    .data(createdData)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {
@@ -59,10 +62,11 @@ public class AddressController {
         try {
             AddressCollection data = modelMapper.map(body, AddressCollection.class);
             AddressCollection updatedData = addressService.updateAddressById(addressId, data);
+            UpdateAddressResponse resData = modelMapper.map(updatedData, UpdateAddressResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.UPDATED)
-                    .data(updatedData)
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {

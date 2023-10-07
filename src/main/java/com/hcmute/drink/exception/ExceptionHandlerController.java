@@ -26,7 +26,8 @@ public class ExceptionHandlerController {
             UPDATE_FAILED,
             CATEGORY_EXISTED,
             ACCOUNT_BLOCKED,
-            THREE_ADDRESS
+            THREE_ADDRESS,
+            ORDER_NOT_COMPLETED
     );
     private static final List<String> error404= Arrays.asList(
             USER_NOT_FOUND,

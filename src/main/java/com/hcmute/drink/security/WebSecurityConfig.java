@@ -34,7 +34,7 @@ import static com.hcmute.drink.constant.SecurityConstant.*;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true) //EnableGlobalMethodSecurity
-public class WebSecurityConfig  {
+public class WebSecurityConfig {
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -53,13 +53,11 @@ public class WebSecurityConfig  {
     private UserCustomAuthenticationProvider userCustomAuthenticationProvider;
 
     @Bean
-    public MyAuthenticationFilter myAuthenticationFilter() throws Exception
-    {
+    public MyAuthenticationFilter myAuthenticationFilter() throws Exception {
         MyAuthenticationFilter authenticationFilter = new MyAuthenticationFilter();
 
         return authenticationFilter;
     }
-
 
 
     @Bean
@@ -72,26 +70,28 @@ public class WebSecurityConfig  {
     ApplicationListener<AuthenticationSuccessEvent> doSomething() {
         return new ApplicationListener<AuthenticationSuccessEvent>() {
             @Override
-            public void onApplicationEvent(AuthenticationSuccessEvent event){
+            public void onApplicationEvent(AuthenticationSuccessEvent event) {
                 Authentication authentication = event.getAuthentication();
                 // get required details from OAuth2Authentication instance and proceed further
             }
         };
     }
+
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         // Tự custom
         CustomAuthenticationManager authenticationManager = new CustomAuthenticationManager();
         authenticationManager.addProvider(adminCustomAuthenticationProvider);
         authenticationManager.addProvider(userCustomAuthenticationProvider);
-        return  authenticationManager;
+        return authenticationManager;
         // Dùng mặc định không custom
 //        return http.getSharedObject(AuthenticationManagerBuilder.class)
 //                .authenticationProvider(adminCustomAuthenticationProvider)
 //                .authenticationProvider(userCustomAuthenticationProvider)
 //                .build();
     }
-//    @Bean
+
+    //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
 //        configuration.addAllowedOrigin("*"); // Cho phép tất cả các nguồn (origin)
@@ -127,45 +127,47 @@ public class WebSecurityConfig  {
 //
 //                        .requestMatchers("/socket.io/**").permitAll()
 //                        .requestMatchers("/socket.io").permitAll()
-                        // ALL
-                        .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
-                        .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
-                        .requestMatchers(HttpMethod.PATCH, PATCH_AUTH_WHITELIST).permitAll()
+                                // ALL
+                                .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
+                                .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
+                                .requestMatchers(HttpMethod.PATCH, PATCH_AUTH_WHITELIST).permitAll()
 
-                        // Only USER
-                        .requestMatchers(HttpMethod.GET, GET_USER_PATH).hasRole(USER)
-                        .requestMatchers(HttpMethod.PATCH, PATCH_USER_PATH).hasRole(USER)
-                        .requestMatchers(HttpMethod.PUT, PUT_USER_PATH).hasRole(USER)
-                        .requestMatchers(HttpMethod.POST, POST_USER_PATH).hasRole(USER)
-                        .requestMatchers(HttpMethod.DELETE, DELETE_USER_PATH).hasRole(USER)
+                                // Only USER
+                                .requestMatchers(HttpMethod.GET, GET_USER_PATH).hasRole(USER)
+                                .requestMatchers(HttpMethod.PATCH, PATCH_USER_PATH).hasRole(USER)
+                                .requestMatchers(HttpMethod.PUT, PUT_USER_PATH).hasRole(USER)
+                                .requestMatchers(HttpMethod.POST, POST_USER_PATH).hasRole(USER)
+                                .requestMatchers(HttpMethod.DELETE, DELETE_USER_PATH).hasRole(USER)
 
-                        // Only USER
-                        .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_PATH).hasRole(EMPLOYEE)
+                                // Only USER
+                                .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_PATH).hasRole(EMPLOYEE)
 
-                        // Only ADMIN
-                        .requestMatchers(HttpMethod.GET, GET_ADMIN_PATH).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_PATH).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, POST_ADMIN_PATH).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, DELETE_ADMIN_PATH).hasRole(ADMIN)
+                                // Only ADMIN
+                                .requestMatchers(HttpMethod.GET, GET_ADMIN_PATH).hasRole(ADMIN)
+                                .requestMatchers(HttpMethod.PUT, PUT_ADMIN_PATH).hasRole(ADMIN)
+                                .requestMatchers(HttpMethod.POST, POST_ADMIN_PATH).hasRole(ADMIN)
+                                .requestMatchers(HttpMethod.DELETE, DELETE_ADMIN_PATH).hasRole(ADMIN)
 
 
-                        // ADMIN + EMPLOYEE
-                        .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
-                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
-                        .requestMatchers(HttpMethod.PATCH, PATCH_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+                                // ADMIN + EMPLOYEE
+                                .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+                                .requestMatchers(HttpMethod.PUT, PUT_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
+                                .requestMatchers(HttpMethod.PATCH, PATCH_ADMIN_EMPLOYEE_PATH).hasAnyRole(ADMIN, EMPLOYEE)
 
-                        // ADMIN + USER
-                        .requestMatchers(HttpMethod.GET, GET_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
-                        .requestMatchers(HttpMethod.POST, POST_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
-                        .requestMatchers(HttpMethod.PUT, PUT_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                                // ADMIN + USER
+                                .requestMatchers(HttpMethod.GET, GET_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                                .requestMatchers(HttpMethod.POST, POST_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                                .requestMatchers(HttpMethod.PUT, PUT_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
+                                .requestMatchers(HttpMethod.PATCH, PATCH_ADMIN_USER_PATH).hasAnyRole(ADMIN, USER)
 
-                        // EMPLOYEE + USER
-                        .requestMatchers(HttpMethod.POST, POST_EMPLOYEE_USER_PATH).hasAnyRole(EMPLOYEE, USER)
+                                // EMPLOYEE + USER
+                                .requestMatchers(HttpMethod.POST, POST_EMPLOYEE_USER_PATH).hasAnyRole(EMPLOYEE, USER)
+                                .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_USER_PATH).hasAnyRole(EMPLOYEE, USER)
 
-                        // EMPLOYEE + USER
-                        .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_USER_PATH).hasAnyRole(ADMIN, EMPLOYEE, USER)
+                                // EMPLOYEE + USER
+                                .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_USER_PATH).hasAnyRole(ADMIN, EMPLOYEE, USER)
 
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 );
 
         return http.build();
