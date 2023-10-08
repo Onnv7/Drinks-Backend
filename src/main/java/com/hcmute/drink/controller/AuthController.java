@@ -6,6 +6,7 @@ import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.AuthServiceImpl;
+import com.hcmute.drink.service.impl.EmployeeServiceImpl;
 import com.hcmute.drink.service.impl.UserServiceImpl;
 import com.hcmute.drink.utils.EmailUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +33,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 public class AuthController {
     private final AuthServiceImpl authService;
     private final UserServiceImpl userService;
+    private final EmployeeServiceImpl employeeService;
     private final EmailUtils emailUtils;
     private final ModelMapper modelMapper;
 
@@ -177,6 +179,25 @@ public class AuthController {
             return new ResponseEntity<>(res, StatusCode.OK);
         }
         catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = AUTH_EMPLOYEE_LOGIN_SUM, description = AUTH_EMPLOYEE_LOGIN_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(path = AUTH_EMPLOYEE_LOGIN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated CreateEmployeeRequest body) {
+        try {
+            LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(data)
+                    .message(SuccessConstant.LOGIN)
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

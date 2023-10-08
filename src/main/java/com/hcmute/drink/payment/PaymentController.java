@@ -6,13 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
@@ -24,7 +17,7 @@ public class PaymentController {
                                            @RequestParam("vnp_OrderInfo") String orderInfo
     ) {
         try {
-            String url = vnPayUtils.createPayment(request, amount*100, orderInfo);
+            String url = vnPayUtils.createUrlPayment(request, amount*100, orderInfo);
             PaymentResDTO paymentResDTO = new PaymentResDTO();
             paymentResDTO.setStatus("0k");
             paymentResDTO.setMessage("success");
@@ -50,7 +43,6 @@ public class PaymentController {
     @GetMapping("/IPN")
     public ResponseEntity<?> payResult(HttpServletRequest request) {
         try {
-
             IPNResDto res = vnPayUtils.getResult(request);
             return new ResponseEntity<>(res, HttpStatus.OK);
         }

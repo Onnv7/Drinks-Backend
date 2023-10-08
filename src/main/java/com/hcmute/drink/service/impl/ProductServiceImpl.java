@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
             imagesList.add(new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
         }
 
-        data.setImagesList(imagesList);
+        data.setImageList(imagesList);
         ProductCollection product = productRepository.save(data);
         if (product != null) {
             return product;
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
         if(product == null) {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
-        List<ImageEmbedded> images = product.getImagesList();
+        List<ImageEmbedded> images = product.getImageList();
         int size = images.size();
         for (int i = 0; i < size; i++) {
             cloudinaryUtils.deleteImage(images.get(i).getId());
@@ -88,14 +88,14 @@ public class ProductServiceImpl implements ProductService {
         modelMapperNotNull.map(data, product);
         int size = images.size();
 
-        List<ImageEmbedded> oldImages = product.getImagesList();
+        List<ImageEmbedded> oldImages = product.getImageList();
 
         for (int i = 0; i < size; i++) {
             cloudinaryUtils.deleteImage(oldImages.get(i).getId());
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH, data.getName(), images.get(i));
             imagesList.add(new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY)));
         }
-        product.setImagesList(imagesList);
+        product.setImageList(imagesList);
         ProductCollection newProduct = productRepository.save(product);
         if(newProduct != null) {
             return newProduct;

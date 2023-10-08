@@ -26,7 +26,7 @@ public class SecurityConstant {
     public static final String[] POST_AUTH_WHITELIST = {
             "/refund",
             "/IPN/**",
-            EMPLOYEE_LOGIN_PATH,
+            AUTH_EMPLOYEE_LOGIN_PATH,
             AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_TO_REGISTER_PATH, AUTH_RE_SEND_EMAIL_PATH,
                 AUTH_REGISTER_PATH, AUTH_LOGIN_PATH, AUTH_VERIFY_EMAIL_PATH, AUTH_SEND_CODE_TO_GET_PWD_PATH
     };

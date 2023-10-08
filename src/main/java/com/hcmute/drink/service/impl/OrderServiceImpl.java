@@ -3,9 +3,8 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.TransactionCollection;
-import com.hcmute.drink.collection.embedded.OrderDetailsEmbedded;
-import com.hcmute.drink.collection.embedded.OrderLogEmbedded;
-import com.hcmute.drink.collection.embedded.ReviewEmbedded;
+import com.hcmute.drink.collection.embedded.*;
+import com.hcmute.drink.common.ToppingModel;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.CreateReviewRequest;
 import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
@@ -22,6 +21,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -42,6 +42,7 @@ public class OrderServiceImpl {
     @Lazy
     private TransactionServiceImpl transactionService;
 
+    @Transactional
     public OrderCollection createShippingOrder(OrderCollection data, PaymentType paymentType) throws Exception {
         userService.exceptionIfNotExistedUserById(data.getUserId().toString());
 
@@ -52,7 +53,15 @@ public class OrderServiceImpl {
             if (productInfo == null) {
                 throw new Exception(ErrorConstant.PRODUCT_NOT_FOUND + product.getProductId().toString());
             }
-            totalPrice += productInfo.getPrice();
+            double totalPriceToppings = 0;
+            for (ToppingEmbedded topping : product.getToppings()) {
+                totalPriceToppings += topping.getPrice();
+            }
+            totalPrice += totalPriceToppings;
+
+            SizeEmbedded size = productInfo.getSizeList().stream().filter(it -> it.getSize().equals(product.getSize())).findFirst().orElseThrow();
+            totalPrice += size.getPrice();
+
         }
         data.setTotal(totalPrice);
 
@@ -90,6 +99,7 @@ public class OrderServiceImpl {
         }
         return updatedOrder;
     }
+
     public List<GetAllShippingOrdersResponse> getAllShippingOrdersQueueForEmployee() throws Exception {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
@@ -102,6 +112,7 @@ public class OrderServiceImpl {
     public OrderCollection findOrderByTransactionId(String id) throws Exception {
         return orderRepository.findById(id).orElseThrow(() -> new Exception(ErrorConstant.NOT_FOUND + id));
     }
+
     public OrderCollection findOrderById(String id) throws Exception {
         OrderCollection order = orderRepository.findByTransactionId(new ObjectId(id));
         if (order == null) {
@@ -125,6 +136,7 @@ public class OrderServiceImpl {
         }
         return order;
     }
+
     public List<GetAllOrderHistoryByUserIdResponse> completeOrder(String userId, OrderStatus orderStatus) throws Exception {
         List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(userId, orderStatus);
         if (order == null) {
@@ -136,7 +148,7 @@ public class OrderServiceImpl {
     public OrderCollection createReviewForOrder(String id, ReviewEmbedded data) throws Exception {
         OrderCollection order = findOrderByTransactionId(id);
         securityUtils.exceptionIfNotMe(order.getUserId().toString());
-        if(order.getEventLogs().get(order.getEventLogs().size()).getOrderStatus() != OrderStatus.SUCCEED) {
+        if (order.getEventLogs().get(order.getEventLogs().size()).getOrderStatus() != OrderStatus.SUCCEED) {
             throw new Exception(ErrorConstant.ORDER_NOT_COMPLETED);
         }
         order.setReview(data);

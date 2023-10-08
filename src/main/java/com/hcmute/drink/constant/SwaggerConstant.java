@@ -14,7 +14,7 @@ public class SwaggerConstant {
 
     // For authentication =================================================================
     public static final String AUTH_CONTROLLER_TITLE = "AUTH MANAGEMENT";
-    public static final String AUTH_LOGIN_SUM = "Login to get token";
+    public static final String AUTH_LOGIN_SUM = "User login to get token";
     public static final String AUTH_LOGIN_DES= "This endpoint returns a token";
     public static final String AUTH_REGISTER_SUM = "Register new user account with some information";
     public static final String AUTH_REGISTER_DES= "This endpoint returns a token and a user id";
@@ -28,9 +28,10 @@ public class SwaggerConstant {
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM = "Send OTP code to phone number (The function is under maintenance)";
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_DES= NOTIFICATION_NOT_DATA;
-
     public static final String AUTH_CHANGE_PASSWORD_SUM = "Change password by email";
     public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
+    public static final String AUTH_EMPLOYEE_LOGIN_SUM = "Employee login to get token";
+    public static final String AUTH_EMPLOYEE_LOGIN_DES = "This endpoint returns a token";
 
     // For user =================================================================
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";
@@ -122,8 +123,6 @@ public class SwaggerConstant {
 
     public static final String EMPLOYEE_DELETE_BY_ID_SUM = "Delete a employee by employee id";
     public static final String EMPLOYEE_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
-    public static final String EMPLOYEE_LOGIN_SUM = "Login to get token";
-    public static final String EMPLOYEE_LOGIN_DES= "This endpoint returns a token";
     public static final String EMPLOYEE_REGISTER_SUM = "Register new employee account with some information";
     public static final String EMPLOYEE_REGISTER_DES= NOTIFICATION_NOT_DATA;
 

@@ -94,24 +94,7 @@ public class EmployeeController {
         }
     }
 
-    @Operation(summary = EMPLOYEE_LOGIN_SUM, description = EMPLOYEE_LOGIN_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(path = EMPLOYEE_LOGIN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated CreateEmployeeRequest body) {
-        try {
-            LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
 
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .data(data)
-                    .message(SuccessConstant.LOGIN)
-                    .build();
-
-            return new ResponseEntity<>(res, StatusCode.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Operation(summary = EMPLOYEE_UPDATE_BY_ID_SUM, description = EMPLOYEE_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))

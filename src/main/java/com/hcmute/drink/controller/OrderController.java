@@ -44,7 +44,8 @@ public class OrderController {
         try {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
             OrderCollection savedData =  orderService.createShippingOrder(data, body.getPaymentType());
-            String urlPayment = vnPayUtils.createPayment(request, savedData.getTotal(), "Shipping Order Info");
+            // FIXME: sau khi thanh toán cần 1 api rõ hơn để check với vnpay và update lại transaction thành PAID/UNPAID
+            String urlPayment = vnPayUtils.createUrlPayment(request, savedData.getTotal(), "Shipping Order Info");
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(urlPayment)

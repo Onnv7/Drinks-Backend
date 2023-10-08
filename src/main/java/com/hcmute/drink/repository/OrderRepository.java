@@ -48,13 +48,13 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
     })
     GetOrderDetailsResponse getOrderDetailsById(String id);
     @Aggregation(pipeline = {
-            "{$match: {userId: ObjectId('651beee0cb49c553d299cb92')}}",
+            "{$match: {userId: ?0}}",
             "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
             "{$match: {'lastEventLog.orderStatus': ?1}}",
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
             "{$unwind: '$products.productInfo'}",
-            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventLogs: {$first: '$eventLogs'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productInfo: {$first: {name: '$products.productInfo.name', image: {$arrayElemAt: ['$products.productInfo.imagesList', 0]}}}}}}",
+            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventLogs: {$first: '$eventLogs'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productInfo: {$first: {name: '$products.productInfo.name', image: {$arrayElemAt: ['$products.productInfo.imageList', 0]}}}}}}",
             "{$project: {userId: 0, note: 0, eventLogs: 0, transactionId: 0, address: 0, updatedAt: 0}}"
     })
     List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String id, OrderStatus orderStatus);

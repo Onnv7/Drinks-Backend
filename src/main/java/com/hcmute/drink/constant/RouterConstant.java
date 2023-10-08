@@ -69,8 +69,6 @@ public class RouterConstant {
     public static final String EMPLOYEE_DELETE_BY_ID_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_DELETE_BY_ID_SUB_PATH;
     public static final String EMPLOYEE_REGISTER_SUB_PATH = "/register";
     public static final String EMPLOYEE_REGISTER_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_REGISTER_SUB_PATH;
-    public static final String EMPLOYEE_LOGIN_SUB_PATH = "/login";
-    public static final String EMPLOYEE_LOGIN_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_LOGIN_SUB_PATH;
 
     // ENDPOINT URL CATEGORY =================================================================
     public static final String CATEGORY_ID = "{categoryId}";
@@ -131,5 +129,7 @@ public class RouterConstant {
     public static final String AUTH_VERIFY_EMAIL_PATH = AUTH_BASE_PATH + AUTH_VERIFY_EMAIL_SUB_PATH;
     public static final String AUTH_CHANGE_PASSWORD_SUB_PATH = "/change-password";
     public static final String AUTH_CHANGE_PASSWORD_PATH = AUTH_BASE_PATH + AUTH_CHANGE_PASSWORD_SUB_PATH;
+    public static final String AUTH_EMPLOYEE_LOGIN_SUB_PATH = "/employee/login";
+    public static final String AUTH_EMPLOYEE_LOGIN_PATH = AUTH_BASE_PATH + AUTH_EMPLOYEE_LOGIN_SUB_PATH;
 
 }

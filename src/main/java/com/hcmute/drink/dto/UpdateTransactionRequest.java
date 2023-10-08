@@ -24,8 +24,8 @@ public class UpdateTransactionRequest {
     @Builder.Default
     private PaymentStatus status = PaymentStatus.UNPAID;
 
-    @Schema(example = TOTAL_PAID_EX, description = NOT_BLANK_DES)
-    @NotBlank
+    @Schema(example = TOTAL_PAID_EX, description = NOT_NULL_DES)
+    @NotNull
     private double totalPaid;
 
 

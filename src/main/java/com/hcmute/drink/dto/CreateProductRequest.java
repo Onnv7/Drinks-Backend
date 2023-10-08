@@ -1,5 +1,6 @@
 package com.hcmute.drink.dto;
 
+import com.hcmute.drink.common.SizeModel;
 import com.hcmute.drink.common.ToppingModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -20,9 +21,10 @@ public class CreateProductRequest {
     @NotBlank
     private String name;
 
-    @Schema(example = PRODUCT_PRICE_EX, description = MIN_VALUE_DES + PRODUCT_PRICE_MIN)
-    @Min(PRODUCT_PRICE_MIN)
-    private double price;
+//    @Schema(example = PRODUCT_PRICE_EX, description = MIN_VALUE_DES + PRODUCT_PRICE_MIN)
+//    @Min(PRODUCT_PRICE_MIN)
+//    private double price;
+
 
 
     @Schema(description = NOT_EMPTY_DES)
@@ -30,8 +32,13 @@ public class CreateProductRequest {
     private List<MultipartFile> imageList;
 
     // example = PRODUCT_SIZE_EX
-    @Schema(description = OPTIONAL_DES)
-    private List<String> size;
+//    @Schema(description = OPTIONAL_DES)
+//    private List<String> size;
+
+
+    @Schema(description = NOT_EMPTY_DES)
+    @NotEmpty
+    private List<SizeModel> sizeList;
 
     @Schema(example = PRODUCT_DESCRIPTION_EX, description = NOT_BLANK_DES)
     @NotBlank

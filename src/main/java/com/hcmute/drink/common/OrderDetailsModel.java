@@ -29,6 +29,10 @@ public class OrderDetailsModel {
     @Min(PRODUCT_PRICE_MIN)
     private double price;
 
+    @Schema(example = OBJECT_ID_EX, description = NOT_NULL_DES)
+    @NotNull
+    private String size;
+
     @Schema(example = NOT_EMPTY_DES, description = PRODUCT_NOTE_EX)
     private String note;
 }
