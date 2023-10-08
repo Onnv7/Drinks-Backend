@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
     public List<GetProductsByCategoryIdResponse> findProductsByCategoryId(String categoryId) throws Exception {
-        return productRepository.findByCategoryId(new ObjectId(categoryId));
+        return productRepository.getProductsByCategoryId(new ObjectId(categoryId));
     }
 
     public List<ProductCollection> findAllProducts() throws Exception {

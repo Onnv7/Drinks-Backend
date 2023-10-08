@@ -9,8 +9,9 @@ import java.util.List;
 
 @Data
 public class GetProductsByCategoryIdResponse {
-    private String id;
+    private String _id;
     private String name;
-    private List<ImageModel> imageList;
-    private List<SizeModel> sizeList;
+    private String description;
+    private String price;
+    private String imageUrl;
 }
