@@ -14,8 +14,10 @@ import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
+import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.OrderRepository;
 import com.hcmute.drink.utils.SecurityUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +36,14 @@ public class OrderServiceImpl {
     private final UserServiceImpl userService;
     private final ProductServiceImpl productService;
     private final SecurityUtils securityUtils;
+    private final VNPayUtils vnPayUtils;
 
     @Autowired
     @Lazy
     private TransactionServiceImpl transactionService;
 
     @Transactional
-    public OrderCollection createShippingOrder(OrderCollection data, PaymentType paymentType) throws Exception {
+    public String createShippingOrder(OrderCollection data, PaymentType paymentType, HttpServletRequest request) throws Exception {
         userService.exceptionIfNotExistedUserById(data.getUserId().toString());
 
         List<OrderDetailsEmbedded> products = data.getProducts();
@@ -66,7 +66,10 @@ public class OrderServiceImpl {
         data.setTotal(totalPrice);
 
 
+        Map<String, String> resData = vnPayUtils.createUrlPayment(request, totalPrice, "Shipping Order Info");
         TransactionCollection transData = TransactionCollection.builder()
+                .invoiceCode(resData.get("vnp_TxnRef").toString())
+                .timeCode(resData.get("vnp_CreateDate"))
                 .status(PaymentStatus.UNPAID)
                 .paymentType(paymentType)
                 .build();
@@ -80,11 +83,14 @@ public class OrderServiceImpl {
                 .time(new Date()).build();
         data.setEventLogs(new ArrayList<>(Arrays.<OrderLogEmbedded>asList(log)));
         OrderCollection order = orderRepository.save(data);
-        return order;
+
+
+
+        return resData.get("vnp_url");
     }
 
     public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
-        OrderCollection order = findOrderByTransactionId(id);
+        OrderCollection order = findOrderById(id);
         String employeeId = securityUtils.getCurrentUserId();
         order.getEventLogs().add(OrderLogEmbedded.builder()
                 .orderStatus(orderStatus)
@@ -110,15 +116,15 @@ public class OrderServiceImpl {
     }
 
     public OrderCollection findOrderByTransactionId(String id) throws Exception {
-        return orderRepository.findById(id).orElseThrow(() -> new Exception(ErrorConstant.NOT_FOUND + id));
-    }
-
-    public OrderCollection findOrderById(String id) throws Exception {
         OrderCollection order = orderRepository.findByTransactionId(new ObjectId(id));
-        if (order == null) {
+        if(order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
         return order;
+    }
+
+    public OrderCollection findOrderById(String id) throws Exception {
+        return orderRepository.findById(id).orElseThrow();
     }
 
     public GetOrderDetailsResponse getOrderDetailsById(String id) throws Exception {

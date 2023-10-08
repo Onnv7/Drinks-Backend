@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
@@ -17,11 +19,11 @@ public class PaymentController {
                                            @RequestParam("vnp_OrderInfo") String orderInfo
     ) {
         try {
-            String url = vnPayUtils.createUrlPayment(request, amount*100, orderInfo);
+            Map<String, String> result = vnPayUtils.createUrlPayment(request, amount*100, orderInfo);
             PaymentResDTO paymentResDTO = new PaymentResDTO();
             paymentResDTO.setStatus("0k");
             paymentResDTO.setMessage("success");
-            paymentResDTO.setURL(url);
+            paymentResDTO.setURL(result.get("vnp_url"));
             return ResponseEntity.status(HttpStatus.OK).body(paymentResDTO);
         }
         catch (Exception e) {

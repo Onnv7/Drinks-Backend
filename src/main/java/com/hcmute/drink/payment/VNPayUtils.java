@@ -18,11 +18,12 @@ import java.util.*;
 @Slf4j
 public class VNPayUtils {
     private ObjectMapper objectMapper = new ObjectMapper();
-    public String createUrlPayment(HttpServletRequest request, long amount, String orderInfo) throws UnsupportedEncodingException {
+    public Map<String, String> createUrlPayment(HttpServletRequest request, long amount, String orderInfo) throws UnsupportedEncodingException {
         String vnp_TxnRef = Config.getRandomNumber(8);
         String vnp_IpAddr = Config.getIpAddress(request);
         String vnp_TmnCode = Config.vnp_TmnCode;
 
+        Map<String, String> result = new HashMap<>();
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", Config.vnp_Version);
         vnp_Params.put("vnp_Command", Config.vnp_Command);
@@ -31,6 +32,7 @@ public class VNPayUtils {
         vnp_Params.put("vnp_CurrCode", "VND");
 //        vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+        result.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", orderInfo);
         vnp_Params.put("vnp_ReturnUrl", "https://sandbox.vnpayment.vn/apis/docs/huong-dan-tich-hop/#code-returnurl");  //"http://localhost:8080/api/test/ok"
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
@@ -41,6 +43,7 @@ public class VNPayUtils {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+        result.put("vnp_CreateDate", vnp_CreateDate);
 
         cld.add(Calendar.MINUTE, 15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
@@ -74,7 +77,8 @@ public class VNPayUtils {
         String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+        result.put("vnp_url", paymentUrl);
+        return result;
     }
 
     public IPNResDto getResult(HttpServletRequest request) throws UnsupportedEncodingException {

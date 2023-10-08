@@ -24,6 +24,7 @@ public class TransactionCollection {
     @Id
     private String id;
     private String invoiceCode;
+    private String timeCode;
     @Builder.Default
     private PaymentStatus status = PaymentStatus.UNPAID;
     private PaymentType paymentType;

@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@Hidden
 @RequiredArgsConstructor
 @RequestMapping("/api/test")
 public class HelloController {
     private final CloudinaryUtils cloudinaryUtils;
     @GetMapping()
     private String greeting() {
-        return "Hello";
+        return "Hello world huhu";
     }
     @GetMapping("/ok")
     private String ok() {

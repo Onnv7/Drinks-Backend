@@ -39,13 +39,13 @@ public class TransactionController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = TRANSACTION_UPDATE_BY_ID_SUB_PATH)
     // sau khi thanh toán (thành công/thất bại) => update transaction
-    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, @RequestBody @Validated UpdateTransactionRequest body, HttpServletRequest request) {
+    public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, HttpServletRequest request) { // @RequestBody @Validated UpdateTransactionRequest body,
         try {
             TransactionCollection data =  TransactionCollection.builder()
                     .id(id)
                     .build();
-            modelMapper.map(body, data);
-            TransactionCollection newData =  transactionService.updateTransaction(data, body.getTransactionTimeCode(), request);
+//            modelMapper.map(body, data);
+            TransactionCollection newData =  transactionService.updateTransaction(id, request);
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)

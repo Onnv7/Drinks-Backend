@@ -9,6 +9,7 @@ import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.service.impl.OrderServiceImpl;
+import com.hcmute.drink.service.impl.TransactionServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
@@ -35,6 +37,7 @@ public class OrderController {
     private final ModelMapper modelMapper;
     private final VNPayUtils vnPayUtils;
     private final OrderServiceImpl orderService;
+    private final TransactionServiceImpl transactionService;
 
 
     @Operation(summary = ORDER_CREATE_SHIPPING_SUM, description = ORDER_CREATE_SHIPPING_DES)
@@ -43,9 +46,10 @@ public class OrderController {
     public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Validated CreateOrderRequest body) {
         try {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
-            OrderCollection savedData =  orderService.createShippingOrder(data, body.getPaymentType());
+            String  urlPayment =  orderService.createShippingOrder(data, body.getPaymentType(), request);
             // FIXME: sau khi thanh toán cần 1 api rõ hơn để check với vnpay và update lại transaction thành PAID/UNPAID
-            String urlPayment = vnPayUtils.createUrlPayment(request, savedData.getTotal(), "Shipping Order Info");
+//            Map<String, String> resData = vnPayUtils.createUrlPayment(request, savedData.getTotal(), "Shipping Order Info");
+//            transactionService.updateTransactionAfterDonePaid(savedData.getTransactionId().toString(), resData.get("vnp_TxnRef"), resData.get("vnp_CreateDate"), request);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(urlPayment)
