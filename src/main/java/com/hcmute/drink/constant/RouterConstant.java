@@ -16,6 +16,7 @@ public class RouterConstant {
     public static final String CATEGORY_ALL_PATH = CATEGORY_BASE_PATH + "/**";
     public static final String PRODUCT_ALL_PATH = PRODUCT_BASE_PATH + "/**";
     public static final String ORDER_ALL_PATH = PRODUCT_BASE_PATH + "/**";
+    public static final String CATEGORY_ID = "{categoryId}";
 
     // ENDPOINT URL USER =================================================================
 
@@ -46,6 +47,8 @@ public class RouterConstant {
 
     public static final String PRODUCT_GET_BY_ID_SUB_PATH = "/" + PRODUCT_ID;
     public static final String PRODUCT_GET_BY_ID_PATH = PRODUCT_BASE_PATH + PRODUCT_GET_BY_ID_SUB_PATH;
+    public static final String PRODUCT_GET_BY_CATEGORY_ID_SUB_PATH = "/category/" + CATEGORY_ID;
+    public static final String PRODUCT_GET_BY_CATEGORY_ID_PATH = PRODUCT_BASE_PATH + PRODUCT_GET_BY_CATEGORY_ID_SUB_PATH;
     public static final String PRODUCT_GET_ALL_SUB_PATH = "";
     public static final String PRODUCT_GET_ALL_PATH = PRODUCT_BASE_PATH + PRODUCT_GET_ALL_SUB_PATH;
     public static final String PRODUCT_UPDATE_BY_ID_SUB_PATH = "/" + PRODUCT_ID;
@@ -71,7 +74,6 @@ public class RouterConstant {
     public static final String EMPLOYEE_REGISTER_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_REGISTER_SUB_PATH;
 
     // ENDPOINT URL CATEGORY =================================================================
-    public static final String CATEGORY_ID = "{categoryId}";
 
     public static final String CATEGORY_GET_BY_SUB_ID_PATH = "/" + CATEGORY_ID;
     public static final String CATEGORY_GET_BY_ID_PATH = CATEGORY_BASE_PATH + CATEGORY_GET_BY_SUB_ID_PATH;

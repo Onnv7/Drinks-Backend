@@ -4,10 +4,12 @@ import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.GetProductsByCategoryIdResponse;
 import com.hcmute.drink.repository.ProductRepository;
 import com.hcmute.drink.service.ProductService;
 import com.hcmute.drink.utils.CloudinaryUtils;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +59,9 @@ public class ProductServiceImpl implements ProductService {
             throw new Exception(ErrorConstant.NOT_FOUND);
         }
         return product;
+    }
+    public List<GetProductsByCategoryIdResponse> findProductsByCategoryId(String categoryId) throws Exception {
+        return productRepository.findByCategoryId(new ObjectId(categoryId));
     }
 
     public List<ProductCollection> findAllProducts() throws Exception {

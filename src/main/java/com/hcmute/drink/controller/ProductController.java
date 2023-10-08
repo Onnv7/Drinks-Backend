@@ -79,6 +79,25 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = PRODUCT_GET_BY_CATEGORY_ID_SUM, description = PRODUCT_GET_BY_CATEGORY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = PRODUCT_GET_BY_CATEGORY_ID_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> getProductByCategoryId(@PathVariable("categoryId") String categoryId) {
+        try {
+            List<GetProductsByCategoryIdResponse> products = productService.findProductsByCategoryId(categoryId);
+
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .timestamp(new Date())
+                    .data(products)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Operation(summary = PRODUCT_GET_ALL_SUM, description = PRODUCT_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = PRODUCT_GET_ALL_SUB_PATH)

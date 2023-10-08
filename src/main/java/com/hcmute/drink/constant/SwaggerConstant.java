@@ -62,6 +62,8 @@ public class SwaggerConstant {
     public static final String PRODUCT_CREATE_DES = "This endpoint returns new product after saved on database";
     public static final String PRODUCT_GET_BY_ID_SUM = "Get a product by product id";
     public static final String PRODUCT_GET_BY_ID_DES= "This endpoint returns a product's information";
+    public static final String PRODUCT_GET_BY_CATEGORY_ID_SUM = "Get products by category id";
+    public static final String PRODUCT_GET_BY_CATEGORY_ID_DES= "This endpoint returns products list";
     public static final String PRODUCT_GET_ALL_SUM = "Get all products";
     public static final String PRODUCT_GET_ALL_DES= "This endpoint returns all products";
     public static final String PRODUCT_DELETE_BY_ID_SUM = "Delete a product by product id";
