@@ -12,4 +12,5 @@ public class GetProductsByCategoryIdResponse {
     private String id;
     private String name;
     private List<ImageModel> imageList;
+    private List<SizeModel> sizeList;
 }
