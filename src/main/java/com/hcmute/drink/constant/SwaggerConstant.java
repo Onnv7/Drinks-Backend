@@ -53,6 +53,10 @@ public class SwaggerConstant {
     public static final String ADDRESS_UPDATE_ADDRESS_BY_ID_DES = "This endpoint returns new user's address after it were updated";
     public static final String ADDRESS_DELETE_ADDRESS_BY_ID_SUM = "Delete address by address id";
     public static final String ADDRESS_DELETE_ADDRESS_BY_ID_DES = NOTIFICATION_NOT_DATA;
+    public static final String ADDRESS_GET_BY_USER_ID_SUM = "Get all addresses by user id";
+    public static final String ADDRESS_GET_BY_USER_ID_DES = "This endpoint returns all addresses info of an user";
+    public static final String ADDRESS_GET_DETAILS_BY_ID_SUM = "Get an address details by id";
+    public static final String ADDRESS_GET_DETAILS_BY_ID_DES = "This endpoint returns an address details by id";
 
 
     // For product =================================================================

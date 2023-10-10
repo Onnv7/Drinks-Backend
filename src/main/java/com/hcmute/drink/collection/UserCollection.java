@@ -37,7 +37,6 @@ public class UserCollection {
     @Indexed(unique = true)
     private String email;
     private String phoneNumber;
-    private List<ObjectId> addressIds;
 
     @Builder.Default
     private Role[] roles = {Role.ROLE_USER};

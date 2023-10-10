@@ -7,9 +7,6 @@ public class SecurityConstant {
     public static final String SET_USER_ROLE = "hasRole('USER')";
 
 
-
-
-
     // ALL =================================================================
     public static final String[] GET_AUTH_WHITELIST = {
             "/api/test/**",
@@ -28,7 +25,7 @@ public class SecurityConstant {
             "/IPN/**",
             AUTH_EMPLOYEE_LOGIN_PATH,
             AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_TO_REGISTER_PATH, AUTH_RE_SEND_EMAIL_PATH,
-                AUTH_REGISTER_PATH, AUTH_LOGIN_PATH, AUTH_VERIFY_EMAIL_PATH, AUTH_SEND_CODE_TO_GET_PWD_PATH
+            AUTH_REGISTER_PATH, AUTH_LOGIN_PATH, AUTH_VERIFY_EMAIL_PATH, AUTH_SEND_CODE_TO_GET_PWD_PATH
     };
 
     public static final String[] PATCH_AUTH_WHITELIST = {
@@ -49,7 +46,8 @@ public class SecurityConstant {
             ADDRESS_DELETE_PATH
     };
     public static final String[] GET_USER_PATH = {
-            ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH
+            ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH,
+            ADDRESS_GET_BY_USER_ID_PATH, ADDRESS_GET_DETAILS_BY_ID_PATH
     };
 
     // Only ADMIN =================================================================
@@ -113,7 +111,6 @@ public class SecurityConstant {
     public static final String[] PUT_ADMIN_USER_PATH = {
             USER_UPDATE_BY_ID_PATH,
     };
-
 
 
     // EMPLOYEE + USER =================================================================

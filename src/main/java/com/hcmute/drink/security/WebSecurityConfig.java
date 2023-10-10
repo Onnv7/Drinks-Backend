@@ -91,24 +91,6 @@ public class WebSecurityConfig {
 //                .build();
     }
 
-    //    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("*"); // Cho phép tất cả các nguồn (origin)
-//        configuration.addAllowedMethod("*"); // Cho phép tất cả các HTTP method
-//        configuration.addAllowedHeader("*"); // Cho phép tất cả các header
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//
-//        return source;
-//    }
-//
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        CorsFilter filter = new CorsFilter(corsConfigurationSource());
-//        return filter;
-//    }
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
         System.out.println("filter chain");

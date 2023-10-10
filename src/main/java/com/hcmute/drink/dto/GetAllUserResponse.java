@@ -23,7 +23,6 @@ public class GetAllUserResponse {
     private Date birthDate;
     private String email;
     private String phoneNumber;
-    private List<String> addressIds;
 
     private boolean enabled = true;
     private Date updatedAt;

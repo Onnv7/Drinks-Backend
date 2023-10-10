@@ -3,7 +3,7 @@ package com.hcmute.drink.dto;
 import lombok.Data;
 
 @Data
-public class GetAddressResponse {
+public class GetAddressDetailsByIdResponse {
     private String id;
     private String details;
     private double longitude;

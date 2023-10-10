@@ -29,7 +29,7 @@ public class UpdateAddressRequest {
     private String recipientName;
 
     @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
-    @NotBlank
-    @Pattern(regexp = PHONE_NUMBER_REGEX)
+//    @NotBlank
+//    @Pattern(regexp = PHONE_NUMBER_REGEX)
     private String phoneNumber;
 }
