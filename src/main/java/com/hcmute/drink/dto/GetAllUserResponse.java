@@ -22,7 +22,7 @@ public class GetAllUserResponse {
     private Gender gender;
     private Date birthDate;
     private String email;
-    private String phoneNumber;
+//    private String phoneNumber;
 
     private boolean enabled = true;
     private Date updatedAt;

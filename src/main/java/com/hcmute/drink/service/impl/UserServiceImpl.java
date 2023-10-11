@@ -9,6 +9,8 @@ import com.hcmute.drink.service.UserService;
 import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    @Autowired
+    @Qualifier("modelMapperNotNull")
+    private ModelMapper modelMapperNotNull;
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -103,7 +108,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
-        modelMapper.map(body, user);
+        modelMapperNotNull.map(body, user);
         user.setUpdatedAt(new Date());
         UserCollection updatedUser = userRepository.save(user);
         if(updatedUser != null) {

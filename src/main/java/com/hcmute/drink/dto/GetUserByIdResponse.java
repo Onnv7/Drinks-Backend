@@ -14,5 +14,5 @@ public class GetUserByIdResponse {
     private Gender gender;
     private Date birthDate;
     private String email;
-    private String phoneNumber;
+//    private String phoneNumber;
 }
