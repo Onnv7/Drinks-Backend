@@ -45,6 +45,8 @@ public class RouterConstant {
     public static final String ADDRESS_GET_BY_USER_ID_PATH = ADDRESS_BASE_PATH + ADDRESS_GET_BY_USER_ID_SUB_PATH;
     public static final String ADDRESS_GET_DETAILS_BY_ID_SUB_PATH = "/" + ADDRESS_ID ;
     public static final String ADDRESS_GET_DETAILS_BY_ID_PATH = ADDRESS_BASE_PATH + ADDRESS_GET_DETAILS_BY_ID_SUB_PATH;
+    public static final String ADDRESS_SET_DEFAULT_BY_ID_SUB_PATH = "/default/" + ADDRESS_ID ;
+    public static final String ADDRESS_SET_DEFAULT_BY_ID_PATH = ADDRESS_BASE_PATH + ADDRESS_SET_DEFAULT_BY_ID_SUB_PATH;
 
     // ENDPOINT URL PRODUCT =================================================================
     public static final String PRODUCT_ID = "{productId}";

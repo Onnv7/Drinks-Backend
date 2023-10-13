@@ -10,5 +10,6 @@ public class CreateAddressResponse {
     private double latitude;
     private String note;
     private String recipientName;
+    private boolean isDefault;
     private String phoneNumber;
 }

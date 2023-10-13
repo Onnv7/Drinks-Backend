@@ -26,6 +26,12 @@ public class AddressServiceImpl {
 
     public AddressCollection createAddressToUser(AddressCollection data, String userId) throws Exception {
         userService.exceptionIfNotExistedUserById(userId);
+        List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
+        if (addresses.size() == 0) {
+            data.setDefault(true);
+        } else {
+            data.setDefault(false);
+        }
         return addressRepository.save(data);
     }
 
@@ -46,7 +52,20 @@ public class AddressServiceImpl {
         userService.exceptionIfNotExistedUserById(userId);
         return addressRepository.getAddressByUserId(new ObjectId(userId));
     }
+
     public GetAddressDetailsByIdResponse getAddressById(String id) throws Exception {
         return addressRepository.getAddressDetailsById(id);
+    }
+
+    public void setDefaultAddress(String id) throws Exception {
+        AddressCollection address = addressRepository.findById(id).orElseThrow();
+        ObjectId userId = address.getUserId();
+        List<AddressCollection> addresses = addressRepository.findByUserId(userId);
+        for (AddressCollection add : addresses) {
+            add.setDefault(false);
+            addressRepository.save(add);
+        }
+        address.setDefault(true);
+        addressRepository.save(address);
     }
 }

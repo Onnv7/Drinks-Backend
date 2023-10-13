@@ -1,5 +1,7 @@
 package com.hcmute.drink.collection;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+
+import static com.hcmute.drink.constant.SwaggerConstant.BOOLEAN_EX;
+import static com.hcmute.drink.constant.SwaggerConstant.NOT_NULL_DES;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +32,9 @@ public class AddressCollection {
     private String recipientName;
     private String phoneNumber;
     private ObjectId userId;
+
+    private boolean isDefault = false;
+
     @CreatedDate
     private Date createdAt;
 

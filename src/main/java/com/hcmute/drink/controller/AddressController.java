@@ -41,11 +41,11 @@ public class AddressController {
             AddressCollection data = modelMapper.map(body, AddressCollection.class);
             data.setUserId(new ObjectId(userId));
             AddressCollection createdData = addressService.createAddressToUser(data, userId);
-            CreateAddressResponse resData = modelMapper.map(createdData, CreateAddressResponse.class);
+//            CreateAddressResponse resData = modelMapper.map(createdData, CreateAddressResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.CREATED)
-                    .data(resData)
+//                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {
@@ -117,6 +117,22 @@ public class AddressController {
                     .timestamp(new Date())
                     .data(resData)
                     .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = ADDRESS_SET_DEFAULT_BY_ID_SUM, description = ADDRESS_SET_DEFAULT_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = ADDRESS_SET_DEFAULT_BY_ID_SUB_PATH)
+    public ResponseEntity<ResponseAPI> setDefaultAddress(@PathVariable("addressId") String addressId) {
+        try {
+            addressService.setDefaultAddress(addressId);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.UPDATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {

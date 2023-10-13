@@ -1,6 +1,5 @@
 package com.hcmute.drink.dto;
 
-import com.hcmute.drink.common.ImageModel;
 import com.hcmute.drink.common.ToppingModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -8,8 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.bson.types.ObjectId;
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

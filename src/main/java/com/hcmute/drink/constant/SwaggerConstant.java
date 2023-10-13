@@ -57,7 +57,8 @@ public class SwaggerConstant {
     public static final String ADDRESS_GET_BY_USER_ID_DES = "This endpoint returns all addresses info of an user";
     public static final String ADDRESS_GET_DETAILS_BY_ID_SUM = "Get an address details by id";
     public static final String ADDRESS_GET_DETAILS_BY_ID_DES = "This endpoint returns an address details by id";
-
+    public static final String ADDRESS_SET_DEFAULT_BY_ID_SUM = "Set default address for user";
+    public static final String ADDRESS_SET_DEFAULT_BY_ID_DES = NOTIFICATION_NOT_DATA;
 
     // For product =================================================================
 
@@ -195,4 +196,5 @@ public class SwaggerConstant {
     public static final String PAYMENT_STATUS_EX = "PAID";
     public static final String PAYMENT_TYPE_EX = "BANKING";
     public static final String REVIEW_DES_EX = "Good service";
+    public static final String BOOLEAN_EX = "false";
 }
