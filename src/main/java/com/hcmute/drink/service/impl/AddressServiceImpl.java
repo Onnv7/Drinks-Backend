@@ -27,6 +27,7 @@ public class AddressServiceImpl {
     public AddressCollection createAddressToUser(AddressCollection data, String userId) throws Exception {
         userService.exceptionIfNotExistedUserById(userId);
         List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
+
         if (addresses.size() == 0) {
             data.setDefault(true);
         } else {
@@ -35,10 +36,13 @@ public class AddressServiceImpl {
         return addressRepository.save(data);
     }
 
-    public AddressCollection updateAddressById(String addressId, AddressCollection data) throws Exception {
-        AddressCollection address = addressRepository.findById(addressId).orElse(null);
+    public AddressCollection updateAddressById(AddressCollection data) throws Exception {
+        AddressCollection address = addressRepository.findById(data.getId()).orElse(null);
         if (address == null) {
-            throw new Exception(NOT_FOUND + addressId);
+            throw new Exception(NOT_FOUND + data.getId());
+        }
+        if (data.isDefault()){
+            setDefaultAddress(data.getId());
         }
         modelMapperNotNull.map(data, address);
         return addressRepository.save(address);
@@ -57,8 +61,8 @@ public class AddressServiceImpl {
         return addressRepository.getAddressDetailsById(id);
     }
 
-    public void setDefaultAddress(String id) throws Exception {
-        AddressCollection address = addressRepository.findById(id).orElseThrow();
+    public void setDefaultAddress(String addressId) throws Exception {
+        AddressCollection address = addressRepository.findById(addressId).orElseThrow();
         ObjectId userId = address.getUserId();
         List<AddressCollection> addresses = addressRepository.findByUserId(userId);
         for (AddressCollection add : addresses) {

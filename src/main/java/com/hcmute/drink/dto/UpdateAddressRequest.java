@@ -29,6 +29,10 @@ public class UpdateAddressRequest {
     @NotBlank
     private String recipientName;
 
+    @Schema(example = BOOLEAN_EX, description = NOT_NULL_DES)
+    @NotNull
+    private boolean isDefault;
+
     @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
     @NotBlank
     @Pattern(regexp = PHONE_NUMBER_REGEX)
