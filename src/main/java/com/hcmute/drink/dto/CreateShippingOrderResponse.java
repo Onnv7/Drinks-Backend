@@ -9,6 +9,6 @@ import lombok.Data;
 public class CreateShippingOrderResponse {
     private String orderId;
     private String paymentUrl;
-    private String invoiceCode;
+    private String transactionId;
 }
 

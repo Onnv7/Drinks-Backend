@@ -101,7 +101,7 @@ public class OrderServiceImpl {
         OrderCollection order = orderRepository.save(data);
 
         resData.setOrderId(order.getId());
-        resData.setInvoiceCode(transData.getInvoiceCode());
+        resData.setTransactionId(transData.getId());
 
         return resData;
     }
