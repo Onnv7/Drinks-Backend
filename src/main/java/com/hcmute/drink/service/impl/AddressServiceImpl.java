@@ -1,6 +1,7 @@
 package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.AddressCollection;
+import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.GetAddressByUserIdResponse;
 import com.hcmute.drink.dto.GetAddressDetailsByIdResponse;
 import com.hcmute.drink.repository.AddressRepository;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.hcmute.drink.constant.ErrorConstant.NOT_FOUND;
@@ -27,7 +30,9 @@ public class AddressServiceImpl {
     public AddressCollection createAddressToUser(AddressCollection data, String userId) throws Exception {
         userService.exceptionIfNotExistedUserById(userId);
         List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
-
+        if(addresses.size() >= 5) {
+            throw new Exception(ErrorConstant.OVER_FIVE_ADDRESS);
+        }
         if (addresses.size() == 0) {
             data.setDefault(true);
         } else {
@@ -54,7 +59,20 @@ public class AddressServiceImpl {
 
     public List<GetAddressByUserIdResponse> getAddressByUserId(String userId) throws Exception {
         userService.exceptionIfNotExistedUserById(userId);
-        return addressRepository.getAddressByUserId(new ObjectId(userId));
+        List<GetAddressByUserIdResponse> list = addressRepository.getAddressByUserId(new ObjectId(userId));
+        Collections.sort(list, new Comparator<GetAddressByUserIdResponse>() {
+            @Override
+            public int compare(GetAddressByUserIdResponse address1, GetAddressByUserIdResponse address2) {
+                if (address1.isDefault() && !address2.isDefault()) {
+                    return -1;
+                } else if (!address1.isDefault() && address2.isDefault()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        return list;
     }
 
     public GetAddressDetailsByIdResponse getAddressById(String id) throws Exception {

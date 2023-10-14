@@ -26,7 +26,7 @@ public class ExceptionHandlerController {
             UPDATE_FAILED,
             CATEGORY_EXISTED,
             ACCOUNT_BLOCKED,
-            THREE_ADDRESS,
+            OVER_FIVE_ADDRESS,
             ORDER_NOT_COMPLETED
     );
     private static final List<String> error404= Arrays.asList(

@@ -27,9 +27,9 @@ public class CreateOrderRequest {
     @Schema(example = ORDER_NOTE_EX, description = OPTIONAL_DES)
     private String note;
 
-    @Schema(example = PAYMENT_STATUS_EX, description = NOT_BLANK_DES)
-    @NotNull
-    private PaymentStatus paymentStatus;
+//    @Schema(example = PAYMENT_STATUS_EX, description = NOT_BLANK_DES)
+//    @NotNull
+//    private PaymentStatus paymentStatus;
 
     @Schema(example = PAYMENT_TYPE_EX, description = NOT_BLANK_DES)
     @NotNull

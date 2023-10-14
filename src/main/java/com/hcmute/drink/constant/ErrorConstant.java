@@ -15,6 +15,6 @@ public class ErrorConstant {
     public static final String ACCESS_DENIED = "Access Denied";
     public static final String ACCOUNT_BLOCKED = "Account has been locked";
     public static final String PRODUCT_NOT_FOUND = "PRODUCT NOT FOUND";
-    public static final String THREE_ADDRESS = "Only add up to 3 addresses";
+    public static final String OVER_FIVE_ADDRESS = "Do not add more than 5 addresses";
     public static final String ORDER_NOT_COMPLETED = "Order not completed";
 }
