@@ -4,16 +4,13 @@ import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.collection.embedded.*;
-import com.hcmute.drink.common.ToppingModel;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.CreateReviewRequest;
-import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
-import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
-import com.hcmute.drink.dto.GetOrderDetailsResponse;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
+import com.hcmute.drink.payment.Config;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.OrderRepository;
 import com.hcmute.drink.utils.SecurityUtils;
@@ -25,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -43,7 +41,7 @@ public class OrderServiceImpl {
     private TransactionServiceImpl transactionService;
 
     @Transactional
-    public String createShippingOrder(OrderCollection data, PaymentType paymentType, HttpServletRequest request) throws Exception {
+    public CreateShippingOrderResponse createShippingOrder(OrderCollection data, PaymentType paymentType, HttpServletRequest request) throws Exception {
         userService.exceptionIfNotExistedUserById(data.getUserId().toString());
 
         List<OrderDetailsEmbedded> products = data.getProducts();
@@ -64,17 +62,35 @@ public class OrderServiceImpl {
 
         }
         data.setTotal(totalPrice);
+        TransactionCollection transData = new TransactionCollection();
+        CreateShippingOrderResponse resData = new CreateShippingOrderResponse();
+        if(paymentType == PaymentType.CASHING) {
+
+            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            String vnp_CreateDate = formatter.format(cld.getTime());
+
+            transData = TransactionCollection.builder()
+                    .invoiceCode(Config.getRandomNumber(8))
+                    .timeCode(vnp_CreateDate)
+                    .status(PaymentStatus.UNPAID)
+                    .paymentType(PaymentType.CASHING).build();
+
+        }
+        else {
+            Map<String, String> paymentData = vnPayUtils.createUrlPayment(request, totalPrice, "Shipping Order Info");
+
+            transData = TransactionCollection.builder()
+                    .invoiceCode(paymentData.get("vnp_TxnRef").toString())
+                    .timeCode(paymentData.get("vnp_CreateDate"))
+                    .status(PaymentStatus.UNPAID)
+                    .paymentType(paymentType)
+                    .build();
+            resData.setPaymentUrl(paymentData.get("vnp_url"));
+        }
 
 
-        Map<String, String> resData = vnPayUtils.createUrlPayment(request, totalPrice, "Shipping Order Info");
-        TransactionCollection transData = TransactionCollection.builder()
-                .invoiceCode(resData.get("vnp_TxnRef").toString())
-                .timeCode(resData.get("vnp_CreateDate"))
-                .status(PaymentStatus.UNPAID)
-                .paymentType(paymentType)
-                .build();
         TransactionCollection savedData = transactionService.createTransaction(transData);
-
         data.setOrderType(OrderType.SHIPPING);
         data.setTransactionId(new ObjectId(savedData.getId()));
 
@@ -84,9 +100,10 @@ public class OrderServiceImpl {
         data.setEventLogs(new ArrayList<>(Arrays.<OrderLogEmbedded>asList(log)));
         OrderCollection order = orderRepository.save(data);
 
+        resData.setOrderId(order.getId());
+        resData.setInvoiceCode(transData.getInvoiceCode());
 
-
-        return resData.get("vnp_url");
+        return resData;
     }
 
     public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {

@@ -9,4 +9,6 @@ public class GetAddressByUserIdResponse {
     private String recipientName;
     private boolean isDefault;
     private String phoneNumber;
+    private double longitude;
+    private double latitude;
 }

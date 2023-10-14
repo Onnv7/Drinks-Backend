@@ -4,6 +4,7 @@ import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.GetAllProductsResponse;
 import com.hcmute.drink.dto.GetProductsByCategoryIdResponse;
 import com.hcmute.drink.repository.ProductRepository;
 import com.hcmute.drink.service.ProductService;
@@ -60,12 +61,12 @@ public class ProductServiceImpl implements ProductService {
         }
         return product;
     }
-    public List<GetProductsByCategoryIdResponse> findProductsByCategoryId(String categoryId) throws Exception {
+    public List<GetProductsByCategoryIdResponse> getProductsByCategoryId(String categoryId) throws Exception {
         return productRepository.getProductsByCategoryId(new ObjectId(categoryId));
     }
 
-    public List<ProductCollection> findAllProducts() throws Exception {
-        return productRepository.findAll();
+    public List<GetAllProductsResponse> getAllProducts() throws Exception {
+        return productRepository.getAllProducts();
     }
 
     public boolean deleteProductById(String id) throws Exception {

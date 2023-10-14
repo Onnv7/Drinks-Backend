@@ -1,6 +1,7 @@
 package com.hcmute.drink.repository;
 
 import com.hcmute.drink.collection.ProductCollection;
+import com.hcmute.drink.dto.GetAllProductsResponse;
 import com.hcmute.drink.dto.GetProductsByCategoryIdResponse;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -16,4 +17,9 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
             "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, imageUrl: {$first: '$imageList.url'}}}"
     })
     List<GetProductsByCategoryIdResponse> getProductsByCategoryId(ObjectId categoryId);
+
+    @Aggregation(pipeline = {
+            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, imageUrl: {$first: '$imageList.url'}}}"
+    })
+    List<GetAllProductsResponse> getAllProducts();
 }

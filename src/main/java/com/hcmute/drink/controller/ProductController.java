@@ -1,7 +1,5 @@
 package com.hcmute.drink.controller;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
@@ -13,17 +11,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -84,7 +77,7 @@ public class ProductController {
     @GetMapping(path = PRODUCT_GET_BY_CATEGORY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getProductByCategoryId(@PathVariable("categoryId") String categoryId) {
         try {
-            List<GetProductsByCategoryIdResponse> products = productService.findProductsByCategoryId(categoryId);
+            List<GetProductsByCategoryIdResponse> products = productService.getProductsByCategoryId(categoryId);
 
 
             ResponseAPI res = ResponseAPI.builder()
@@ -103,13 +96,7 @@ public class ProductController {
     @GetMapping(path = PRODUCT_GET_ALL_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getAllProducts() {
         try {
-            List<ProductCollection> products = productService.findAllProducts();
-            List<GetAllProductsResponse> resData = new ArrayList<>();
-            for (ProductCollection product : products) {
-                GetAllProductsResponse response = new GetAllProductsResponse();
-                modelMapper.map(product, response);
-                resData.add(response);
-            }
+            List<GetAllProductsResponse> resData = productService.getAllProducts();
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)

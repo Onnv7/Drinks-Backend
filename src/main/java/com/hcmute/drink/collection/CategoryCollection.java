@@ -27,6 +27,7 @@ public class CategoryCollection {
     private ImageEmbedded image;
 
     // FIXME thêm deleted = false
+    private boolean deleted = false;
 
     @CreatedDate
     private Date createdAt;

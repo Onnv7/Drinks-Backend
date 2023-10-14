@@ -46,13 +46,13 @@ public class OrderController {
     public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Validated CreateOrderRequest body) {
         try {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
-            String  urlPayment =  orderService.createShippingOrder(data, body.getPaymentType(), request);
+            CreateShippingOrderResponse  resData =  orderService.createShippingOrder(data, body.getPaymentType(), request);
             // FIXME: sau khi thanh toán cần 1 api rõ hơn để check với vnpay và update lại transaction thành PAID/UNPAID
 //            Map<String, String> resData = vnPayUtils.createUrlPayment(request, savedData.getTotal(), "Shipping Order Info");
 //            transactionService.updateTransactionAfterDonePaid(savedData.getTransactionId().toString(), resData.get("vnp_TxnRef"), resData.get("vnp_CreateDate"), request);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(urlPayment)
+                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);

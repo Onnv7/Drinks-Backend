@@ -11,9 +11,7 @@ import java.util.List;
 public class GetAllProductsResponse  {
     private String id;
     private String name;
-    public List<ImageModel> imageList;
-    private List<SizeModel> sizeList;
     private String description;
-    private List<ToppingModel> toppingList;
-    private String categoryId;
+    private double price;
+    private String imageUrl;
 }

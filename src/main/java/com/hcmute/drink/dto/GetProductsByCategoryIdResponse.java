@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class GetProductsByCategoryIdResponse {
-    private String _id;
+    private String id;
     private String name;
     private String description;
     private double price;
