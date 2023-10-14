@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 @Data
 public class GetOrderDetailsResponse {
-    private String _id;
+    private String id;
     private String note;
     private double total;
     private OrderType orderType;
@@ -24,11 +24,11 @@ public class GetOrderDetailsResponse {
     private Address address;
     private Date createdAt;
     private List<Product> products;
-    private User user;
+
     private Transaction transaction;
     @Data
     private class Transaction {
-        private String _id;
+        private String id;
         private PaymentStatus status;
         private PaymentType paymentType;
         private double totalPaid;
@@ -36,7 +36,7 @@ public class GetOrderDetailsResponse {
 
     @Data
     private class User {
-        private String _id;
+        private String id;
         private String firstName;
         private String lastName;
         private String email;
@@ -53,15 +53,12 @@ public class GetOrderDetailsResponse {
     private class Product {
         private int quantity;
         private List<Topping> toppings;
+        private String size;
         private double price;
         private String note;
-        private ProductInfo productInfo;
-        @Data
-        public class ProductInfo {
-            private String _id;
-            private String name;
+        private String id;
+        private String name;
 
-        }
         @Data
         public class Topping {
             private String name;

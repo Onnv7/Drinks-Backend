@@ -47,7 +47,8 @@ public class SecurityConstant {
     };
     public static final String[] GET_USER_PATH = {
             ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH,
-            ADDRESS_GET_BY_USER_ID_PATH, ADDRESS_GET_DETAILS_BY_ID_PATH, ADDRESS_SET_DEFAULT_BY_ID_PATH
+            ADDRESS_GET_BY_USER_ID_PATH, ADDRESS_GET_DETAILS_BY_ID_PATH, ADDRESS_SET_DEFAULT_BY_ID_PATH,
+            ORDER_GET_STATUS_LINE_PATH
     };
 
     // Only ADMIN =================================================================

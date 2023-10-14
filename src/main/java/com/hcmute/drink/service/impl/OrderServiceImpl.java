@@ -4,6 +4,7 @@ import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.collection.embedded.*;
+import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.OrderStatus;
@@ -17,6 +18,7 @@ import com.hcmute.drink.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class OrderServiceImpl {
     private final ProductServiceImpl productService;
     private final SecurityUtils securityUtils;
     private final VNPayUtils vnPayUtils;
+    private final ModelMapper modelMapper;
 
     @Autowired
     @Lazy
@@ -64,7 +67,7 @@ public class OrderServiceImpl {
         data.setTotal(totalPrice);
         TransactionCollection transData = new TransactionCollection();
         CreateShippingOrderResponse resData = new CreateShippingOrderResponse();
-        if(paymentType == PaymentType.CASHING) {
+        if (paymentType == PaymentType.CASHING) {
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -76,8 +79,7 @@ public class OrderServiceImpl {
                     .status(PaymentStatus.UNPAID)
                     .paymentType(PaymentType.CASHING).build();
 
-        }
-        else {
+        } else {
             Map<String, String> paymentData = vnPayUtils.createUrlPayment(request, totalPrice, "Shipping Order Info");
 
             transData = TransactionCollection.builder()
@@ -134,7 +136,7 @@ public class OrderServiceImpl {
 
     public OrderCollection findOrderByTransactionId(String id) throws Exception {
         OrderCollection order = orderRepository.findByTransactionId(new ObjectId(id));
-        if(order == null) {
+        if (order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
         return order;
@@ -176,5 +178,15 @@ public class OrderServiceImpl {
         }
         order.setReview(data);
         return orderRepository.save(order);
+    }
+
+    public List<OrderLogModel> getOrderEventLogById(String orderId) throws Exception {
+        OrderCollection order = orderRepository.findById(orderId).orElseThrow();
+        List<OrderLogModel> resData = new ArrayList<OrderLogModel>();
+        List<OrderLogEmbedded> logs = order.getEventLogs();
+        for (OrderLogEmbedded log : logs) {
+            resData.add(modelMapper.map(log, OrderLogModel.class));
+        }
+        return resData;
     }
 }

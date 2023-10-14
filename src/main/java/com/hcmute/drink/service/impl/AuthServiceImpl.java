@@ -7,6 +7,7 @@ import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
 import com.hcmute.drink.repository.ConfirmationRepository;
+import com.hcmute.drink.repository.TokenRepository;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
@@ -38,11 +39,13 @@ public class AuthServiceImpl implements AuthService {
     private final EmailUtils emailService;
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
-    private final JwtUtils jwtIssuer;
+    private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AuthenticationManager authenticationManager;
     private final ConfirmationServiceImpl confirmationService;
     private final UserServiceImpl userService;
+    private final TokenServiceImpl tokenService;
+
     @Value("${twilio.trial_number}")
     private String trialNumber;
 
@@ -66,8 +69,11 @@ public class AuthServiceImpl implements AuthService {
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var token = jwtIssuer.issue(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        return LoginResponse.builder().accessToken(token).userId(principalAuthenticated.getUserId()).build();
+        var token = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        tokenService.createToken(refreshToken, principalAuthenticated.getUserId());
+
+        return LoginResponse.builder().accessToken(token).userId(principalAuthenticated.getUserId()).refreshToken(refreshToken).build();
     }
 
     @Override
@@ -90,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
         for (Role role : savedUser.getRoles()) {
             roleList.add(role.name());
         }
-        var token = jwtIssuer.issue(savedUser.getId(), savedUser.getEmail(), roleList);
+        var token = jwtUtils.issueAccessToken(savedUser.getId(), savedUser.getEmail(), roleList);
         resData.setAccessToken(token);
         resData.setUserId(savedUser.getId());
         return resData;

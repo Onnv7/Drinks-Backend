@@ -2,6 +2,7 @@ package com.hcmute.drink.controller;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.embedded.ReviewEmbedded;
+import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
@@ -144,6 +145,26 @@ public class OrderController {
 
             OrderCollection savedData =  orderService.createReviewForOrder(id, review);
             CreateReviewOrderResponse resData = modelMapper.map(savedData, CreateReviewOrderResponse.class);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(resData)
+                    .message(SuccessConstant.CREATED)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = ORDER_GET_STATUS_LINE_SUM, description = ORDER_GET_STATUS_LINE_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_STATUS_LINE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> get(@PathVariable("orderId") String orderId) {
+        try {
+
+            List<OrderLogModel> resData =  orderService.getOrderEventLogById(orderId);
+
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)

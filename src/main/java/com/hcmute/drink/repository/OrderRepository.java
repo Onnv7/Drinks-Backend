@@ -39,12 +39,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
             "{$unwind: '$products.productInfo'}",
-            "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: '$products' }}}",
-            "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
-            "{$unwind: '$user'}",
+            "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: { _id: '$products._id', quantity: '$products.quantity', size: '$products.size', toppings: '$products.toppings', price: '$products.price', note: '$products.note', name: '$products.productInfo.name', _id: '$products.productInfo._id' } } }}",
             "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
             "{$unwind: '$transaction'}",
-            "{$project: {'products.productId': 0, 'userId': 0, 'transactionId': 0}}"
+            "{$project: {'userId': 0, 'transactionId': 0}}"
     })
     GetOrderDetailsResponse getOrderDetailsById(String id);
     @Aggregation(pipeline = {

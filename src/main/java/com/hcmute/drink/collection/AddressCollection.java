@@ -35,9 +35,9 @@ public class AddressCollection {
 
     private boolean isDefault = false;
 
-    @CreatedDate
-    private Date createdAt;
-
-    @LastModifiedDate
-    private Date updatedAt;
+//    @CreatedDate
+//    private Date createdAt;
+//
+//    @LastModifiedDate
+//    private Date updatedAt;
 }

@@ -79,7 +79,7 @@ public class EmployeeServiceImpl {
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var token = jwtIssuer.issue(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        var token = jwtIssuer.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
         return LoginResponse.builder().accessToken(token).build();
     }
 

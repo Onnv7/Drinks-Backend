@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class GetAllOrderHistoryByUserIdResponse {
-    private String _id;
+    private String id;
     private double total;
     private OrderType orderType;
     private int totalQuantity;

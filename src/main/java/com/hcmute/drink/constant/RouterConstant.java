@@ -106,6 +106,8 @@ public class RouterConstant {
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH;
     public static final String ORDER_CREATE_REVIEW_SUB_PATH = "/rating/" + ORDER_ID;
     public static final String ORDER_CREATE_REVIEW_PATH = ORDER_BASE_PATH + ORDER_CREATE_REVIEW_SUB_PATH;
+    public static final String ORDER_GET_STATUS_LINE_SUB_PATH = "/status/" + ORDER_ID;
+    public static final String ORDER_GET_STATUS_LINE_PATH = ORDER_BASE_PATH + ORDER_GET_STATUS_LINE_SUB_PATH;
 
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";

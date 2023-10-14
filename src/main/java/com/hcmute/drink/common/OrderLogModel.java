@@ -7,7 +7,6 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@Builder
 public class OrderLogModel {
     private OrderStatus orderStatus;
     private Date time;

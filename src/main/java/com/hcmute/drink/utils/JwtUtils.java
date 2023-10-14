@@ -19,10 +19,18 @@ import java.util.List;
 public class JwtUtils {
     private final JwtProperties properties;
 
-    public String issue(String userId, String email, List<String> roles) {
+    public String issueAccessToken(String userId, String email, List<String> roles) {
         return JWT.create()
                 .withSubject(String.valueOf(userId))
-                .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
+                .withExpiresAt(Instant.now().plus(Duration.of(30, ChronoUnit.DAYS)))
+                .withClaim("email", email)
+                .withClaim("roles", roles)
+                .sign(Algorithm.HMAC256(properties.getSecretKey()));
+    }
+    public String issueRefreshToken(String userId, String email, List<String> roles) {
+        return JWT.create()
+                .withSubject(String.valueOf(userId))
+                .withExpiresAt(Instant.now().plus(Duration.of(7, ChronoUnit.DAYS)))
                 .withClaim("email", email)
                 .withClaim("roles", roles)
                 .sign(Algorithm.HMAC256(properties.getSecretKey()));
