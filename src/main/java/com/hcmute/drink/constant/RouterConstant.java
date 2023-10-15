@@ -141,5 +141,7 @@ public class RouterConstant {
     public static final String AUTH_CHANGE_PASSWORD_PATH = AUTH_BASE_PATH + AUTH_CHANGE_PASSWORD_SUB_PATH;
     public static final String AUTH_EMPLOYEE_LOGIN_SUB_PATH = "/employee/login";
     public static final String AUTH_EMPLOYEE_LOGIN_PATH = AUTH_BASE_PATH + AUTH_EMPLOYEE_LOGIN_SUB_PATH;
+    public static final String AUTH_REFRESH_TOKEN_SUB_PATH = "/refresh-token";
+    public static final String AUTH_REFRESH_TOKEN_PATH = AUTH_BASE_PATH + AUTH_REFRESH_TOKEN_SUB_PATH;
 
 }

@@ -1,13 +1,15 @@
 package com.hcmute.drink.service.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hcmute.drink.collection.ConfirmationCollection;
+import com.hcmute.drink.collection.TokenCollection;
 import com.hcmute.drink.collection.UserCollection;
+import com.hcmute.drink.dto.RefreshTokenResponse;
 import com.hcmute.drink.dto.RegisterResponse;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
 import com.hcmute.drink.repository.ConfirmationRepository;
-import com.hcmute.drink.repository.TokenRepository;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
@@ -30,6 +32,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.hcmute.drink.constant.ErrorConstant.*;
+import static com.hcmute.drink.utils.JwtUtils.ROLES_CLAIM_KEY;
 
 @Service
 @RequiredArgsConstructor
@@ -96,15 +101,17 @@ public class AuthServiceImpl implements AuthService {
         for (Role role : savedUser.getRoles()) {
             roleList.add(role.name());
         }
-        var token = jwtUtils.issueAccessToken(savedUser.getId(), savedUser.getEmail(), roleList);
-        resData.setAccessToken(token);
+        var accessToken = jwtUtils.issueAccessToken(savedUser.getId(), savedUser.getEmail(), roleList);
+        var refreshToken = jwtUtils.issueRefreshToken(savedUser.getId(), savedUser.getEmail(), roleList);
+        resData.setAccessToken(accessToken);
+        resData.setRefreshToken(refreshToken);
         resData.setUserId(savedUser.getId());
         return resData;
     }
 
     public void resendCode(String email) throws Exception {
         ConfirmationCollection confirmation = confirmationRepository.findByEmail(email);
-        if(confirmation == null) {
+        if (confirmation == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + email);
         }
 
@@ -153,4 +160,43 @@ public class AuthServiceImpl implements AuthService {
         throw new Exception(ErrorConstant.EMAIL_UNVERIFIED);
     }
 
+    public RefreshTokenResponse refreshToken(String refreshToken) throws Exception {
+        DecodedJWT jwt = null;
+
+        try {
+            jwt = jwtUtils.decodeRefreshToken(refreshToken);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        TokenCollection token = tokenService.findByRefreshToken(refreshToken);
+
+        String userId = jwt.getSubject().toString();
+        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+
+        UserCollection user = userService.findUserById(userId);
+
+        String newAccessToken = "";
+        String newRefreshToken = "";
+
+
+        if (token == null) {
+            throw new Exception(INVALID_TOKEN);
+        } else {
+            if(token.isUsed()) {
+                tokenService.deleteAllByUserId(userId);
+
+                throw new Exception(STOLEN_TOKEN);
+            }
+            newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getEmail(), roles);
+            newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getEmail(), roles);
+            tokenService.updateTokenIsUsed(token.getId());
+            tokenService.createToken(newRefreshToken, userId);
+        }
+
+        RefreshTokenResponse resData = RefreshTokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
+        return resData;
+    }
 }

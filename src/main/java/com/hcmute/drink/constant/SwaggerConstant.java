@@ -32,6 +32,8 @@ public class SwaggerConstant {
     public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_EMPLOYEE_LOGIN_SUM = "Employee login to get token";
     public static final String AUTH_EMPLOYEE_LOGIN_DES = "This endpoint returns a token";
+    public static final String AUTH_REFRESH_TOKEN_SUM = "Create new access token and refresh token";
+    public static final String AUTH_REFRESH_TOKEN_DES = "This endpoint returns a new token";
 
     // For user =================================================================
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";

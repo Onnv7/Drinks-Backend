@@ -39,7 +39,9 @@ public class ExceptionHandlerController {
     private static final List<String> error403= Arrays.asList(
             ACCESS_DENIED
     );
-
+    private static final List<String> error401= Arrays.asList(
+            INVALID_TOKEN, EXPIRED_TOKEN
+    );
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException ex) {

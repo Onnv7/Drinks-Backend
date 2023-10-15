@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -186,7 +187,7 @@ public class AuthController {
     @Operation(summary = AUTH_EMPLOYEE_LOGIN_SUM, description = AUTH_EMPLOYEE_LOGIN_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(path = AUTH_EMPLOYEE_LOGIN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated CreateEmployeeRequest body) {
+    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated EmployeeLoginRequest body) {
         try {
             LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
 
@@ -200,5 +201,30 @@ public class AuthController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Operation(summary = AUTH_REFRESH_TOKEN_SUM, description = AUTH_REFRESH_TOKEN_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_NEW_TOKEN, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(path = AUTH_REFRESH_TOKEN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> refreshToken(@RequestBody @Validated RefreshTokenRequest body) {
+        try {
+            RefreshTokenResponse data = authService.refreshToken(body.getRefreshToken());
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(data)
+                    .message(SuccessConstant.GET_NEW_TOKEN)
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/get-client-info")
+    public String getClientInfo(HttpServletRequest request) {
+        String clientIP = request.getRemoteAddr();
+        String clientDevice = request.getHeader("User-Agent");
+        return "Client IP: " + clientIP + "<br>Client Device: " + clientDevice;
     }
 }

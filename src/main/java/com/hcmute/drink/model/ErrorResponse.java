@@ -16,5 +16,4 @@ public class ErrorResponse {
     private boolean success;
     private String message;
     private String stack;
-
 }

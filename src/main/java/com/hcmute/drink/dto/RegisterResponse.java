@@ -16,4 +16,6 @@ import java.util.Date;
 public class RegisterResponse {
     private String userId;
     private String accessToken;
+    private String refreshToken;
 }
+

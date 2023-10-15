@@ -18,5 +18,5 @@ public class TokenCollection {
     private String id;
     private String refreshToken;
     private ObjectId userId;
-    private boolean enable = true;
+    private boolean used = false;
 }

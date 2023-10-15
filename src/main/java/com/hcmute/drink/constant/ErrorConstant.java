@@ -17,4 +17,7 @@ public class ErrorConstant {
     public static final String PRODUCT_NOT_FOUND = "PRODUCT NOT FOUND";
     public static final String OVER_FIVE_ADDRESS = "Do not add more than 5 addresses";
     public static final String ORDER_NOT_COMPLETED = "Order not completed";
+    public static final String INVALID_TOKEN = "Token validation failed";
+    public static final String EXPIRED_TOKEN = "Token expired. Please refresh your token.";
+    public static final String STOLEN_TOKEN = "Stolen tokens";
 }
