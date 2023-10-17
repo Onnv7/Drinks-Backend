@@ -1,9 +1,8 @@
 package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.collection.AddressCollection;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.UpdateUserRequest;
+import com.hcmute.drink.dto.UpdatePasswordRequest;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.service.UserService;
 import com.hcmute.drink.utils.SecurityUtils;
@@ -11,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,9 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapperNotNull;
     private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Lazy
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
     @Override
@@ -78,15 +79,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updatePassword(String userId, String password) throws Exception {
-        UserCollection result = new UserCollection();
-        Optional<UserCollection> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+    public boolean updatePassword(String userId, UpdatePasswordRequest data) throws Exception {
+
+        UserCollection user = userRepository.findById(userId).orElseThrow();
+
+        boolean isValid = passwordEncoder.matches(data.getOldPassword(), user.getPassword());
+
+        if(!isValid) {
+            throw new Exception(ErrorConstant.INVALID_PASSWORD);
         }
-        result = user.get();
-        result.setPassword(passwordEncoder.encode(password));
-        if (userRepository.save(result) != null) {
+
+        user.setPassword(passwordEncoder.encode(data.getNewPassword()));
+        if (userRepository.save(user) != null) {
             return true;
         }
         throw new Exception(ErrorConstant.CREATED_FAILED);

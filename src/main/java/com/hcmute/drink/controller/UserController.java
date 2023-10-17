@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<ResponseAPI> changePassword(@PathVariable String userId,
                                                       @RequestBody @Validated UpdatePasswordRequest body) {
         try {
-            userService.updatePassword(userId, body.getPassword());
+            userService.updatePassword(userId, body);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .success(true)

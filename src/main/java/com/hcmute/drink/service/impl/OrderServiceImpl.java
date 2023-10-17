@@ -155,25 +155,19 @@ public class OrderServiceImpl {
     }
 
     public List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String userId, OrderStatus orderStatus) throws Exception {
-        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(userId, orderStatus);
+        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(new ObjectId(userId), orderStatus);
         if (order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + userId);
         }
         return order;
     }
 
-    public List<GetAllOrderHistoryByUserIdResponse> completeOrder(String userId, OrderStatus orderStatus) throws Exception {
-        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(userId, orderStatus);
-        if (order == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND + userId);
-        }
-        return order;
-    }
+
 
     public OrderCollection createReviewForOrder(String id, ReviewEmbedded data) throws Exception {
-        OrderCollection order = findOrderByTransactionId(id);
+        OrderCollection order = findOrderById(id);
         securityUtils.exceptionIfNotMe(order.getUserId().toString());
-        if (order.getEventLogs().get(order.getEventLogs().size()).getOrderStatus() != OrderStatus.SUCCEED) {
+        if (order.getEventLogs().get(order.getEventLogs().size() -1).getOrderStatus() != OrderStatus.SUCCEED) {
             throw new Exception(ErrorConstant.ORDER_NOT_COMPLETED);
         }
         order.setReview(data);

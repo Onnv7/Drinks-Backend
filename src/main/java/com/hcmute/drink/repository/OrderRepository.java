@@ -39,7 +39,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
             "{$unwind: '$products.productInfo'}",
-            "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: { _id: '$products._id', quantity: '$products.quantity', size: '$products.size', toppings: '$products.toppings', price: '$products.price', note: '$products.note', name: '$products.productInfo.name', _id: '$products.productInfo._id' } } }}",
+            "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, review: { $first: '$review'}, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: { _id: '$products._id', quantity: '$products.quantity', size: '$products.size', toppings: '$products.toppings', price: '$products.price', note: '$products.note', name: '$products.productInfo.name', _id: '$products.productInfo._id' } } }}",
             "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
             "{$unwind: '$transaction'}",
             "{$project: {'userId': 0, 'transactionId': 0}}"
@@ -50,12 +50,13 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
             "{$match: {'lastEventLog.orderStatus': ?1}}",
             "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
-            "{$unwind: '$products.productInfo'}",
-            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventLogs: {$first: '$eventLogs'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productInfo: {$first: {name: '$products.productInfo.name', image: {$arrayElemAt: ['$products.productInfo.imageList', 0]}}}}}}",
-            "{$project: {userId: 0, note: 0, eventLogs: 0, transactionId: 0, address: 0, updatedAt: 0}}"
+            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
+            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productName: {$first: {$arrayElemAt: ['$products.productSample.name', 0]}}, thumbnailUrl: {$first: {$arrayElemAt: ['$products.productSample.imageList.url', 0]}}, orderStatus: {$last: '$lastEventLog.orderStatus'}}}",
+            "{$addFields: {thumbnailUrl: {$arrayElemAt: ['$thumbnailUrl', 0]}}}",
+            "{$addFields: {orderStatus: {$arrayElemAt: ['$orderStatus', 0]}}}",
+            "{$project: {_id: 1, orderType: 1, total: 1, createdAt: 1, updatedAt: 1, orderStatus: 1, productName: 1, thumbnailUrl: 1}}"
     })
-    List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String id, OrderStatus orderStatus);
+    List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(ObjectId id, OrderStatus orderStatus);
 
 
     @Query("{'_id' : ?0}")

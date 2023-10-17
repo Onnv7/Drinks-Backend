@@ -26,6 +26,13 @@ public class GetOrderDetailsResponse {
     private List<Product> products;
 
     private Transaction transaction;
+    private Review review;
+
+    @Data
+    private class Review {
+        private int rating;
+        private String content;
+    }
     @Data
     private class Transaction {
         private String id;

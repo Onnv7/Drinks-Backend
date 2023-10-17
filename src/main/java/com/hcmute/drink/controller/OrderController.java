@@ -144,10 +144,11 @@ public class OrderController {
             ReviewEmbedded review = modelMapper.map(body, ReviewEmbedded.class);
 
             OrderCollection savedData =  orderService.createReviewForOrder(id, review);
+            // TODO: không cần response
             CreateReviewOrderResponse resData = modelMapper.map(savedData, CreateReviewOrderResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(resData)
+//                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);

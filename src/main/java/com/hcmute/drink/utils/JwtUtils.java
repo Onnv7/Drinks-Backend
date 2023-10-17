@@ -25,7 +25,7 @@ public class JwtUtils {
     public String issueAccessToken(String userId, String email, List<String> roles) {
         return JWT.create()
                 .withSubject(String.valueOf(userId))
-                .withExpiresAt(Instant.now().plus(Duration.of(30, ChronoUnit.SECONDS)))
+                .withExpiresAt(Instant.now().plus(Duration.of(30, ChronoUnit.DAYS)))
                 .withClaim(EMAIL_CLAIM_KEY, email)
                 .withClaim(ROLES_CLAIM_KEY, roles)
                 .sign(Algorithm.HMAC256(properties.getAccessTokenKey()));
@@ -61,10 +61,5 @@ public class JwtUtils {
         return JWT.require(Algorithm.HMAC256(properties.getRefreshTokenKey()))
                 .build()
                 .verify(token);
-    }
-    public boolean isExpiredToken(DecodedJWT jwt) {
-            Date expireTime = jwt.getExpiresAt();
-
-            return !expireTime.before(new Date());
     }
 }

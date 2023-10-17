@@ -98,10 +98,11 @@ public class SecurityConstant {
     // ADMIN + USER =================================================================
     public static final String[] GET_ADMIN_USER_PATH = {
             USER_GET_BY_ID_PATH,
+            TRANSACTION_UPDATE_BY_ID_PATH,
     };
     public static final String[] PATCH_ADMIN_USER_PATH = {
 
-            TRANSACTION_UPDATE_BY_ID_PATH,
+
     };
 
     public static final String[] POST_ADMIN_USER_PATH = {

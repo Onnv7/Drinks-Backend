@@ -169,7 +169,7 @@ public class AuthController {
     @Operation(summary = AUTH_CHANGE_PASSWORD_SUM, description = AUTH_CHANGE_PASSWORD_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(AUTH_CHANGE_PASSWORD_SUB_PATH)
-    public ResponseEntity<ResponseAPI> changePassword(@RequestBody @Validated ChangePasswordRequest body) {
+    public ResponseEntity<ResponseAPI> changePasswordWhenForgot(@RequestBody @Validated ChangePasswordRequest body) {
         try {
             userService.updatePasswordByEmail(body.getEmail(), body.getPassword());
 
@@ -220,11 +220,5 @@ public class AuthController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-    @GetMapping("/get-client-info")
-    public String getClientInfo(HttpServletRequest request) {
-        String clientIP = request.getRemoteAddr();
-        String clientDevice = request.getHeader("User-Agent");
-        return "Client IP: " + clientIP + "<br>Client Device: " + clientDevice;
     }
 }

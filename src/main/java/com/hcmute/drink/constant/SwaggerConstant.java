@@ -28,7 +28,7 @@ public class SwaggerConstant {
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM = "Send OTP code to phone number (The function is under maintenance)";
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_DES= NOTIFICATION_NOT_DATA;
-    public static final String AUTH_CHANGE_PASSWORD_SUM = "Change password by email";
+    public static final String AUTH_CHANGE_PASSWORD_SUM = "Change password by email when forgot password";
     public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_EMPLOYEE_LOGIN_SUM = "Employee login to get token";
     public static final String AUTH_EMPLOYEE_LOGIN_DES = "This endpoint returns a token";

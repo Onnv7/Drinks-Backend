@@ -20,4 +20,5 @@ public class ErrorConstant {
     public static final String INVALID_TOKEN = "Token validation failed";
     public static final String EXPIRED_TOKEN = "Token expired. Please refresh your token.";
     public static final String STOLEN_TOKEN = "Stolen tokens";
+    public static final String INVALID_PASSWORD = "INVALID PASSWORD";
 }
