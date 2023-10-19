@@ -49,12 +49,11 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$match: {userId: ?0}}",
             "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
             "{$match: {'lastEventLog.orderStatus': ?1}}",
+            "{ $unwind: '$lastEventLog' }",
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
-            "{$group: {_id: '$_id', userId: {$first: '$userId'}, note: {$first: '$note'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, transactionId: {$first: '$transactionId'}, address: {$first: '$address'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, totalQuantity: {$sum: '$products.quantity'}, productName: {$first: {$arrayElemAt: ['$products.productSample.name', 0]}}, thumbnailUrl: {$first: {$arrayElemAt: ['$products.productSample.imageList.url', 0]}}, orderStatus: {$last: '$lastEventLog.orderStatus'}}}",
-            "{$addFields: {thumbnailUrl: {$arrayElemAt: ['$thumbnailUrl', 0]}}}",
-            "{$addFields: {orderStatus: {$arrayElemAt: ['$orderStatus', 0]}}}",
-            "{$project: {_id: 1, orderType: 1, total: 1, createdAt: 1, updatedAt: 1, orderStatus: 1, productName: 1, thumbnailUrl: 1}}"
+            "{ $unwind: '$products.productSample' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, productName: {$addToSet: '$products.productSample.name'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}}}"
     })
     List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(ObjectId id, OrderStatus orderStatus);
 

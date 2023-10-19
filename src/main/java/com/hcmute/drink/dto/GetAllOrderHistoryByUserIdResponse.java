@@ -5,17 +5,16 @@ import com.hcmute.drink.enums.OrderType;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class GetAllOrderHistoryByUserIdResponse {
     private String id;
     private double total;
     private OrderType orderType;
-    private String productName;
-    private String thumbnailUrl;
-    private OrderStatus orderStatus;
-    private Date createdAt;
-    private Date updatedAt;
+    private List<String> productName;
+    private OrderStatus statusLastEvent;
+    private Date timeLastEvent;
 
 
 }

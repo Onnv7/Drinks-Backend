@@ -20,7 +20,7 @@ import java.util.Date;
 public class ConfirmationCollection {
     @Id
     private String id;
-    @Indexed(unique = true)
+    
     private String code;
     @Indexed(unique = true)
     private String email;
