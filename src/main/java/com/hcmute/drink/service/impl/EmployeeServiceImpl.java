@@ -3,7 +3,7 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
-import com.hcmute.drink.dto.RefreshTokenResponse;
+
 import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +26,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl {
     private final EmployeeRepository employeeRepository;
+    private final TokenServiceImpl tokenService;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Lazy
     @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Lazy
+    @Autowired
     private AuthenticationManager authenticationManager;
-    private final JwtUtils jwtIssuer;
+    private final JwtUtils jwtUtils;
     @Autowired
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
@@ -54,6 +56,7 @@ public class EmployeeServiceImpl {
         if (existedEmployee != null) {
             throw new Exception(ErrorConstant.REGISTERED_EMAIL);
         }
+        data.setPassword(passwordEncoder.encode(data.getPassword()));
         EmployeeCollection newEmployee = employeeRepository.save(data);
         if (newEmployee == null) {
             throw new Exception(ErrorConstant.CREATED_FAILED);
@@ -80,8 +83,11 @@ public class EmployeeServiceImpl {
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var token = jwtIssuer.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        return LoginResponse.builder().accessToken(token).build();
+        var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        tokenService.createToken(refreshToken, principalAuthenticated.getUserId());
+
+        return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).userId(principalAuthenticated.getUserId()).build();
     }
 
     public EmployeeCollection updateEmployee(EmployeeCollection data) throws Exception {

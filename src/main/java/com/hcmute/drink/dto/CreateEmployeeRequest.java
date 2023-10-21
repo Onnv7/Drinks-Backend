@@ -15,7 +15,6 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Data
 public class CreateEmployeeRequest {
     @Schema(example = USERNAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
-    @Email
     @NotBlank
     private String username;
 

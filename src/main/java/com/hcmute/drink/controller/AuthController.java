@@ -13,10 +13,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -196,8 +199,13 @@ public class AuthController {
                     .data(data)
                     .message(SuccessConstant.LOGIN)
                     .build();
+//            Cookie cookie = new Cookie("refreshToken", data.getRefreshToken());
+//            cookie.setHttpOnly(true); // Cho phép truy cập từ JavaScript
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.SET_COOKIE,"refreshToken=" + data.getRefreshToken() +"; Max-Age=604800; Path=/; Secure; HttpOnly");
+//            response.addCookie(cookie);
 
-            return new ResponseEntity<>(res, StatusCode.OK);
+            return new ResponseEntity<>(res, headers, StatusCode.OK);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

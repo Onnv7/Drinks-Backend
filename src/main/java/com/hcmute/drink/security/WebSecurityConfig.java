@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +28,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.hcmute.drink.constant.SecurityConstant.*;
 
@@ -90,7 +94,23 @@ public class WebSecurityConfig {
 //                .authenticationProvider(userCustomAuthenticationProvider)
 //                .build();
     }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
 
+        configuration.setAllowCredentials(true);
+//        configuration.addAllowedOrigin(corsAllowedOrigin); // @Value: http://localhost:8080
+        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedMethod("*");
+
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//        configuration.addAllowedHeader(List.of("Authorization"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
         System.out.println("filter chain");
@@ -98,8 +118,9 @@ public class WebSecurityConfig {
         http.addFilterBefore(myAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 //        http.headers().httpStrictTransportSecurity().disable();
         // set route sẽ ăn từ trên xuống (ưu tiên cái đầu tiên)
+
         http
-                .cors().and()
+                .cors(Customizer.withDefaults())
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
