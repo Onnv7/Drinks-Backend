@@ -10,12 +10,15 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class UpdateCategoryRequest {
-    @Schema(description = NOT_NULL_DES)
-    @NotNull
+    @Schema(description = OPTIONAL_DES)
     private MultipartFile image;
 
 
     @Schema(example = CATEGORY_NAME_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String name;
+
+    @Schema(example = BOOLEAN_EX, description = NOT_NULL_DES)
+    @NotNull
+    private boolean enabled;
 }

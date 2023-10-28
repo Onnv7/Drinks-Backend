@@ -26,8 +26,8 @@ public class CategoryCollection {
     private String name;
     private ImageEmbedded image;
 
-    // FIXME thêm deleted = false
-    private boolean deleted = false;
+    @Builder.Default
+    private boolean enabled = true;
 
     @CreatedDate
     private Date createdAt;

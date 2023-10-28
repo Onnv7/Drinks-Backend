@@ -190,7 +190,7 @@ public class AuthController {
     @Operation(summary = AUTH_EMPLOYEE_LOGIN_SUM, description = AUTH_EMPLOYEE_LOGIN_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PostMapping(path = AUTH_EMPLOYEE_LOGIN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated EmployeeLoginRequest body) {
+    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated EmployeeLoginRequest body, HttpServletResponse response) {
         try {
             LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
 
@@ -200,8 +200,16 @@ public class AuthController {
                     .message(SuccessConstant.LOGIN)
                     .build();
 //            Cookie cookie = new Cookie("refreshToken", data.getRefreshToken());
-//            cookie.setHttpOnly(true); // Cho phép truy cập từ JavaScript
+//            cookie.setMaxAge(7 * 24 * 60 * 60);
+//            cookie.setSecure(true);
+//            cookie.setHttpOnly(true);
+//            cookie.setPath("/");
+//            response.addCookie(cookie);
+
             HttpHeaders headers = new HttpHeaders();
+
+//            headers.add("Set-Cookie","key="+"value"+";Max-Age=3600;Secure; HttpOnly");
+            // TODO: kiem tra expire coookie
             headers.add(HttpHeaders.SET_COOKIE,"refreshToken=" + data.getRefreshToken() +"; Max-Age=604800; Path=/; Secure; HttpOnly");
 //            response.addCookie(cookie);
 

@@ -57,7 +57,7 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> getCategoryById(@PathVariable("categoryId") String categoryId) {
         try {
             CategoryCollection category = categoryService.getCategoryById(categoryId);
-            GetCategoryResponse resData = modelMapper.map(category, GetCategoryResponse.class);
+            GetAllCategoryResponse resData = modelMapper.map(category, GetAllCategoryResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
@@ -75,10 +75,27 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> getAllCategories() {
         try {
             List<CategoryCollection> list = categoryService.getAllCategories();
-            List<GetCategoryResponse> resData = new ArrayList<>();
+            List<GetAllCategoryResponse> resData = new ArrayList<>();
             for (CategoryCollection category : list) {
-                resData.add(modelMapper.map(category, GetCategoryResponse.class));
+                resData.add(modelMapper.map(category, GetAllCategoryResponse.class));
             }
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.GET)
+                    .data(resData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = CATEGORY_GET_ALL_WITHOUT_DELETED_SUM, description = CATEGORY_GET_ALL_WITHOUT_DELETED_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = CATEGORY_GET_ALL_WITHOUT_DELETED_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getAllCategoriesWithoutDeleted() {
+        try {
+            List<GetAllCategoriesWithoutDisabledResponse> resData = categoryService.getAllCategoriesWithoutDeleted();
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.GET)
@@ -115,6 +132,23 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> deleteCategoryById(@PathVariable("categoryId") String id) {
         try {
             categoryService.deleteCategoryById(id);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.DELETED)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = CATEGORY_SOFT_DELETE_BY_ID_SUM, description = CATEGORY_SOFT_DELETE_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @DeleteMapping(path = CATEGORY_SOFT_DELETE_BY_ID_SUB_PATH)
+    public ResponseEntity<ResponseAPI> softDeleteCategoryById(@PathVariable("categoryId") String id) {
+        try {
+            categoryService.softDeleteCategoryById(id);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .message(SuccessConstant.DELETED)

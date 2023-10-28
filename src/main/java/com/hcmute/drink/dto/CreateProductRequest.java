@@ -25,11 +25,9 @@ public class CreateProductRequest {
 //    @Min(PRODUCT_PRICE_MIN)
 //    private double price;
 
-
-
-    @Schema(description = NOT_EMPTY_DES)
-    @NotEmpty
-    private List<MultipartFile> imageList;
+    @Schema(description = NOT_NULL_DES)
+    @NotNull
+    private MultipartFile image;
 
     // example = PRODUCT_SIZE_EX
 //    @Schema(description = OPTIONAL_DES)

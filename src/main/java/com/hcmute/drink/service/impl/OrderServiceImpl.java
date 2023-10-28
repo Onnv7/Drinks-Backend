@@ -55,7 +55,8 @@ public class OrderServiceImpl {
                 throw new Exception(ErrorConstant.PRODUCT_NOT_FOUND + product.getProductId().toString());
             }
             double totalPriceToppings = 0;
-            for (ToppingEmbedded topping : product.getToppings()) {
+            List<ToppingEmbedded> toppings = product.getToppings() != null ? product.getToppings() : new ArrayList<>();
+            for (ToppingEmbedded topping : toppings) {
                 totalPriceToppings += topping.getPrice();
             }
             totalPrice += totalPriceToppings;
@@ -132,6 +133,14 @@ public class OrderServiceImpl {
         List<GetAllShippingOrdersResponse> ordersCreatedOnDate = orderRepository.getAllShippingOrdersQueueForEmployee(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()));
 
         return ordersCreatedOnDate;
+    }
+
+    public List<GetAllOrdersByStatusResponse> getAllOrdersByOrderStatusInDay(OrderType orderType, OrderStatus orderStatus) throws Exception {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        ZonedDateTime endOfDay = now.withHour(23).withMinute(59).withSecond(59).withNano(999);
+        List<GetAllOrdersByStatusResponse> data = orderRepository.getAllOrdersByOrderStatusInDay(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()), orderType, orderStatus);
+        return data;
     }
 
     public OrderCollection findOrderByTransactionId(String id) throws Exception {

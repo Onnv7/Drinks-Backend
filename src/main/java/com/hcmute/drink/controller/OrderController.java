@@ -7,6 +7,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.OrderStatus;
+import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.service.impl.OrderServiceImpl;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
@@ -48,10 +48,7 @@ public class OrderController {
         try {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
             CreateShippingOrderResponse  resData =  orderService.createShippingOrder(data, body.getPaymentType(), request);
-            // FIXME: sau khi thanh toán cần 1 api rõ hơn để check với vnpay và update lại transaction thành PAID/UNPAID
-//            Map<String, String> resData = vnPayUtils.createUrlPayment(request, savedData.getTotal(), "Shipping Order Info");
-//            transactionService.updateTransactionAfterDonePaid(savedData.getTransactionId().toString(), resData.get("vnp_TxnRef"), resData.get("vnp_CreateDate"), request);
-            ResponseAPI res = ResponseAPI.builder()
+              ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)
                     .message(SuccessConstant.CREATED)
@@ -100,6 +97,25 @@ public class OrderController {
             throw new RuntimeException(e);
         }
     }
+
+    @Operation(summary = ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_SUM, description = ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_ALL_SHIPPING_BY_STATUS_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getAllOrdersByOrderStatusInDay(@PathVariable("orderType") OrderType orderType, @PathVariable("orderStatus") OrderStatus orderStatus) {
+        try {
+            List<GetAllOrdersByStatusResponse> dataRes =  orderService.getAllOrdersByOrderStatusInDay(orderType, orderStatus);
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(dataRes)
+                    .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Operation(summary = ORDER_GET_DETAILS_BY_ID_SUM, description = ORDER_GET_DETAILS_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_DETAILS_BY_ID_SUB_PATH)

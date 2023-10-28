@@ -20,6 +20,7 @@ import static com.hcmute.drink.constant.CloudinaryConstant.*;
 public class CloudinaryUtils {
     private final Cloudinary cloudinary;
 
+    // TODO: co the xoas
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         return cloudinary.uploader()
                 .upload(multipartFile.getBytes(),
@@ -30,9 +31,9 @@ public class CloudinaryUtils {
                 .get(URL_PROPERTY)
                 .toString();
     }
-    public HashMap<String, String> uploadFileToFolder(String pathName, String fileName, MultipartFile multipartFile) throws IOException {
+    public HashMap<String, String> uploadFileToFolder(String pathName, String fileName, byte[] imageData) throws IOException {
         var file = cloudinary.uploader()
-                .upload(multipartFile.getBytes(),
+                .upload(imageData,
                         Map.of(
                                 PUBLIC_ID, fileName,
                                 UPLOAD_PRESET, pathName,
@@ -47,4 +48,5 @@ public class CloudinaryUtils {
         Map<String, String> options = ObjectUtils.asMap("invalidate", true);
         cloudinary.uploader().destroy(publicId, options);
     }
+
 }

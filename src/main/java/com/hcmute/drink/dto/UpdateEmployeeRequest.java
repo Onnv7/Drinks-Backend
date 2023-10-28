@@ -28,4 +28,8 @@ public class UpdateEmployeeRequest {
     @Schema(example = GENDER_EX, description = NOT_NULL_DES)
     @NotNull
     private Gender gender;
+
+    @Schema(example = BOOLEAN_EX, description = NOT_NULL_DES)
+    @NotNull
+    private boolean enabled;
 }

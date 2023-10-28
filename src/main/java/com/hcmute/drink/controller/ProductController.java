@@ -39,7 +39,7 @@ public class ProductController {
         try {
             ProductCollection product = modelMapper.map(body, ProductCollection.class);
 
-            product = productService.createProduct(product, body.getImageList());
+            product = productService.createProduct(product, body.getImage());
             CreateProductResponse resData = modelMapper.map(product, CreateProductResponse.class);
 
             ResponseAPI res = ResponseAPI.builder()
@@ -55,12 +55,29 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_GET_BY_ID_SUM, description = PRODUCT_GET_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping(path = PRODUCT_GET_BY_ID_SUB_PATH)
-    protected ResponseEntity<ResponseAPI> getProductById(@PathVariable("productId") String id) {
+    @GetMapping(path = PRODUCT_GET_DETAILS_BY_ID_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> getProductDetailsById(@PathVariable("productId") String id) {
         try {
             ProductCollection product = productService.findProductById(id);
             GetProductByIdResponse resData = modelMapper.map(product, GetProductByIdResponse.class);
 
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .timestamp(new Date())
+                    .data(resData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = PRODUCT_GET_ENABLED_BY_ID_SUM, description = PRODUCT_GET_ENABLED_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = PRODUCT_GET_ENABLED_BY_ID_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> getProductEnabledById(@PathVariable("productId") String id) {
+        try {
+            GetProductEnabledByIdResponse resData = productService.getProductEnabledById(id);
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)
                     .timestamp(new Date())
@@ -84,6 +101,24 @@ public class ProductController {
                     .message(SuccessConstant.GET)
                     .timestamp(new Date())
                     .data(products)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = PRODUCT_GET_ALL_ENABLED_SUM, description = PRODUCT_GET_ALL_ENABLED_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = PRODUCT_GET_ALL_ENABLED_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> getAllProductsEnabled() {
+        try {
+            List<GetAllProductsEnabledResponse> resData = productService.getAllProductsEnabled();
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .timestamp(new Date())
+                    .data(resData)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         } catch (Exception e) {
@@ -126,15 +161,33 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = PRODUCT_SOFT_DELETE_BY_ID_SUM, description = PRODUCT_SOFT_DELETE_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @DeleteMapping(path = PRODUCT_SOFT_DELETE_BY_ID_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> softDeleteProductById(@PathVariable("productId") String id) {
+        try {
+            productService.softDeleteProductById(id);
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.DELETED)
+                    .timestamp(new Date())
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(path = PRODUCT_UPDATE_BY_ID_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> updateProductById(@ModelAttribute @Validated UpdateProductRequest body,
                                                          @PathVariable("productId") String id) {
         try {
-            ProductCollection data = modelMapper.map(body, ProductCollection.class);
-            data.setId(id);
-            ProductCollection updatedData = productService.updateProductById(data, body.getImages());
+//            ProductCollection data = modelMapper.map(body, ProductCollection.class);
+//            data.setId(id);
+            ProductCollection updatedData = productService.updateProductById(body, id);
             UpdateProductResponse resData = modelMapper.map(updatedData, UpdateProductResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)

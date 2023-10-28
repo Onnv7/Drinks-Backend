@@ -11,10 +11,11 @@ import java.util.List;
 public class UpdateProductResponse {
     private String id;
     private String name;
-    private List<ImageModel> imageList;
+    private ImageModel image;
     private List<SizeModel> sizeList;
     private String description;
     private List<ToppingModel> toppingList;
     private String categoryId;
+    private boolean enabled;
 
 }

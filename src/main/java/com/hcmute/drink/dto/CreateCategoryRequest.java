@@ -11,6 +11,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class CreateCategoryRequest {
+    @Schema(description = NOT_NULL_DES)
     @NotNull
     private MultipartFile image;
 

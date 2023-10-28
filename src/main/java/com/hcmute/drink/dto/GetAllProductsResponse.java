@@ -1,17 +1,17 @@
 package com.hcmute.drink.dto;
 
-import com.hcmute.drink.common.ImageModel;
-import com.hcmute.drink.common.SizeModel;
-import com.hcmute.drink.common.ToppingModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class GetAllProductsResponse  {
+public class GetAllProductsResponse {
     private String id;
     private String name;
     private String description;
     private double price;
-    private String imageUrl;
+    @JsonProperty("thumbnailUrl")
+    private String thumbnail;
+    @JsonProperty("imageUrl")
+    private String image;
+    private boolean enabled;
 }

@@ -2,9 +2,11 @@ package com.hcmute.drink.repository;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
+import com.hcmute.drink.dto.GetAllOrdersByStatusResponse;
 import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
 import com.hcmute.drink.dto.GetOrderDetailsResponse;
 import com.hcmute.drink.enums.OrderStatus;
+import com.hcmute.drink.enums.OrderType;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -33,6 +35,15 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$project: {user: 1, total: 1, orderType: 1}}"
     })
     List<GetAllShippingOrdersResponse> getAllShippingOrdersQueueForEmployee(Date from, Date to);
+
+    @Aggregation(pipeline = {
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$match: {orderType: ?2, createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?3}}",
+            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
+            "{ $unwind: '$products.productSample' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, productName: {$addToSet: '$products.productSample.name'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}}}"
+    })
+    List<GetAllOrdersByStatusResponse> getAllOrdersByOrderStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus);
 
     @Aggregation(pipeline = {
             "{$match: {'_id': ?0}}",

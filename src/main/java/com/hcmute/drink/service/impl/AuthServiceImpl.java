@@ -21,7 +21,9 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,7 +47,9 @@ public class AuthServiceImpl implements AuthService {
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    @Lazy
+    private  PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final ConfirmationServiceImpl confirmationService;
     private final UserServiceImpl userService;

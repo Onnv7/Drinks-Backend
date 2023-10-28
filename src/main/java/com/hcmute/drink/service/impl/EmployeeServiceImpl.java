@@ -4,6 +4,7 @@ import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.LoginResponse;
 
+import com.hcmute.drink.dto.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
@@ -89,7 +90,11 @@ public class EmployeeServiceImpl {
 
         return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).userId(principalAuthenticated.getUserId()).build();
     }
-
+    public EmployeeCollection updatePassword(UpdatePasswordEmployeeRequest data, String id) throws Exception {
+        EmployeeCollection employee = checkExistedEmployee(id);
+        employee.setPassword(passwordEncoder.encode(data.getPassword()));
+        return employeeRepository.save(employee);
+    }
     public EmployeeCollection updateEmployee(EmployeeCollection data) throws Exception {
         EmployeeCollection employee = checkExistedEmployee(data.getId());
         modelMapperNotNull.map(data, employee);

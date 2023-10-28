@@ -2,6 +2,8 @@ package com.hcmute.drink.security.custom.user;
 
 import com.hcmute.drink.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Component;
 public class UserCustomAuthenticationProvider implements AuthenticationProvider
 {
     private final CustomUserDetailsService customUserDetailsService;
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    @Lazy
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException

@@ -67,7 +67,7 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         System.out.println("Pwd");
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(7);
     }
 
     @Bean
@@ -100,10 +100,12 @@ public class WebSecurityConfig {
 
         configuration.setAllowCredentials(true);
 //        configuration.addAllowedOrigin(corsAllowedOrigin); // @Value: http://localhost:8080
-        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
 
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowCredentials(true);
+
 
 //        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
 //        configuration.addAllowedHeader(List.of("Authorization"));
@@ -148,6 +150,7 @@ public class WebSecurityConfig {
                                 // Only ADMIN
                                 .requestMatchers(HttpMethod.GET, GET_ADMIN_PATH).hasRole(ADMIN)
                                 .requestMatchers(HttpMethod.PUT, PUT_ADMIN_PATH).hasRole(ADMIN)
+                                .requestMatchers(HttpMethod.PUT, PATCH_ADMIN_PATH).hasRole(ADMIN)
                                 .requestMatchers(HttpMethod.POST, POST_ADMIN_PATH).hasRole(ADMIN)
                                 .requestMatchers(HttpMethod.DELETE, DELETE_ADMIN_PATH).hasRole(ADMIN)
 

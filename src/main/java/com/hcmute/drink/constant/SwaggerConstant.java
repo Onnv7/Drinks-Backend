@@ -67,14 +67,20 @@ public class SwaggerConstant {
     public static final String PRODUCT_CONTROLLER_TITLE = "PRODUCT MANAGEMENT";
     public static final String PRODUCT_CREATE_SUM = "Create a new product";
     public static final String PRODUCT_CREATE_DES = "This endpoint returns new product after saved on database";
-    public static final String PRODUCT_GET_BY_ID_SUM = "Get a product by product id";
+    public static final String PRODUCT_GET_BY_ID_SUM = "Get a product's details by product id";
     public static final String PRODUCT_GET_BY_ID_DES= "This endpoint returns a product's information";
+    public static final String PRODUCT_GET_ENABLED_BY_ID_SUM = "Get a product enabled by product id";
+    public static final String PRODUCT_GET_ENABLED_BY_ID_DES= "This endpoint returns a product's information which enabled";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_SUM = "Get products by category id";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_DES= "This endpoint returns products list";
+    public static final String PRODUCT_GET_ALL_ENABLED_SUM = "Get all products have enabled";
+    public static final String PRODUCT_GET_ALL_ENABLED_DES= "This endpoint returns all products which enabled";
     public static final String PRODUCT_GET_ALL_SUM = "Get all products";
     public static final String PRODUCT_GET_ALL_DES= "This endpoint returns all products";
     public static final String PRODUCT_DELETE_BY_ID_SUM = "Delete a product by product id";
     public static final String PRODUCT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
+    public static final String PRODUCT_SOFT_DELETE_BY_ID_SUM = "Set enabled is false for product by id";
+    public static final String PRODUCT_SOFT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
     public static final String PRODUCT_UPDATE_BY_ID_SUM = "Update product's information by product id";
     public static final String PRODUCT_UPDATE_BY_ID_DES= "This endpoint returns new product's information after it were updated";
 
@@ -88,10 +94,14 @@ public class SwaggerConstant {
 
     public static final String CATEGORY_GET_ALL_SUM = "Get all categories";
     public static final String CATEGORY_GET_ALL_DES= "This endpoint returns all categories";
+    public static final String CATEGORY_GET_ALL_WITHOUT_DELETED_SUM = "Get all categories without disabled";
+    public static final String CATEGORY_GET_ALL_WITHOUT_DELETED_DES= "This endpoint returns all categories without disabled";
     public static final String CATEGORY_UPDATE_BY_ID_SUM = "Update category's information by category id";
     public static final String CATEGORY_UPDATE_BY_ID_DES= "This endpoint returns new category's information after it were updated";
     public static final String CATEGORY_DELETE_BY_ID_SUM = "Delete a category by category id";
     public static final String CATEGORY_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
+    public static final String CATEGORY_SOFT_DELETE_BY_ID_SUM = "Set enabled is false for category by category's id";
+    public static final String CATEGORY_SOFT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     // For transaction =======================================================
 
@@ -118,6 +128,8 @@ public class SwaggerConstant {
     public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
     public static final String ORDER_GET_ALL_SUM = "Get all shipping orders for employee";
     public static final String ORDER_GET_ALL_DES= "This endpoint returns all orders";
+    public static final String ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_SUM = "Get all shipping orders for employee by type and status of order";
+    public static final String ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_DES= "This endpoint returns all orders by type and status of order";
     public static final String ORDER_GET_DETAILS_BY_ID_SUM = "Get a details order by order id";
     public static final String ORDER_GET_DETAILS_BY_ID_DES= "This endpoint returns a detail order";
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM = "Get orders history by user id and order status";
@@ -131,6 +143,8 @@ public class SwaggerConstant {
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
     public static final String EMPLOYEE_UPDATE_BY_ID_SUM = "Update employee's information by employee id";
     public static final String EMPLOYEE_UPDATE_BY_ID_DES= "This endpoint returns new employee's information after it were updated";
+    public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM = "Update employee's new password by employee id";
+    public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     public static final String EMPLOYEE_DELETE_BY_ID_SUM = "Delete a employee by employee id";
     public static final String EMPLOYEE_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;

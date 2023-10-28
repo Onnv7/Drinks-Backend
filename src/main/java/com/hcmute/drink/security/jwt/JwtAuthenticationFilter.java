@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,6 +26,7 @@ import static com.hcmute.drink.constant.ErrorConstant.INVALID_TOKEN;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
 
@@ -51,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .timestamp(new Date())
                     .build();
             String jsonResponse = objectMapper.writeValueAsString(resData);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Ví dụ: 500 Internal Server Error
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write(jsonResponse);
         }
@@ -59,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Optional<String> extractTokenFromRequest(HttpServletRequest request) {
         var token = request.getHeader("Authorization");
+        log.warn("Token", token);
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
             return Optional.of(token.substring(7));
         }

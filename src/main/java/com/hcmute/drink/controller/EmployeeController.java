@@ -117,6 +117,24 @@ public class EmployeeController {
         }
     }
 
+    @Operation(summary = EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM, description = EMPLOYEE_UPDATE_PASSWORD_BY_ID_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUB_PATH)
+    public ResponseEntity<ResponseAPI> changePasswordForEmployee(@PathVariable("employeeId") String id, @RequestBody @Validated UpdatePasswordEmployeeRequest body) {
+        try {
+            EmployeeCollection dataUpdated = employeeService.updatePassword(body, id);
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.UPDATED)
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Operation(summary = EMPLOYEE_DELETE_BY_ID_SUM, description = EMPLOYEE_DELETE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @DeleteMapping(path = EMPLOYEE_DELETE_BY_ID_SUB_PATH)

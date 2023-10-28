@@ -15,9 +15,10 @@ public class SecurityConstant {
             "/IPN/**",
             "/openapi/**", "/v3/api-docs/**", "/openapi/swagger-config/**",
             "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html",
-            PRODUCT_GET_ALL_PATH, PRODUCT_GET_BY_ID_PATH, PRODUCT_GET_BY_CATEGORY_ID_PATH,
-            CATEGORY_GET_ALL_PATH, CATEGORY_GET_BY_ID_PATH,
-            USER_CHECK_EXISTED_PATH,
+            PRODUCT_GET_ALL_ENABLED_PATH, PRODUCT_GET_BY_CATEGORY_ID_PATH, PRODUCT_GET_ENABLED_BY_ID_PATH,
+             CATEGORY_GET_BY_ID_PATH,
+            USER_CHECK_EXISTED_PATH, CATEGORY_GET_ALL_WITHOUT_DELETED_PATH,
+
 
     };
     public static final String[] POST_AUTH_WHITELIST = {
@@ -56,8 +57,11 @@ public class SecurityConstant {
 
     };
     public static final String[] GET_ADMIN_PATH = {
+            PRODUCT_GET_DETAILS_BY_ID_PATH,
             USER_GET_ALL_PATH,
-            EMPLOYEE_GET_ALL_PATH
+            EMPLOYEE_GET_ALL_PATH,
+            CATEGORY_GET_ALL_PATH,
+            PRODUCT_GET_ALL_PATH,
     };
     public static final String[] PUT_ADMIN_PATH = {
             PRODUCT_UPDATE_BY_ID_PATH,
@@ -68,11 +72,15 @@ public class SecurityConstant {
             EMPLOYEE_REGISTER_PATH,
             CATEGORY_CREATE_PATH
     };
+    public static final String[] PATCH_ADMIN_PATH = {
+    };
 
     public static final String[] DELETE_ADMIN_PATH = {
             PRODUCT_DELETE_BY_ID_PATH,
             EMPLOYEE_DELETE_BY_ID_PATH,
-            CATEGORY_DELETE_BY_ID_PATH
+            CATEGORY_DELETE_BY_ID_PATH,
+            PRODUCT_SOFT_DELETE_BY_ID_PATH,
+            CATEGORY_SOFT_DELETE_BY_ID_PATH
     };
 
     // Only EMPLOYEE =================================================================
@@ -86,12 +94,14 @@ public class SecurityConstant {
     public static final String[] GET_ADMIN_EMPLOYEE_PATH = {
             EMPLOYEE_GET_BY_ID_PATH,
             ORDER_GET_ALL_SHIPPING_PATH,
+            ORDER_GET_ALL_SHIPPING_BY_STATUS_PATH,
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {
             EMPLOYEE_UPDATE_BY_ID_PATH,
     };
     public static final String[] PATCH_ADMIN_EMPLOYEE_PATH = {
+            EMPLOYEE_UPDATE_PASSWORD_BY_ID_PATH
     };
 
 
@@ -127,6 +137,7 @@ public class SecurityConstant {
 
     public static final String[] GET_ADMIN_EMPLOYEE_USER_PATH = {
             ORDER_GET_DETAILS_BY_ID_PATH,
+
     };
 
 }

@@ -15,4 +15,5 @@ public class CreateCategoryResponse {
     private String id;
     private String name;
     private ImageModel image;
+    private boolean enabled;
 }
