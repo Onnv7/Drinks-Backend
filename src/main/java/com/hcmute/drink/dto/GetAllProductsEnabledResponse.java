@@ -9,6 +9,6 @@ public class GetAllProductsEnabledResponse {
     private String name;
     private String description;
     private double price;
-    @JsonProperty("imageUrl")
-    private String image;
+    @JsonProperty("thumbnailUrl")
+    private String thumbnail;
 }

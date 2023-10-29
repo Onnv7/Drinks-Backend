@@ -17,13 +17,13 @@ import java.util.List;
 public interface ProductRepository extends MongoRepository<ProductCollection, String> {
     @Aggregation(pipeline = {
             "{$match: {categoryId: ?0}}",
-            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, image: '$image.url'}"
+            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}"
     })
     List<GetProductsByCategoryIdResponse> getProductsByCategoryId(ObjectId categoryId);
 
     @Aggregation(pipeline = {
             "{$match: {enabled: true}}",
-            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, image: '$image.url'}"
+            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}"
     })
     List<GetAllProductsEnabledResponse> getAllProductsEnabled();
 
