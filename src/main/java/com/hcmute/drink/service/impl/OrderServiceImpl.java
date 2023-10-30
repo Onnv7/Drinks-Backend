@@ -59,10 +59,10 @@ public class OrderServiceImpl {
             for (ToppingEmbedded topping : toppings) {
                 totalPriceToppings += topping.getPrice();
             }
-            totalPrice += totalPriceToppings;
+             ;
 
             SizeEmbedded size = productInfo.getSizeList().stream().filter(it -> it.getSize().equals(product.getSize())).findFirst().orElseThrow();
-            totalPrice += size.getPrice();
+            totalPrice += (size.getPrice() + totalPriceToppings) * product.getQuantity();
 
         }
         data.setTotal(totalPrice);

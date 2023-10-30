@@ -38,10 +38,17 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
 
     @Aggregation(pipeline = {
             "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$addFields: {'productQuantity': {$size: '$products'}}}",
             "{$match: {orderType: ?2, createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?3}}",
+            "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
+            "{ $unwind: '$user' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
+            "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, productName: {$addToSet: '$products.productSample.name'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}}}"
+            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$addToSet: '$products.productSample.name'}, productThumbnail: {$addToSet: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$unwind: '$productName'}",
+            "{$unwind: '$productThumbnail'}"
     })
     List<GetAllOrdersByStatusResponse> getAllOrdersByOrderStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus);
 
@@ -59,12 +66,14 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
     @Aggregation(pipeline = {
             "{$match: {userId: ?0}}",
             "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
+            "{$addFields: {'productQuantity': {$size: '$products'}}}",
             "{$match: {'lastEventLog.orderStatus': ?1}}",
-            "{ $unwind: '$lastEventLog' }",
+            "{$unwind: '$lastEventLog'}",
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, productName: {$addToSet: '$products.productSample.name'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}}}"
+            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $addToSet: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
+            "{ $unwind: '$productName' }"
     })
     List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(ObjectId id, OrderStatus orderStatus);
 

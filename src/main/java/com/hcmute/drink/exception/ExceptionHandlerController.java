@@ -76,7 +76,7 @@ public class ExceptionHandlerController {
             } else if(error403.contains(throwable.getMessage())) {
                 httpStatus = StatusCode.NOT_FOUND;
             } else if(throwable.getClass() == BadCredentialsException.class) {
-                httpStatus = StatusCode.BAD_REQUEST;
+                httpStatus = StatusCode.UNAUTHORIZED;
             }
         }
         ex.printStackTrace();

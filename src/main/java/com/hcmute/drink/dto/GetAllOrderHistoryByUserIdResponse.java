@@ -11,8 +11,9 @@ import java.util.List;
 public class GetAllOrderHistoryByUserIdResponse {
     private String id;
     private double total;
+    private int productQuantity;
     private OrderType orderType;
-    private List<String> productName;
+    private String productName;
     private OrderStatus statusLastEvent;
     private Date timeLastEvent;
 
