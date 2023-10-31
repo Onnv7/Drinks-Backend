@@ -138,6 +138,8 @@ public class SwaggerConstant {
     public static final String ORDER_CREATE_REVIEW_DES = "This endpoint returns new order information";
     public static final String ORDER_GET_STATUS_LINE_SUM = "Get order status line by order id";
     public static final String ORDER_GET_STATUS_LINE_DES = "This endpoint returns order status line";
+    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM = "Get all order history for employee by page and size";
+    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES = "This endpoint returns all order history";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";

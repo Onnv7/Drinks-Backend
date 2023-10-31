@@ -1,13 +1,11 @@
 package com.hcmute.drink.repository;
 
 import com.hcmute.drink.collection.OrderCollection;
-import com.hcmute.drink.dto.GetAllOrderHistoryByUserIdResponse;
-import com.hcmute.drink.dto.GetAllOrdersByStatusResponse;
-import com.hcmute.drink.dto.GetAllShippingOrdersResponse;
-import com.hcmute.drink.dto.GetOrderDetailsResponse;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import org.bson.types.ObjectId;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -73,11 +71,30 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
             "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $addToSet: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
-            "{ $unwind: '$productName' }"
+            "{ $unwind: '$productName' }",
+            "{$sort: {'timeLastEvent': -1}}",
     })
     List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(ObjectId id, OrderStatus orderStatus);
 
 
+    @Aggregation(pipeline = {
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$addFields: {'productQuantity': {$size: '$products'}}}",
+            "{$match: {$or: [{'lastEventLog.orderStatus': 'CANCELED'}, {'lastEventLog.orderStatus': 'SUCCEED'}]}}",
+            "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
+            "{ $unwind: '$user' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
+            "{$unwind: '$products'}",
+            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
+            "{ $unwind: '$products.productSample' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$addToSet: '$products.productSample.name'}, productThumbnail: {$addToSet: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$unwind: '$productName'}",
+            "{$unwind: '$productThumbnail'}",
+            "{$sort: {'timeLastEvent': -1}}",
+            "{$skip: ?0}",
+            "{$limit: ?1}",
+    })
+    List<GetOrderHistoryPageForEmployeeResponse> getAllOrderHistoryForEmployee(int skip, int limit);
     @Query("{'_id' : ?0}")
     @Update("{$push: {eventLogs: ?1}}")
     void completeOrder(String id, OrderStatus orderStatus);

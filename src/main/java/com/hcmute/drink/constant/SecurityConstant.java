@@ -18,6 +18,7 @@ public class SecurityConstant {
             PRODUCT_GET_ALL_ENABLED_PATH, PRODUCT_GET_BY_CATEGORY_ID_PATH, PRODUCT_GET_ENABLED_BY_ID_PATH,
              CATEGORY_GET_BY_ID_PATH,
             USER_CHECK_EXISTED_PATH, CATEGORY_GET_ALL_WITHOUT_DELETED_PATH,
+            "/api/order/test"
 
 
     };
@@ -95,6 +96,7 @@ public class SecurityConstant {
             EMPLOYEE_GET_BY_ID_PATH,
             ORDER_GET_ALL_SHIPPING_PATH,
             ORDER_GET_ALL_SHIPPING_BY_STATUS_PATH,
+            ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH,
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {

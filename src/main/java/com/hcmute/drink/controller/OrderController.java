@@ -19,6 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +53,23 @@ public class OrderController {
             OrderCollection data = modelMapper.map(body, OrderCollection.class);
             CreateShippingOrderResponse  resData =  orderService.createShippingOrder(data, body.getPaymentType(), request);
               ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(resData)
+                    .message(SuccessConstant.CREATED)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Operation(summary = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM, description = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getOrderHistoryPageForEmployee(@RequestParam("page") int page, @RequestParam("size") int size) {
+        try {
+            List<GetOrderHistoryPageForEmployeeResponse> resData =  orderService.getOrderHistoryPageForEmployee(page, size);
+            ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)
                     .message(SuccessConstant.CREATED)

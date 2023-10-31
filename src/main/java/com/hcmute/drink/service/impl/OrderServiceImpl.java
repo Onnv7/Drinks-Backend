@@ -21,6 +21,11 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +33,9 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +46,7 @@ public class OrderServiceImpl {
     private final SecurityUtils securityUtils;
     private final VNPayUtils vnPayUtils;
     private final ModelMapper modelMapper;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
     @Lazy
@@ -191,5 +200,13 @@ public class OrderServiceImpl {
             resData.add(modelMapper.map(log, OrderLogModel.class));
         }
         return resData;
+    }
+
+    public List<GetOrderHistoryPageForEmployeeResponse> getOrderHistoryPageForEmployee(int page, int size)  {
+
+        int skip = (page - 1) * size;
+        int limit = size;
+        List<GetOrderHistoryPageForEmployeeResponse> list =  orderRepository.getAllOrderHistoryForEmployee(skip, limit);
+        return list;
     }
 }
