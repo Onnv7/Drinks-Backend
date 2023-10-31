@@ -2,16 +2,17 @@ package com.hcmute.drink.service.impl;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hcmute.drink.collection.ConfirmationCollection;
+import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.collection.TokenCollection;
 import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.dto.RefreshTokenResponse;
-import com.hcmute.drink.dto.RegisterResponse;
+import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.LoginResponse;
 import com.hcmute.drink.repository.ConfirmationRepository;
+import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.security.UserPrincipal;
+import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.service.AuthService;
 import com.hcmute.drink.utils.EmailUtils;
@@ -50,10 +51,13 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     @Lazy
     private  PasswordEncoder passwordEncoder;
+    private final EmployeeRepository employeeRepository;
     private final AuthenticationManager authenticationManager;
     private final ConfirmationServiceImpl confirmationService;
     private final UserServiceImpl userService;
+    private final EmployeeServiceImpl employeeService;
     private final TokenServiceImpl tokenService;
+    private final EmployeeTokenServiceImpl employeeTokenService;
 
     @Value("${twilio.trial_number}")
     private String trialNumber;
@@ -78,13 +82,38 @@ public class AuthServiceImpl implements AuthService {
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var token = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
         String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
         tokenService.createToken(refreshToken, principalAuthenticated.getUserId());
 
-        return LoginResponse.builder().accessToken(token).userId(principalAuthenticated.getUserId()).refreshToken(refreshToken).build();
+        return LoginResponse.builder().accessToken(accessToken).userId(principalAuthenticated.getUserId()).refreshToken(refreshToken).build();
     }
+    public EmployeeLoginResponse attemptEmployeeLogin(String username, String password) throws Exception {
+        UserPrincipal principal = UserPrincipal.builder()
+                .username(username)
+                .password(password)
+                .build();
+        Authentication employeeCredential = new EmployeeUsernamePasswordAuthenticationToken(principal);
+        var authentication = authenticationManager.authenticate(employeeCredential);
 
+        var principalAuthenticated = (UserPrincipal) authentication.getPrincipal();
+        EmployeeCollection employee = employeeRepository.findByUsername(principalAuthenticated.getUsername());
+
+        if(!employee.isEnabled()) {
+            throw new Exception(ErrorConstant.ACCOUNT_BLOCKED);
+        }
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        var roles = principalAuthenticated.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .toList();
+
+        var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
+        employeeTokenService.createToken(refreshToken, principalAuthenticated.getUserId());
+
+        return EmployeeLoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).employeeId(principalAuthenticated.getUserId()).build();
+    }
     @Override
     public RegisterResponse registerUser(UserCollection data) throws Exception {
         UserCollection existedUser = userRepository.findByEmail(data.getEmail());
@@ -198,6 +227,45 @@ public class AuthServiceImpl implements AuthService {
         }
 
         RefreshTokenResponse resData = RefreshTokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
+        return resData;
+    }
+    public RefreshEmployeeTokenResponse refreshEmployeeToken(String refreshToken) throws Exception {
+        DecodedJWT jwt = null;
+
+        try {
+            jwt = jwtUtils.decodeRefreshToken(refreshToken);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        TokenCollection token = employeeTokenService.findByRefreshToken(refreshToken);
+
+        String userId = jwt.getSubject().toString();
+        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+
+        EmployeeCollection user = employeeService.isExistedEmployeeOrException(userId);
+
+
+        String newAccessToken = "";
+        String newRefreshToken = "";
+
+
+        if (token == null) {
+            throw new Exception(INVALID_TOKEN);
+        } else {
+            if(token.isUsed()) {
+                employeeTokenService.deleteAllByUserId(userId);
+                throw new Exception(STOLEN_TOKEN);
+            }
+            newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getUsername(), roles);
+            newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getUsername(), roles);
+            employeeTokenService.updateTokenIsUsed(token.getId());
+            employeeTokenService.createToken(newRefreshToken, userId);
+        }
+
+        RefreshEmployeeTokenResponse resData = RefreshEmployeeTokenResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();

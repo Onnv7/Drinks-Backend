@@ -19,10 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -101,7 +97,7 @@ public class OrderController {
         }
     }
 
-    @Operation(summary = ORDER_GET_ALL_SUM, description = ORDER_GET_ALL_DES)
+    @Operation(summary = ORDER_GET_ALL_IN_DAY_SUM, description = ORDER_GET_ALL_IN_DAY_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_ALL_SHIPPING_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllShippingOrdersQueueForEmployee() {
@@ -119,12 +115,12 @@ public class OrderController {
         }
     }
 
-    @Operation(summary = ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_SUM, description = ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_DES)
+    @Operation(summary = ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM, description = ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping(path = ORDER_GET_ALL_SHIPPING_BY_STATUS_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllOrdersByOrderStatusInDay(@PathVariable("orderType") OrderType orderType, @PathVariable("orderStatus") OrderStatus orderStatus) {
+    @GetMapping(path = ORDER_GET_ALL_BY_STATUS_AND_TYPE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getAllByTypeAndStatusInDay(@PathVariable("orderType") OrderType orderType, @PathVariable("orderStatus") OrderStatus orderStatus) {
         try {
-            List<GetAllOrdersByStatusResponse> dataRes =  orderService.getAllOrdersByOrderStatusInDay(orderType, orderStatus);
+            List<GetAllOrdersByStatusResponse> dataRes =  orderService.getAllByTypeAndStatusInDay(orderType, orderStatus);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(dataRes)
@@ -198,7 +194,7 @@ public class OrderController {
     @Operation(summary = ORDER_GET_STATUS_LINE_SUM, description = ORDER_GET_STATUS_LINE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_STATUS_LINE_SUB_PATH)
-    public ResponseEntity<ResponseAPI> get(@PathVariable("orderId") String orderId) {
+    public ResponseEntity<ResponseAPI> getOrderStatusLine(@PathVariable("orderId") String orderId) {
         try {
 
             List<OrderLogModel> resData =  orderService.getOrderEventLogById(orderId);

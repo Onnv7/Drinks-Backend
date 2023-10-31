@@ -86,6 +86,8 @@ public class RouterConstant {
     public static final String EMPLOYEE_DELETE_BY_ID_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_DELETE_BY_ID_SUB_PATH;
     public static final String EMPLOYEE_REGISTER_SUB_PATH = "/register";
     public static final String EMPLOYEE_REGISTER_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_REGISTER_SUB_PATH;
+    public static final String EMPLOYEE_UPDATE_PASSWORD_SUB_PATH = "/change-password/" + EMPLOYEE_ID;
+    public static final String EMPLOYEE_UPDATE_PASSWORD_PATH = EMPLOYEE_BASE_PATH + EMPLOYEE_UPDATE_PASSWORD_SUB_PATH;
 
     // ENDPOINT URL CATEGORY =================================================================
 
@@ -112,8 +114,8 @@ public class RouterConstant {
     public static final String ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + ORDER_UPDATE_STATUS_SUB_PATH;
     public static final String ORDER_GET_ALL_SHIPPING_SUB_PATH = "/shipping";
     public static final String ORDER_GET_ALL_SHIPPING_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_SHIPPING_SUB_PATH;
-    public static final String ORDER_GET_ALL_SHIPPING_BY_STATUS_SUB_PATH = "/{orderType}/status/{orderStatus}" ;
-    public static final String ORDER_GET_ALL_SHIPPING_BY_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_SHIPPING_BY_STATUS_SUB_PATH;
+    public static final String ORDER_GET_ALL_BY_STATUS_AND_TYPE_SUB_PATH = "/{orderType}/status/{orderStatus}" ;
+    public static final String ORDER_GET_ALL_BY_STATUS_AND_TYPE_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_BY_STATUS_AND_TYPE_SUB_PATH;
     public static final String ORDER_GET_DETAILS_BY_ID_SUB_PATH = "/details/" + ORDER_ID;
     public static final String ORDER_GET_DETAILS_BY_ID_PATH = ORDER_BASE_PATH + ORDER_GET_DETAILS_BY_ID_SUB_PATH;
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH = "/history/user/" + USER_ID;
@@ -159,5 +161,7 @@ public class RouterConstant {
     public static final String AUTH_EMPLOYEE_LOGIN_PATH = AUTH_BASE_PATH + AUTH_EMPLOYEE_LOGIN_SUB_PATH;
     public static final String AUTH_REFRESH_TOKEN_SUB_PATH = "/refresh-token";
     public static final String AUTH_REFRESH_TOKEN_PATH = AUTH_BASE_PATH + AUTH_REFRESH_TOKEN_SUB_PATH;
+    public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_SUB_PATH = "/employee/refresh-token";
+    public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_PATH = AUTH_BASE_PATH + AUTH_REFRESH_EMPLOYEE_TOKEN_SUB_PATH;
 
 }

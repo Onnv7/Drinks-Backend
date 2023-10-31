@@ -2,6 +2,7 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.ChangePasswordEmployeeRequest;
 import com.hcmute.drink.dto.LoginResponse;
 
 import com.hcmute.drink.dto.UpdatePasswordEmployeeRequest;
@@ -45,7 +46,7 @@ public class EmployeeServiceImpl {
         return employeeRepository.findAll();
     }
     public EmployeeCollection getEmployeeById(String id) throws Exception {
-        return checkExistedEmployee(id);
+        return isExistedEmployeeOrException(id);
     }
 
     public EmployeeCollection findByUsername(String username) {
@@ -64,56 +65,38 @@ public class EmployeeServiceImpl {
         }
     }
 
-    public LoginResponse attemptEmployeeLogin(String email, String password) throws Exception {
-        UserPrincipal principal = UserPrincipal.builder()
-                .username(email)
-                .password(password)
-                .build();
-        Authentication employeeCredential = new EmployeeUsernamePasswordAuthenticationToken(principal);
-        var authentication = authenticationManager.authenticate(employeeCredential);
 
-        var principalAuthenticated = (UserPrincipal) authentication.getPrincipal();
-        EmployeeCollection employee = employeeRepository.findByUsername(principalAuthenticated.getUsername());
-
-        if(!employee.isEnabled()) {
-           throw new Exception(ErrorConstant.ACCOUNT_BLOCKED);
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        var roles = principalAuthenticated.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .toList();
-
-        var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        tokenService.createToken(refreshToken, principalAuthenticated.getUserId());
-
-        return LoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).userId(principalAuthenticated.getUserId()).build();
-    }
     public EmployeeCollection updatePassword(UpdatePasswordEmployeeRequest data, String id) throws Exception {
-        EmployeeCollection employee = checkExistedEmployee(id);
+        EmployeeCollection employee = isExistedEmployeeOrException(id);
         employee.setPassword(passwordEncoder.encode(data.getPassword()));
         return employeeRepository.save(employee);
     }
     public EmployeeCollection updateEmployee(EmployeeCollection data) throws Exception {
-        EmployeeCollection employee = checkExistedEmployee(data.getId());
+        EmployeeCollection employee = isExistedEmployeeOrException(data.getId());
         modelMapperNotNull.map(data, employee);
         return employeeRepository.save(employee);
     }
 
     public void deleteEmployeeById(String id) throws Exception {
-        checkExistedEmployee(id);
+        isExistedEmployeeOrException(id);
         employeeRepository.deleteById(id);
     }
 
-    private EmployeeCollection checkExistedEmployee(String id) throws Exception {
-
+    public EmployeeCollection isExistedEmployeeOrException(String id) throws Exception {
         EmployeeCollection  employee = employeeRepository.findById(id).orElse(null);
         if(employee == null) {
             throw new Exception(ErrorConstant.EMPLOYEE_NOT_FOUND);
         }
-        employee.setPassword(null);
+//        employee.setPassword(null);
         return employee;
     }
-
+    public void changePasswordEmployee(ChangePasswordEmployeeRequest data, String emplId) throws Exception {
+        EmployeeCollection employee = isExistedEmployeeOrException(emplId);
+        boolean isValid = passwordEncoder.matches(data.getOldPassword(), employee.getPassword());
+        if(!isValid) {
+            throw new Exception(ErrorConstant.INVALID_PASSWORD);
+        }
+        employee.setPassword(passwordEncoder.encode(data.getNewPassword()));
+        employeeRepository.save(employee);
+    }
 }

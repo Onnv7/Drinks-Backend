@@ -25,7 +25,7 @@ public class SecurityConstant {
     public static final String[] POST_AUTH_WHITELIST = {
             "/refund",
             "/IPN/**",
-            AUTH_EMPLOYEE_LOGIN_PATH, AUTH_REFRESH_TOKEN_PATH,
+            AUTH_EMPLOYEE_LOGIN_PATH, AUTH_REFRESH_TOKEN_PATH, AUTH_REFRESH_EMPLOYEE_TOKEN_PATH,
             AUTH_SEND_OPT_PATH, AUTH_SEND_CODE_TO_REGISTER_PATH, AUTH_RE_SEND_EMAIL_PATH,
             AUTH_REGISTER_PATH, AUTH_LOGIN_PATH, AUTH_VERIFY_EMAIL_PATH, AUTH_SEND_CODE_TO_GET_PWD_PATH
     };
@@ -50,7 +50,6 @@ public class SecurityConstant {
     public static final String[] GET_USER_PATH = {
             ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH,
             ADDRESS_GET_BY_USER_ID_PATH, ADDRESS_GET_DETAILS_BY_ID_PATH, ADDRESS_SET_DEFAULT_BY_ID_PATH,
-            ORDER_GET_STATUS_LINE_PATH
     };
 
     // Only ADMIN =================================================================
@@ -88,14 +87,15 @@ public class SecurityConstant {
     public static final String[] EMPLOYEE_PATH = {};
 
     public static final String[] PATCH_EMPLOYEE_PATH = {
-            TRANSACTION_UPDATE_COMPLETE_PATH
+            TRANSACTION_UPDATE_COMPLETE_PATH,
+            EMPLOYEE_UPDATE_PASSWORD_PATH
     };
 
     // ADMIN + EMPLOYEE =================================================================
     public static final String[] GET_ADMIN_EMPLOYEE_PATH = {
             EMPLOYEE_GET_BY_ID_PATH,
             ORDER_GET_ALL_SHIPPING_PATH,
-            ORDER_GET_ALL_SHIPPING_BY_STATUS_PATH,
+            ORDER_GET_ALL_BY_STATUS_AND_TYPE_PATH,
             ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH,
     };
 
@@ -128,6 +128,9 @@ public class SecurityConstant {
 
 
     // EMPLOYEE + USER =================================================================
+    public static final String[] GET_EMPLOYEE_USER_PATH = {
+            ORDER_GET_STATUS_LINE_PATH
+    };
 
     public static final String[] POST_EMPLOYEE_USER_PATH = {
             ORDER_CREATE_PATH,
@@ -139,7 +142,6 @@ public class SecurityConstant {
 
     public static final String[] GET_ADMIN_EMPLOYEE_USER_PATH = {
             ORDER_GET_DETAILS_BY_ID_PATH,
-
     };
 
 }

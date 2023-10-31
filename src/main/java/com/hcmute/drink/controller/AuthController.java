@@ -192,26 +192,21 @@ public class AuthController {
     @PostMapping(path = AUTH_EMPLOYEE_LOGIN_SUB_PATH)
     public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated EmployeeLoginRequest body, HttpServletResponse response) {
         try {
-            LoginResponse data = employeeService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
+            EmployeeLoginResponse data = authService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(data)
                     .message(SuccessConstant.LOGIN)
                     .build();
-//            Cookie cookie = new Cookie("refreshToken", data.getRefreshToken());
-//            cookie.setMaxAge(7 * 24 * 60 * 60);
-//            cookie.setSecure(true);
-//            cookie.setHttpOnly(true);
-//            cookie.setPath("/");
-//            response.addCookie(cookie);
+
 
             HttpHeaders headers = new HttpHeaders();
 
-//            headers.add("Set-Cookie","key="+"value"+";Max-Age=3600;Secure; HttpOnly");
+
             // TODO: kiem tra expire coookie
             headers.add(HttpHeaders.SET_COOKIE,"refreshToken=" + data.getRefreshToken() +"; Max-Age=604800; Path=/; Secure; HttpOnly");
-//            response.addCookie(cookie);
+
 
             return new ResponseEntity<>(res, headers, StatusCode.OK);
         } catch (Exception e) {
@@ -225,6 +220,25 @@ public class AuthController {
     public ResponseEntity<ResponseAPI> refreshToken(@RequestBody @Validated RefreshTokenRequest body) {
         try {
             RefreshTokenResponse data = authService.refreshToken(body.getRefreshToken());
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(data)
+                    .message(SuccessConstant.GET_NEW_TOKEN)
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = AUTH_REFRESH_EMPLOYEE_TOKEN_SUM, description = AUTH_REFRESH_EMPLOYEE_TOKEN_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_NEW_TOKEN, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PostMapping(path = AUTH_REFRESH_EMPLOYEE_TOKEN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> refreshEmployeeToken(@RequestBody @Validated RefreshEmployeeTokenRequest body) {
+        try {
+            RefreshEmployeeTokenResponse data = authService.refreshEmployeeToken(body.getRefreshToken());
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())

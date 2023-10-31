@@ -153,5 +153,23 @@ public class EmployeeController {
         }
     }
 
+    @Operation(summary = EMPLOYEE_UPDATE_PASSWORD_SUM, description = EMPLOYEE_UPDATE_PASSWORD_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = EMPLOYEE_UPDATE_PASSWORD_SUB_PATH)
+    public ResponseEntity<ResponseAPI> updatePassword(@PathVariable("employeeId") String id, @RequestBody ChangePasswordEmployeeRequest body) {
+        try {
+            employeeService.changePasswordEmployee(body, id);
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .message(SuccessConstant.UPDATED)
+                    .build();
+
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 

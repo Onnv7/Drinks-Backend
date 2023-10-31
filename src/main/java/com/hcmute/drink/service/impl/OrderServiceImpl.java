@@ -21,11 +21,6 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +29,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +39,6 @@ public class OrderServiceImpl {
     private final SecurityUtils securityUtils;
     private final VNPayUtils vnPayUtils;
     private final ModelMapper modelMapper;
-    private final MongoTemplate mongoTemplate;
 
     @Autowired
     @Lazy
@@ -144,11 +136,11 @@ public class OrderServiceImpl {
         return ordersCreatedOnDate;
     }
 
-    public List<GetAllOrdersByStatusResponse> getAllOrdersByOrderStatusInDay(OrderType orderType, OrderStatus orderStatus) throws Exception {
+    public List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(OrderType orderType, OrderStatus orderStatus) throws Exception {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
         ZonedDateTime endOfDay = now.withHour(23).withMinute(59).withSecond(59).withNano(999);
-        List<GetAllOrdersByStatusResponse> data = orderRepository.getAllOrdersByOrderStatusInDay(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()), orderType, orderStatus);
+        List<GetAllOrdersByStatusResponse> data = orderRepository.getAllByTypeAndStatusInDay(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()), orderType, orderStatus);
         return data;
     }
 

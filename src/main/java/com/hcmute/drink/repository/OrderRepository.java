@@ -5,8 +5,6 @@ import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import org.bson.types.ObjectId;
-import org.springdoc.core.converters.models.PageableAsQueryParam;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -44,11 +42,9 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$addToSet: '$products.productSample.name'}, productThumbnail: {$addToSet: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
-            "{$unwind: '$productName'}",
-            "{$unwind: '$productThumbnail'}"
+            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
     })
-    List<GetAllOrdersByStatusResponse> getAllOrdersByOrderStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus);
+    List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus);
 
     @Aggregation(pipeline = {
             "{$match: {'_id': ?0}}",
@@ -87,9 +83,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$addToSet: '$products.productSample.name'}, productThumbnail: {$addToSet: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
-            "{$unwind: '$productName'}",
-            "{$unwind: '$productThumbnail'}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {'timeLastEvent': -1}}",
             "{$skip: ?0}",
             "{$limit: ?1}",

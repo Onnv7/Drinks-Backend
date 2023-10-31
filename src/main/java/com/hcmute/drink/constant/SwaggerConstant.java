@@ -32,8 +32,10 @@ public class SwaggerConstant {
     public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_EMPLOYEE_LOGIN_SUM = "Employee login to get token";
     public static final String AUTH_EMPLOYEE_LOGIN_DES = "This endpoint returns a token";
-    public static final String AUTH_REFRESH_TOKEN_SUM = "Create new access token and refresh token";
-    public static final String AUTH_REFRESH_TOKEN_DES = "This endpoint returns a new token";
+    public static final String AUTH_REFRESH_TOKEN_SUM = "Create new access token and refresh token for user";
+    public static final String AUTH_REFRESH_TOKEN_DES = "This endpoint returns a new token for user";
+    public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_SUM = "Create new access token and refresh token for employee";
+    public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_DES = "This endpoint returns a new token for employee";
 
     // For user =================================================================
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";
@@ -126,10 +128,10 @@ public class SwaggerConstant {
     public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
     public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
     public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
-    public static final String ORDER_GET_ALL_SUM = "Get all shipping orders for employee";
-    public static final String ORDER_GET_ALL_DES= "This endpoint returns all orders";
-    public static final String ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_SUM = "Get all shipping orders for employee by type and status of order";
-    public static final String ORDER_GET_ALL_BY_ORDER_TYPE_ORDER_STATUS_DES= "This endpoint returns all orders by type and status of order";
+    public static final String ORDER_GET_ALL_IN_DAY_SUM = "Get all shipping orders in current day for employee";
+    public static final String ORDER_GET_ALL_IN_DAY_DES = "This endpoint returns all orders in current day";
+    public static final String ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM = "Get all orders for employee by type and status of order in current day";
+    public static final String ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_DES = "This endpoint returns all orders by type and status of order in current day";
     public static final String ORDER_GET_DETAILS_BY_ID_SUM = "Get a details order by order id";
     public static final String ORDER_GET_DETAILS_BY_ID_DES= "This endpoint returns a detail order";
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM = "Get orders history by user id and order status";
@@ -145,7 +147,7 @@ public class SwaggerConstant {
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
     public static final String EMPLOYEE_UPDATE_BY_ID_SUM = "Update employee's information by employee id";
     public static final String EMPLOYEE_UPDATE_BY_ID_DES= "This endpoint returns new employee's information after it were updated";
-    public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM = "Update employee's new password by employee id";
+    public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM = "Update employee's new password by employee id for admin";
     public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     public static final String EMPLOYEE_DELETE_BY_ID_SUM = "Delete a employee by employee id";
@@ -157,6 +159,8 @@ public class SwaggerConstant {
     public static final String EMPLOYEE_GET_BY_ID_DES= "This endpoint returns a employee's information";
     public static final String EMPLOYEE_GET_ALL_SUM = "Get all employees";
     public static final String EMPLOYEE_GET_ALL_DES= "This endpoint returns all employees";
+    public static final String EMPLOYEE_UPDATE_PASSWORD_SUM = "Update new password for employee by employee id for employee";
+    public static final String EMPLOYEE_UPDATE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
 
 
 
@@ -217,4 +221,6 @@ public class SwaggerConstant {
     public static final String PAYMENT_TYPE_EX = "BANKING";
     public static final String REVIEW_DES_EX = "Good service";
     public static final String BOOLEAN_EX = "false";
+    public static final String USERNAME_EX = "employee";
+    public static final String REFRESH_TOKEN_EX = "wesaferg534vbdrbtgertyrrw6b456ertbvw354t";
 }
