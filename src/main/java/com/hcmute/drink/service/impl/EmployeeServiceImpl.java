@@ -3,22 +3,18 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.ChangePasswordEmployeeRequest;
-import com.hcmute.drink.dto.LoginResponse;
+import com.hcmute.drink.dto.GetAllEmployeeResponse;
 
 import com.hcmute.drink.dto.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.repository.EmployeeRepository;
-import com.hcmute.drink.security.UserPrincipal;
-import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.utils.JwtUtils;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,15 +34,26 @@ public class EmployeeServiceImpl {
     @Autowired
     private AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final SecurityUtils securityUtils;
     @Autowired
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
 
-    public List<EmployeeCollection> getAllEmployees() throws Exception {
-        return employeeRepository.findAll();
+    public EmployeeCollection exceptionIfNotExistedEmployeeById(String id) throws Exception {
+        EmployeeCollection  employee = employeeRepository.findById(id).orElse(null);
+        if(employee == null) {
+            throw new Exception(ErrorConstant.EMPLOYEE_NOT_FOUND);
+        }
+//        employee.setPassword(null);
+        return employee;
+    }
+    // SERVICES =================================================================
+
+    public List<GetAllEmployeeResponse> getAllEmployees() throws Exception {
+        return employeeRepository.getAllEmployees();
     }
     public EmployeeCollection getEmployeeById(String id) throws Exception {
-        return isExistedEmployeeOrException(id);
+        return exceptionIfNotExistedEmployeeById(id);
     }
 
     public EmployeeCollection findByUsername(String username) {
@@ -66,32 +73,26 @@ public class EmployeeServiceImpl {
     }
 
 
-    public EmployeeCollection updatePassword(UpdatePasswordEmployeeRequest data, String id) throws Exception {
-        EmployeeCollection employee = isExistedEmployeeOrException(id);
+    public void updatePasswordByAdmin(UpdatePasswordEmployeeRequest data, String id) throws Exception {
+        EmployeeCollection employee = exceptionIfNotExistedEmployeeById(id);
         employee.setPassword(passwordEncoder.encode(data.getPassword()));
-        return employeeRepository.save(employee);
+        employeeRepository.save(employee);
     }
     public EmployeeCollection updateEmployee(EmployeeCollection data) throws Exception {
-        EmployeeCollection employee = isExistedEmployeeOrException(data.getId());
+        EmployeeCollection employee = exceptionIfNotExistedEmployeeById(data.getId());
         modelMapperNotNull.map(data, employee);
         return employeeRepository.save(employee);
     }
 
     public void deleteEmployeeById(String id) throws Exception {
-        isExistedEmployeeOrException(id);
+        exceptionIfNotExistedEmployeeById(id);
         employeeRepository.deleteById(id);
     }
 
-    public EmployeeCollection isExistedEmployeeOrException(String id) throws Exception {
-        EmployeeCollection  employee = employeeRepository.findById(id).orElse(null);
-        if(employee == null) {
-            throw new Exception(ErrorConstant.EMPLOYEE_NOT_FOUND);
-        }
-//        employee.setPassword(null);
-        return employee;
-    }
-    public void changePasswordEmployee(ChangePasswordEmployeeRequest data, String emplId) throws Exception {
-        EmployeeCollection employee = isExistedEmployeeOrException(emplId);
+
+    public void changePasswordProfile(ChangePasswordEmployeeRequest data, String emplId) throws Exception {
+        securityUtils.exceptionIfNotMe(emplId);
+        EmployeeCollection employee = exceptionIfNotExistedEmployeeById(emplId);
         boolean isValid = passwordEncoder.matches(data.getOldPassword(), employee.getPassword());
         if(!isValid) {
             throw new Exception(ErrorConstant.INVALID_PASSWORD);

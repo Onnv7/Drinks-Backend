@@ -2,6 +2,8 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.GetAllUserResponse;
+import com.hcmute.drink.dto.GetUserByIdResponse;
 import com.hcmute.drink.dto.UpdatePasswordRequest;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.service.UserService;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,19 +32,16 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
-    @Override
     public UserCollection findByEmail(String email) {
         UserCollection user = userRepository.findByEmail(email);
         return user;
     }
-    public void exceptionIfNotMe(String userId) {
-
-    }
+    // UTILS =================================================================
 
     public UserCollection exceptionIfNotExistedUserById(String id) throws Exception {
         UserCollection user = userRepository.findById(id).orElse(null);
         if(user == null) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
+            throw new Exception(ErrorConstant.USER_NOT_FOUND + " with user id " + id);
         }
         return user;
     }
@@ -54,34 +52,25 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
-    public void exceptionIfExistsUserByEmail(String email) throws Exception {
-        UserCollection user = userRepository.findByEmail(email);
-        if(user != null) {
+
+    // SERVICE =================================================================
+    public List<GetAllUserResponse> getAllUsers() {
+        return userRepository.getAllUsers();
+    }
+
+    public GetUserByIdResponse getUserProfileById(String userId) throws Exception {
+        securityUtils.exceptionIfNotMe(userId);
+        GetUserByIdResponse user = userRepository.getUserProfileById(userId);
+        if (user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
         }
+        return user;
     }
 
-    public List<UserCollection> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public void changePasswordProfile(String userId, UpdatePasswordRequest data) throws Exception {
 
-    @Override
-    public UserCollection findUserById(String userId) throws Exception {
-        UserCollection result = new UserCollection();
-        Optional<UserCollection> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            result = user.get();
-            result.setPassword(null);
-            return result;
-        } else {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
-        }
-    }
-
-    @Override
-    public boolean updatePassword(String userId, UpdatePasswordRequest data) throws Exception {
-
-        UserCollection user = userRepository.findById(userId).orElseThrow();
+        securityUtils.exceptionIfNotMe(userId);
+        UserCollection user = exceptionIfNotExistedUserById(userId);
 
         boolean isValid = passwordEncoder.matches(data.getOldPassword(), user.getPassword());
 
@@ -90,43 +79,27 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(data.getNewPassword()));
-        if (userRepository.save(user) != null) {
-            return true;
-        }
-        throw new Exception(ErrorConstant.CREATED_FAILED);
+        userRepository.save(user);
     }
 
-    public boolean updatePasswordByEmail(String email, String password) throws Exception {
-        UserCollection user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
-        }
+    public void changePasswordForgot(String email, String password) throws Exception {
+        UserCollection user = exceptionIfNotExistedUserByEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
-        return true;
     }
 
-    @Override
-    public UserCollection updateUser(String userId, UserCollection body) throws Exception {
-        UserCollection user = userRepository.findById(userId).orElseGet(() -> null);
-        if (user == null) {
-            throw new Exception(ErrorConstant.USER_NOT_FOUND);
-        }
+
+    public UserCollection updateUserProfile(String userId, UserCollection body) throws Exception {
+        securityUtils.exceptionIfNotMe(userId);
+        UserCollection user = exceptionIfNotExistedUserById(userId);
         modelMapperNotNull.map(body, user);
         user.setUpdatedAt(new Date());
         UserCollection updatedUser = userRepository.save(user);
-        if(updatedUser != null) {
-            updatedUser.setPassword(null);
-            return updatedUser;
-        }
-        throw new Exception(ErrorConstant.UPDATE_FAILED);
+        return updatedUser;
     }
-    public String isExistedUser(String email) throws Exception {
-        UserCollection user = userRepository.findByEmail(email);
-        if (user == null) {
-            return user.getLastName() + user.getFirstName();
-        }
-        return null;
+    public String checkExistedUserByEmail(String email) throws Exception {
+        UserCollection user = exceptionIfNotExistedUserByEmail(email);
+        return user.getLastName() + user.getFirstName();
     }
 
 }

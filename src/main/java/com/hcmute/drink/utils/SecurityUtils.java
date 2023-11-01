@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class SecurityUtils {
     public void exceptionIfNotMe(String userId) throws Exception {
         String myId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-        String role = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities().stream().map(GrantedAuthority::getAuthority).toList().get(0);
+
         if(!myId.equals(userId)) {
             throw new Exception(ErrorConstant.CANT_ACCESS);
         }

@@ -29,7 +29,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -206,7 +205,7 @@ public class AuthServiceImpl implements AuthService {
         String userId = jwt.getSubject().toString();
         List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
 
-        UserCollection user = userService.findUserById(userId);
+        UserCollection user = userService.exceptionIfNotExistedUserById(userId);
 
         String newAccessToken = "";
         String newRefreshToken = "";
@@ -245,7 +244,7 @@ public class AuthServiceImpl implements AuthService {
         String userId = jwt.getSubject().toString();
         List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
 
-        EmployeeCollection user = employeeService.isExistedEmployeeOrException(userId);
+        EmployeeCollection user = employeeService.exceptionIfNotExistedEmployeeById(userId);
 
 
         String newAccessToken = "";

@@ -5,6 +5,7 @@ import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.GetAddressByUserIdResponse;
 import com.hcmute.drink.dto.GetAddressDetailsByIdResponse;
 import com.hcmute.drink.repository.AddressRepository;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
@@ -26,8 +27,10 @@ public class AddressServiceImpl {
     @Autowired
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
+    private final SecurityUtils securityUtils;
 
     public AddressCollection createAddressToUser(AddressCollection data, String userId) throws Exception {
+        securityUtils.exceptionIfNotMe(userId);
         userService.exceptionIfNotExistedUserById(userId);
         List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
         if(addresses.size() >= 5) {
@@ -58,6 +61,7 @@ public class AddressServiceImpl {
     }
 
     public List<GetAddressByUserIdResponse> getAddressByUserId(String userId) throws Exception {
+        securityUtils.exceptionIfNotMe(userId);
         userService.exceptionIfNotExistedUserById(userId);
         List<GetAddressByUserIdResponse> list = addressRepository.getAddressByUserId(new ObjectId(userId));
         Collections.sort(list, new Comparator<GetAddressByUserIdResponse>() {

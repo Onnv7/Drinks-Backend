@@ -5,7 +5,6 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.AuthServiceImpl;
 import com.hcmute.drink.service.impl.EmployeeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,12 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,11 +35,8 @@ public class EmployeeController {
     @GetMapping(path = EMPLOYEE_GET_ALL_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllEmployees() {
         try {
-            List<EmployeeCollection> data = employeeService.getAllEmployees();
-            List<GetAllEmployeeResponse> resData = new ArrayList<>();
-            for (EmployeeCollection employee : data) {
-                resData.add(modelMapper.map(employee, GetAllEmployeeResponse.class));
-            }
+            List<GetAllEmployeeResponse> resData = employeeService.getAllEmployees();
+
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)
@@ -120,9 +114,9 @@ public class EmployeeController {
     @Operation(summary = EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM, description = EMPLOYEE_UPDATE_PASSWORD_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUB_PATH)
-    public ResponseEntity<ResponseAPI> changePasswordForEmployee(@PathVariable("employeeId") String id, @RequestBody @Validated UpdatePasswordEmployeeRequest body) {
+    public ResponseEntity<ResponseAPI> changePasswordByAdmin(@PathVariable("employeeId") String id, @RequestBody @Validated UpdatePasswordEmployeeRequest body) {
         try {
-            EmployeeCollection dataUpdated = employeeService.updatePassword(body, id);
+            employeeService.updatePasswordByAdmin(body, id);
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
@@ -156,9 +150,10 @@ public class EmployeeController {
     @Operation(summary = EMPLOYEE_UPDATE_PASSWORD_SUM, description = EMPLOYEE_UPDATE_PASSWORD_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = EMPLOYEE_UPDATE_PASSWORD_SUB_PATH)
-    public ResponseEntity<ResponseAPI> updatePassword(@PathVariable("employeeId") String id, @RequestBody ChangePasswordEmployeeRequest body) {
+    public ResponseEntity<ResponseAPI> changePasswordProfile(@PathVariable("employeeId") String id, @RequestBody ChangePasswordEmployeeRequest body) {
         try {
-            employeeService.changePasswordEmployee(body, id);
+
+            employeeService.changePasswordProfile(body, id);
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())

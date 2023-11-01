@@ -24,6 +24,6 @@ public class GetAllUserResponse {
     private String email;
 //    private String phoneNumber;
 
-    private boolean enabled = true;
+    private boolean enabled;
     private Date updatedAt;
 }

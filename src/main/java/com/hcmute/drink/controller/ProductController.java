@@ -58,8 +58,7 @@ public class ProductController {
     @GetMapping(path = PRODUCT_GET_DETAILS_BY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getProductDetailsById(@PathVariable("productId") String id) {
         try {
-            ProductCollection product = productService.findProductById(id);
-            GetProductByIdResponse resData = modelMapper.map(product, GetProductByIdResponse.class);
+            GetProductByIdResponse resData = productService.getProductDetailsById(id);
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)
@@ -95,7 +94,6 @@ public class ProductController {
     protected ResponseEntity<ResponseAPI> getProductByCategoryId(@PathVariable("categoryId") String categoryId) {
         try {
             List<GetProductsByCategoryIdResponse> products = productService.getProductsByCategoryId(categoryId);
-
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)
@@ -161,32 +159,12 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = PRODUCT_SOFT_DELETE_BY_ID_SUM, description = PRODUCT_SOFT_DELETE_BY_ID_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @DeleteMapping(path = PRODUCT_SOFT_DELETE_BY_ID_SUB_PATH)
-    protected ResponseEntity<ResponseAPI> softDeleteProductById(@PathVariable("productId") String id) {
-        try {
-            productService.softDeleteProductById(id);
-
-            ResponseAPI res = ResponseAPI.builder()
-                    .message(SuccessConstant.DELETED)
-                    .timestamp(new Date())
-                    .build();
-
-            return new ResponseEntity<>(res, StatusCode.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Operation(summary = PRODUCT_UPDATE_BY_ID_SUM, description = PRODUCT_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PutMapping(path = PRODUCT_UPDATE_BY_ID_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> updateProductById(@ModelAttribute @Validated UpdateProductRequest body,
                                                          @PathVariable("productId") String id) {
         try {
-//            ProductCollection data = modelMapper.map(body, ProductCollection.class);
-//            data.setId(id);
             ProductCollection updatedData = productService.updateProductById(body, id);
             UpdateProductResponse resData = modelMapper.map(updatedData, UpdateProductResponse.class);
             ResponseAPI res = ResponseAPI.builder()

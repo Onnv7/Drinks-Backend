@@ -1,10 +1,7 @@
 package com.hcmute.drink.repository;
 
 import com.hcmute.drink.collection.ProductCollection;
-import com.hcmute.drink.dto.GetAllProductsEnabledResponse;
-import com.hcmute.drink.dto.GetAllProductsResponse;
-import com.hcmute.drink.dto.GetProductEnabledByIdResponse;
-import com.hcmute.drink.dto.GetProductsByCategoryIdResponse;
+import com.hcmute.drink.dto.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -38,6 +35,6 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
 //    })
     @Query(value = "{$and : [{_id: ?0, enabled: true}]}", fields = "{_id: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: '$image.url'}}")
     GetProductEnabledByIdResponse getProductEnabledById(String id);
-
-
+    @Query(value = "{$and : [{_id: ?0}]}", fields = "{_id: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: 1, categoryId: 1, enabled: 1}}")
+    GetProductByIdResponse getProductDetailsById(String id);
 }

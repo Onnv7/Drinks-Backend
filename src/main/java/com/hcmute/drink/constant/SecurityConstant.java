@@ -36,13 +36,15 @@ public class SecurityConstant {
     // Only USER =================================================================
     public static final String[] POST_USER_PATH = {
             ADDRESS_CREATE_PATH,
-            ORDER_CREATE_REVIEW_PATH
+            ORDER_CREATE_REVIEW_PATH,
+            USER_GET_BY_ID_PATH,
     };
     public static final String[] PATCH_USER_PATH = {
             USER_CHANGE_PASSWORD_PATH
     };
     public static final String[] PUT_USER_PATH = {
-            ADDRESS_UPDATE_PATH
+            ADDRESS_UPDATE_PATH,
+            USER_UPDATE_BY_ID_PATH,
     };
     public static final String[] DELETE_USER_PATH = {
             ADDRESS_DELETE_PATH
@@ -84,7 +86,8 @@ public class SecurityConstant {
     };
 
     // Only EMPLOYEE =================================================================
-    public static final String[] EMPLOYEE_PATH = {};
+    public static final String[] GET_EMPLOYEE_PATH = {
+    };
 
     public static final String[] PATCH_EMPLOYEE_PATH = {
             TRANSACTION_UPDATE_COMPLETE_PATH,
@@ -109,7 +112,6 @@ public class SecurityConstant {
 
     // ADMIN + USER =================================================================
     public static final String[] GET_ADMIN_USER_PATH = {
-            USER_GET_BY_ID_PATH,
             TRANSACTION_UPDATE_BY_ID_PATH,
     };
     public static final String[] PATCH_ADMIN_USER_PATH = {
@@ -123,7 +125,6 @@ public class SecurityConstant {
     };
 
     public static final String[] PUT_ADMIN_USER_PATH = {
-            USER_UPDATE_BY_ID_PATH,
     };
 
 

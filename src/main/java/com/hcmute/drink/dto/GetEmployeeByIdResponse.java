@@ -19,6 +19,5 @@ public class GetEmployeeByIdResponse {
     private String lastName;
     private Gender gender;
     private Date birthDate;
-
     private boolean enabled;
 }

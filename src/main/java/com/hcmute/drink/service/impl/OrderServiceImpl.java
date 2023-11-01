@@ -29,6 +29,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static com.hcmute.drink.constant.VNPayConstant.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +46,23 @@ public class OrderServiceImpl {
     @Lazy
     private TransactionServiceImpl transactionService;
 
+    public OrderCollection exceptionIfNotExistedOrderByTransactionId(String transactionId) throws Exception {
+        OrderCollection order = orderRepository.findByTransactionId(new ObjectId(transactionId));
+        if (order == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + " with transaction id " + transactionId);
+        }
+        return order;
+    }
+
+    public OrderCollection exceptionIfNotExistedOrderById(String id) throws Exception {
+        OrderCollection order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new Exception(ErrorConstant.NOT_FOUND + " with order id " + id);
+        }
+        return order;
+    }
+    // SERVICES =================================================================
+
     @Transactional
     public CreateShippingOrderResponse createShippingOrder(OrderCollection data, PaymentType paymentType, HttpServletRequest request) throws Exception {
         userService.exceptionIfNotExistedUserById(data.getUserId().toString());
@@ -51,10 +70,8 @@ public class OrderServiceImpl {
         List<OrderDetailsEmbedded> products = data.getProducts();
         long totalPrice = 0;
         for (OrderDetailsEmbedded product : products) {
-            ProductCollection productInfo = productService.findProductById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
-            if (productInfo == null) {
-                throw new Exception(ErrorConstant.PRODUCT_NOT_FOUND + product.getProductId().toString());
-            }
+            ProductCollection productInfo = productService.exceptionIfNotExistedProductById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
+
             double totalPriceToppings = 0;
             List<ToppingEmbedded> toppings = product.getToppings() != null ? product.getToppings() : new ArrayList<>();
             for (ToppingEmbedded topping : toppings) {
@@ -71,8 +88,8 @@ public class OrderServiceImpl {
         CreateShippingOrderResponse resData = new CreateShippingOrderResponse();
         if (paymentType == PaymentType.CASHING) {
 
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone(VNP_TIME_ZONE));
+            SimpleDateFormat formatter = new SimpleDateFormat(VNP_TIME_FORMAT);
             String vnp_CreateDate = formatter.format(cld.getTime());
 
             transData = TransactionCollection.builder()
@@ -85,12 +102,12 @@ public class OrderServiceImpl {
             Map<String, String> paymentData = vnPayUtils.createUrlPayment(request, totalPrice, "Shipping Order Info");
 
             transData = TransactionCollection.builder()
-                    .invoiceCode(paymentData.get("vnp_TxnRef").toString())
-                    .timeCode(paymentData.get("vnp_CreateDate"))
+                    .invoiceCode(paymentData.get(VNP_TXN_REF_KEY).toString())
+                    .timeCode(paymentData.get(VNP_CREATE_DATE_KEY))
                     .status(PaymentStatus.UNPAID)
                     .paymentType(paymentType)
                     .build();
-            resData.setPaymentUrl(paymentData.get("vnp_url"));
+            resData.setPaymentUrl(paymentData.get(VNP_URL_KEY));
         }
 
 
@@ -111,7 +128,7 @@ public class OrderServiceImpl {
     }
 
     public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
-        OrderCollection order = findOrderById(id);
+        OrderCollection order = exceptionIfNotExistedOrderById(id);
         String employeeId = securityUtils.getCurrentUserId();
         order.getEventLogs().add(OrderLogEmbedded.builder()
                 .orderStatus(orderStatus)
@@ -120,11 +137,7 @@ public class OrderServiceImpl {
                 .time(new Date())
                 .build()
         );
-        OrderCollection updatedOrder = orderRepository.save(order);
-        if (updatedOrder == null) {
-            throw new Exception(ErrorConstant.UPDATE_FAILED);
-        }
-        return updatedOrder;
+        return orderRepository.save(order);
     }
 
     public List<GetAllShippingOrdersResponse> getAllShippingOrdersQueueForEmployee() throws Exception {
@@ -144,17 +157,8 @@ public class OrderServiceImpl {
         return data;
     }
 
-    public OrderCollection findOrderByTransactionId(String id) throws Exception {
-        OrderCollection order = orderRepository.findByTransactionId(new ObjectId(id));
-        if (order == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND + id);
-        }
-        return order;
-    }
 
-    public OrderCollection findOrderById(String id) throws Exception {
-        return orderRepository.findById(id).orElseThrow();
-    }
+
 
     public GetOrderDetailsResponse getOrderDetailsById(String id) throws Exception {
         GetOrderDetailsResponse order = orderRepository.getOrderDetailsById(id);
@@ -175,7 +179,7 @@ public class OrderServiceImpl {
 
 
     public OrderCollection createReviewForOrder(String id, ReviewEmbedded data) throws Exception {
-        OrderCollection order = findOrderById(id);
+        OrderCollection order = exceptionIfNotExistedOrderById(id);
         securityUtils.exceptionIfNotMe(order.getUserId().toString());
         if (order.getEventLogs().get(order.getEventLogs().size() -1).getOrderStatus() != OrderStatus.SUCCEED) {
             throw new Exception(ErrorConstant.ORDER_NOT_COMPLETED);
@@ -195,10 +199,8 @@ public class OrderServiceImpl {
     }
 
     public List<GetOrderHistoryPageForEmployeeResponse> getOrderHistoryPageForEmployee(int page, int size)  {
-
         int skip = (page - 1) * size;
         int limit = size;
-        List<GetOrderHistoryPageForEmployeeResponse> list =  orderRepository.getAllOrderHistoryForEmployee(skip, limit);
-        return list;
+        return orderRepository.getAllOrderHistoryForEmployee(skip, limit);
     }
 }

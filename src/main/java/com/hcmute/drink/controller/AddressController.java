@@ -125,20 +125,5 @@ public class AddressController {
         }
     }
 
-    // TODO: ko dung nua
-//    @Operation(summary = ADDRESS_SET_DEFAULT_BY_ID_SUM, description = ADDRESS_SET_DEFAULT_BY_ID_DES)
-//    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-//    @PatchMapping(path = ADDRESS_SET_DEFAULT_BY_ID_SUB_PATH)
-//    public ResponseEntity<ResponseAPI> setDefaultAddress(@PathVariable("addressId") String addressId) {
-//        try {
-//            addressService.setDefaultAddress(addressId);
-//            ResponseAPI res = ResponseAPI.builder()
-//                    .timestamp(new Date())
-//                    .message(SuccessConstant.UPDATED)
-//                    .build();
-//            return new ResponseEntity<>(res, StatusCode.OK);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+
 }

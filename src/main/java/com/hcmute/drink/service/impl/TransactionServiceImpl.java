@@ -43,7 +43,7 @@ public class TransactionServiceImpl {
         if (transaction == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
-        OrderCollection order = orderService.findOrderByTransactionId(transaction.getId());
+        OrderCollection order = orderService.exceptionIfNotExistedOrderByTransactionId(transaction.getId());
         // kiểm tra trạng thái transaction từ vnpay
 
 
@@ -82,7 +82,7 @@ public class TransactionServiceImpl {
         if (transaction == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + id);
         }
-        OrderCollection order = orderService.findOrderByTransactionId(transaction.getId());
+        OrderCollection order = orderService.exceptionIfNotExistedOrderByTransactionId(transaction.getId());
         // Goi den VNPay de lay thong tin
         Map<String, Object> transInfo = vnPayUtils.getTransactionInfo(transaction.getInvoiceCode(), transaction.getTimeCode(), request);
 
@@ -110,7 +110,7 @@ public class TransactionServiceImpl {
     }
 
     public TransactionCollection completeTransaction(String transId) throws Exception {
-        OrderCollection order = orderService.findOrderByTransactionId(transId);
+        OrderCollection order = orderService.exceptionIfNotExistedOrderByTransactionId(transId);
         TransactionCollection trans = findTransactionById(transId);
         double totalPaid = order.getTotal();
         trans.setStatus(PaymentStatus.PAID);

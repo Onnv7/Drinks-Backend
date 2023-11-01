@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.hcmute.drink.constant.ErrorConstant.NOT_FOUND;
+import static com.hcmute.drink.constant.ErrorConstant.PRODUCT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,16 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     @Qualifier("modelMapperNotNull")
     private ModelMapper modelMapperNotNull;
+    public ProductCollection exceptionIfNotExistedProductById(String id) throws Exception {
+
+        ProductCollection product = productRepository.findById(id).orElse(null);
+        if(product == null) {
+            throw new Exception(PRODUCT_NOT_FOUND + " with product id " + id);
+        }
+        return product;
+    }
+
+    // SERVICE =================================================================
 
     public ProductCollection createProduct(ProductCollection data, MultipartFile image) throws Exception {
         Date currentDate = new Date();
@@ -44,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
         byte[] newImage = imageUtils.resizeImage(originalImage, 200, 200);
         byte[] newThumbnail = imageUtils.resizeImage(originalImage, 200, 200);
 
-        categoryService.exceptionIfNotFoundById(data.getCategoryId().toString());
+        categoryService.exceptionIfNotExistedCategoryById(data.getCategoryId().toString());
 
         HashMap<String, String> imageUploaded = cloudinaryUtils.uploadFileToFolder(
                 CloudinaryConstant.PRODUCT_PATH,
@@ -69,10 +80,10 @@ public class ProductServiceImpl implements ProductService {
         throw new Exception(ErrorConstant.CREATED_FAILED);
     }
 
-    public ProductCollection findProductById(String id) throws Exception {
-        ProductCollection product = productRepository.findById(id).orElse(null);
+    public GetProductByIdResponse getProductDetailsById(String id) throws Exception {
+        GetProductByIdResponse product = productRepository.getProductDetailsById(id);
         if(product == null) {
-            throw new Exception(NOT_FOUND);
+            throw new Exception(PRODUCT_NOT_FOUND);
         }
         return product;
     }
@@ -97,25 +108,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public boolean deleteProductById(String id) throws Exception {
-        ProductCollection product = productRepository.findById(id).orElse(null);
-        if(product == null) {
-            throw new Exception(NOT_FOUND);
-        }
+        ProductCollection product = exceptionIfNotExistedProductById(id);
         ImageEmbedded image = product.getImage();
         cloudinaryUtils.deleteImage(image.getId());
-
         productRepository.deleteById(id);
         return true;
     }
-    public boolean softDeleteProductById(String id) throws Exception {
-        ProductCollection product = productRepository.findById(id).orElse(null);
-        if(product == null) {
-            throw new Exception(NOT_FOUND);
-        }
-        product.setEnabled(true);
-        productRepository.save(product);
-        return true;
-    }
+
 
     public ProductCollection updateProductById(UpdateProductRequest data, String id) throws Exception {
         ProductCollection product = productRepository.findById(id).orElse(null);
@@ -146,10 +145,6 @@ public class ProductServiceImpl implements ProductService {
             product.setThumbnail(thumbnailEmbedded);
         }
 
-        ProductCollection newProduct = productRepository.save(product);
-        if(newProduct != null) {
-            return newProduct;
-        }
-        throw new Exception(ErrorConstant.UPDATE_FAILED);
+        return productRepository.save(product);
     }
 }

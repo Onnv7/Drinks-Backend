@@ -13,8 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -172,9 +170,9 @@ public class AuthController {
     @Operation(summary = AUTH_CHANGE_PASSWORD_SUM, description = AUTH_CHANGE_PASSWORD_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(AUTH_CHANGE_PASSWORD_SUB_PATH)
-    public ResponseEntity<ResponseAPI> changePasswordWhenForgot(@RequestBody @Validated ChangePasswordRequest body) {
+    public ResponseEntity<ResponseAPI> changePasswordForgot(@RequestBody @Validated ChangePasswordRequest body) {
         try {
-            userService.updatePasswordByEmail(body.getEmail(), body.getPassword());
+            userService.changePasswordForgot(body.getEmail(), body.getPassword());
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)

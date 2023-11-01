@@ -28,6 +28,22 @@ public class CategoryServiceImpl implements CategoryService {
     Date currentDate = new Date();
     long currentTimeMillis = currentDate.getTime();
 
+    public CategoryCollection exceptionIfNotExistedCategoryById(String id) throws Exception {
+        CategoryCollection category = categoryRepository.findById(id).orElse(null);
+        if(category == null) {
+            throw new Exception(ErrorConstant.CATEGORY_NOT_FOUND + " " + id);
+        }
+        return category;
+    }
+    public CategoryCollection exceptionIfNotExistedCategoryByName(String name) throws Exception {
+        CategoryCollection category = categoryRepository.findByName(name);
+        if(category == null) {
+            throw new Exception(ErrorConstant.CATEGORY_NOT_FOUND + " " + name);
+        }
+        return category;
+    }
+    // SERVICES =================================================================================
+
     public CategoryCollection createCategory(CreateCategoryRequest data) throws Exception {
         String cgrName = data.getName();
         CategoryCollection existedCategory = categoryRepository.findByName(cgrName);
@@ -44,19 +60,11 @@ public class CategoryServiceImpl implements CategoryService {
                 .name(data.getName())
                 .enabled(true)
                 .build();
-        CategoryCollection newCategory = categoryRepository.save(category);
-        if(newCategory == null) {
-            throw new Exception(ErrorConstant.CREATED_FAILED);
-        }
-        return category;
+        return categoryRepository.save(category);
     }
 
     public CategoryCollection getCategoryById(String id) throws Exception {
-        CategoryCollection category = categoryRepository.findById(id).orElse(null);
-        if(category == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND);
-        }
-        return category;
+        return exceptionIfNotExistedCategoryById(id);
     }
 
     public List<CategoryCollection> getAllCategories() {
@@ -67,10 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public CategoryCollection   updateCategory(UpdateCategoryRequest data, String id) throws Exception {
-        CategoryCollection category = categoryRepository.findById(id).orElse(null);
-        if(category == null) {
-            throw new Exception(ErrorConstant.CATEGORY_NOT_FOUND);
-        }
+        CategoryCollection category = exceptionIfNotExistedCategoryById(id);
         if(data.getImage() != null) {
             cloudinaryUtils.deleteImage(category.getImage().getId());
 
@@ -91,33 +96,10 @@ public class CategoryServiceImpl implements CategoryService {
         throw new Exception(ErrorConstant.UPDATE_FAILED);
     }
 
-
-
     public boolean deleteCategoryById(String id) throws Exception {
-        CategoryCollection category = categoryRepository.findById(id).orElse(null);
-        if(category == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND);
-        }
+        CategoryCollection category = exceptionIfNotExistedCategoryById(id);
         cloudinaryUtils.deleteImage(category.getImage().getId());
         categoryRepository.deleteById(id);
         return true;
-    }
-
-    public boolean softDeleteCategoryById(String id) throws Exception {
-        CategoryCollection category = categoryRepository.findById(id).orElse(null);
-        if(category == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND);
-        }
-        category.setEnabled(true);
-        categoryRepository.save(category);
-        return true;
-    }
-
-    public CategoryCollection exceptionIfNotFoundById(String id) throws Exception {
-        CategoryCollection category = categoryRepository.findById(id).orElse(null);
-        if(category == null) {
-            throw new Exception(ErrorConstant.NOT_FOUND + id);
-        }
-        return category;
     }
 }

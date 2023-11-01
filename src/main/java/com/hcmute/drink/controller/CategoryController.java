@@ -143,20 +143,4 @@ public class CategoryController {
         }
     }
 
-    @Operation(summary = CATEGORY_SOFT_DELETE_BY_ID_SUM, description = CATEGORY_SOFT_DELETE_BY_ID_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.DELETED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @DeleteMapping(path = CATEGORY_SOFT_DELETE_BY_ID_SUB_PATH)
-    public ResponseEntity<ResponseAPI> softDeleteCategoryById(@PathVariable("categoryId") String id) {
-        try {
-            categoryService.softDeleteCategoryById(id);
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .message(SuccessConstant.DELETED)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

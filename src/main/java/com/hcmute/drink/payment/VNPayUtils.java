@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.hcmute.drink.constant.VNPayConstant.*;
+
 @Component
 @Slf4j
 public class VNPayUtils {
@@ -81,101 +83,19 @@ public class VNPayUtils {
         return result;
     }
 
-    public IPNResDto getResult(HttpServletRequest request) throws UnsupportedEncodingException {
-        IPNResDto res = new IPNResDto();
-        try {
-
-        /*  IPN URL: Record payment results from VNPAY
-        Implementation steps:
-        Check checksum
-        Find transactions (vnp_TxnRef) in the database (checkOrderId)
-        Check the payment status of transactions before updating (checkOrderStatus)
-        Check the amount (vnp_Amount) of transactions before updating (checkAmount)
-        Update results to Database
-        Return recorded results to VNPAY
-        */
-
-            // ex:  	PaymnentStatus = 0; pending
-            //              PaymnentStatus = 1; success
-            //              PaymnentStatus = 2; Faile
-
-            //Begin process return from VNPAY
-            Map fields = new HashMap();
-            for (Enumeration params = request.getParameterNames(); params.hasMoreElements(); ) {
-                String fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
-                String fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
-                if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                    fields.put(fieldName, fieldValue);
-                }
-            }
-
-            String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-            if (fields.containsKey("vnp_SecureHashType")) {
-                fields.remove("vnp_SecureHashType");
-            }
-            if (fields.containsKey("vnp_SecureHash")) {
-                fields.remove("vnp_SecureHash");
-            }
-
-            // Check checksum
-            String signValue = Config.hashAllFields(fields);
-            if (signValue.equals(vnp_SecureHash)) {
-
-                boolean checkOrderId = true; // vnp_TxnRef exists in your database
-                boolean checkAmount = true; // vnp_Amount is valid (Check vnp_Amount VNPAY returns compared to the
-//                amount of the code (vnp_TxnRef) in the Your database).
-                boolean checkOrderStatus = true; // PaymnentStatus = 0 (pending)
-
-
-                if (checkOrderId) {
-                    if (checkAmount) {
-                        if (checkOrderStatus) {
-                            if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
-
-                                //Here Code update PaymnentStatus = 1 into your Database
-                            } else {
-
-                                // Here Code update PaymnentStatus = 2 into your Database
-                            }
-                            log.info("{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}");
-                        } else {
-
-                            log.info("{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}");
-                        }
-                    } else {
-                        log.info("{\"RspCode\":\"04\",\"Message\":\"Invalid Amount\"}");
-                    }
-                } else {
-                    log.info("{\"RspCode\":\"01\",\"Message\":\"Order not Found\"}");
-                }
-            } else {
-                log.info("{\"RspCode\":\"97\",\"Message\":\"Invalid Checksum\"}");
-            }
-        } catch (Exception e) {
-            res.setRspCode("99");
-            log.info("{\"RspCode\":\"99\",\"Message\":\"Unknow error\"}");
-            res.setMessage("Unknow error");
-            return res;
-        }
-
-
-        res.setRspCode("00");
-        res.setMessage("Confirm Success");
-        return res;
-    }
 
     public Map<String, Object> getTransactionInfo(String txnref, String transId, HttpServletRequest request) throws IOException {
         String vnp_RequestId = Config.getRandomNumber(8);
-        String vnp_Version = "2.1.0";
-        String vnp_Command = "querydr";
+        String vnp_Version = VNP_VERSION;
+        String vnp_Command = QUERY_DR;
         String vnp_TmnCode = Config.vnp_TmnCode;
         String vnp_TxnRef = txnref;//req.getParameter("order_id");
         String vnp_OrderInfo = "Hoan tien GD OrderId:" + vnp_TxnRef;
         String vnp_TransactionNo = "";
         String vnp_TransactionDate = transId ;
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone(VNP_TIME_ZONE));
+        SimpleDateFormat formatter = new SimpleDateFormat(VNP_TIME_FORMAT);
         String vnp_CreateDate = formatter.format(cld.getTime());
 
         String vnp_IpAddr = Config.getIpAddress(request);
@@ -185,30 +105,30 @@ public class VNPayUtils {
 
         JsonObject vnp_Params = new JsonObject ();
 
-        vnp_Params.addProperty("vnp_RequestId", vnp_RequestId);
-        vnp_Params.addProperty("vnp_Version", vnp_Version);
-        vnp_Params.addProperty("vnp_Command", vnp_Command);
-        vnp_Params.addProperty("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.addProperty(VNP_REQ_ID_KEY, vnp_RequestId);
+        vnp_Params.addProperty(VNP_VERSION_KEY, vnp_Version);
+        vnp_Params.addProperty(VNP_COMMAND_KEY, vnp_Command);
+        vnp_Params.addProperty(VNP_TMN_CODE_KEY, vnp_TmnCode);
 
-        vnp_Params.addProperty("vnp_TxnRef", vnp_TxnRef);
+        vnp_Params.addProperty(VNP_TXN_REF_KEY, vnp_TxnRef);
 
-        vnp_Params.addProperty("vnp_OrderInfo", vnp_OrderInfo);
+        vnp_Params.addProperty(VNP_ORDER_INFO_KEY, vnp_OrderInfo);
 
         if(vnp_TransactionNo != null && !vnp_TransactionNo.isEmpty())
         {
-            vnp_Params.addProperty("vnp_TransactionNo", "{get value of vnp_TransactionNo}");
+            vnp_Params.addProperty(VNP_TRANSACTION_NO_KEY, "{get value of vnp_TransactionNo}");
         }
 
-        vnp_Params.addProperty("vnp_TransactionDate", vnp_TransactionDate);
+        vnp_Params.addProperty(VNP_TRANSACTION_DATE_KEY, vnp_TransactionDate);
 
-        vnp_Params.addProperty("vnp_CreateDate", vnp_CreateDate);
-        vnp_Params.addProperty("vnp_IpAddr", vnp_IpAddr);
+        vnp_Params.addProperty(VNP_CREATE_DATE_KEY, vnp_CreateDate);
+        vnp_Params.addProperty(VNP_IP_ADDRESS_KEY, vnp_IpAddr);
 
         String hash_Data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TxnRef + "|" + vnp_TransactionDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
 
         String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hash_Data.toString());
 
-        vnp_Params.addProperty("vnp_SecureHash", vnp_SecureHash);
+        vnp_Params.addProperty(VNP_SECURE_HASH_KEY, vnp_SecureHash);
 
         URL url = new URL(Config.vnp_ApiUrl);
         HttpURLConnection con = (HttpURLConnection)url.openConnection();
