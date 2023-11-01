@@ -31,7 +31,7 @@ public class CreateOrderRequest {
 //    @NotNull
 //    private PaymentStatus paymentStatus;
 
-    @Schema(example = PAYMENT_TYPE_EX, description = NOT_BLANK_DES)
+    @Schema(example = PAYMENT_TYPE_EX, description = NOT_NULL_DES)
     @NotNull
     private PaymentType paymentType;
 

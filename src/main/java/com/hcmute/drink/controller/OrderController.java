@@ -81,7 +81,7 @@ public class OrderController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = ORDER_UPDATE_STATUS_SUB_PATH)
     // nhân viên cập nhật trạng thái order vào event logs
-    public ResponseEntity<ResponseAPI> updateOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
+    public ResponseEntity<ResponseAPI> addNewOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {
             OrderCollection savedData =  orderService.updateOrderEvent(id, body.getOrderStatus(), body.getDescription());
             UpdateOrderStatusResponse resData = modelMapper.map(savedData, UpdateOrderStatusResponse.class);
@@ -205,6 +205,25 @@ public class OrderController {
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Operation(summary = ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUM, description = ORDER_GET_ORDER_QUANTITY_BY_STATUS_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getOrderQuantityByStatusAtCurrentDate(@RequestParam("status") OrderStatus orderStatus) {
+        try {
+
+            GetOrderQuantityByStatusResponse resData =  orderService.getOrderQuantityByStatusAtCurrentDate(orderStatus);
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .timestamp(new Date())
+                    .data(resData)
+                    .message(SuccessConstant.GET)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

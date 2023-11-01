@@ -126,6 +126,8 @@ public class RouterConstant {
     public static final String ORDER_GET_STATUS_LINE_PATH = ORDER_BASE_PATH + ORDER_GET_STATUS_LINE_SUB_PATH;
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH = "/history";
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH;
+    public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH = "/quantity/today";
+    public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH;
 
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";
@@ -136,7 +138,11 @@ public class RouterConstant {
     public static final String TRANSACTION_UPDATE_BY_ID_PATH = TRANSACTION_BASE_PATH + TRANSACTION_UPDATE_BY_ID_SUB_PATH;
     public static final String TRANSACTION_UPDATE_COMPLETE_SUB_PATH = "/complete/" + TRANSACTION_ID;
     public static final String TRANSACTION_UPDATE_COMPLETE_PATH = TRANSACTION_BASE_PATH + TRANSACTION_UPDATE_COMPLETE_SUB_PATH;
-//    public static final String TRANSACTION_CREATE_PATH = TRANSACTION_BASE_PATH;
+
+    public static final String TRANSACTION_GET_REVENUE_BY_TIME_SUB_PATH = "/revenue";
+    public static final String TRANSACTION_GET_REVENUE_BY_TIME_PATH = TRANSACTION_BASE_PATH + TRANSACTION_GET_REVENUE_BY_TIME_SUB_PATH;
+    public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_SUB_PATH = "/revenue/today";
+    public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_PATH = TRANSACTION_BASE_PATH + TRANSACTION_GET_REVENUE_CURRENT_DATE_SUB_PATH;
 
 
     // ENDPOINT URL AUTH =================================================================

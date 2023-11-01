@@ -3,10 +3,13 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.GetRevenueByTimeResponse;
+import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.TransactionRepository;
+import com.hcmute.drink.utils.MongoDbUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,6 +27,7 @@ public class TransactionServiceImpl {
     private final TransactionRepository transactionRepository;
     private final OrderServiceImpl orderService;
     private final VNPayUtils vnPayUtils;
+    private final MongoDbUtils mongoDbUtils;
 
     @Autowired
     @Qualifier("modelMapperNotNull")
@@ -116,5 +122,15 @@ public class TransactionServiceImpl {
         trans.setStatus(PaymentStatus.PAID);
         trans.setTotalPaid(totalPaid);
         return transactionRepository.save(trans);
+    }
+
+    public List<GetRevenueByTimeResponse> getRevenueByTime(String time) {
+        return transactionRepository.getRevenueByTime(time);
+    }
+
+    public GetRevenueCurrentDateResponse getRevenueCurrentDate() {
+        Date startDate = mongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
+        Date endDate = mongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
+        return transactionRepository.getRevenueCurrentDate(startDate,  endDate);
     }
 }

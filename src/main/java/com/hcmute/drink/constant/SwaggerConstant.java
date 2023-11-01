@@ -114,6 +114,10 @@ public class SwaggerConstant {
     public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
     public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM = "Update transaction's status successfully by transaction id";
     public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
+    public static final String TRANSACTION_GET_REVENUE_BY_TIME_SUM = "Get all revenue of store by time [day, month, year]";
+    public static final String TRANSACTION_GET_REVENUE_BY_TIME_DES= "This endpoint returns revenue's information";
+    public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_SUM = "Get revenue of store at current date";
+    public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_DES= "This endpoint returns revenue's information at current date";
 
 
     // For Order =============================================================
@@ -142,6 +146,8 @@ public class SwaggerConstant {
     public static final String ORDER_GET_STATUS_LINE_DES = "This endpoint returns order status line";
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM = "Get all order history for employee by page and size";
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES = "This endpoint returns all order history";
+    public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUM = "Get order's quantity by status at today";
+    public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_DES = "This endpoint returns order's quantity at today";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";

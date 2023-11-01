@@ -3,6 +3,8 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
+import com.hcmute.drink.dto.GetRevenueByTimeResponse;
+import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
 import com.hcmute.drink.dto.UpdateTransactionRequest;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.impl.TransactionServiceImpl;
@@ -20,6 +22,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.hcmute.drink.constant.RouterConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
@@ -68,6 +72,40 @@ public class TransactionController {
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.UPDATED)
                     .data(newData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = TRANSACTION_GET_REVENUE_BY_TIME_SUM, description = TRANSACTION_GET_REVENUE_BY_TIME_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = TRANSACTION_GET_REVENUE_BY_TIME_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getRevenueByTime(@RequestParam("time") String time) {
+        try {
+            List<GetRevenueByTimeResponse> newData =  transactionService.getRevenueByTime(time);
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .data(newData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Operation(summary = TRANSACTION_GET_REVENUE_CURRENT_DATE_SUM, description = TRANSACTION_GET_REVENUE_CURRENT_DATE_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @PatchMapping(path = TRANSACTION_GET_REVENUE_CURRENT_DATE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> getRevenueCurrentDate() {
+        try {
+            GetRevenueCurrentDateResponse revenue = transactionService.getRevenueCurrentDate();
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .data(revenue)
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
         }

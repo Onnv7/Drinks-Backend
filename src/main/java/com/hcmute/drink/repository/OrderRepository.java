@@ -89,6 +89,13 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$limit: ?1}",
     })
     List<GetOrderHistoryPageForEmployeeResponse> getAllOrderHistoryForEmployee(int skip, int limit);
+
+    @Aggregation(pipeline = {
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$match: {$and: [{'lastEventLog.orderStatus': ?0}, {'lastEventLog.time': {$gte: ?1, $lt: ?2}}]}}",
+            "{$group: {_id: null, orderQuantity: {$sum: 1}}}"
+    })
+    GetOrderQuantityByStatusResponse getOrderQuantityByStatusAtCurrentDate(OrderStatus orderStatus, Date from, Date to);
     @Query("{'_id' : ?0}")
     @Update("{$push: {eventLogs: ?1}}")
     void completeOrder(String id, OrderStatus orderStatus);

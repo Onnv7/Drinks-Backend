@@ -14,6 +14,7 @@ import com.hcmute.drink.enums.PaymentType;
 import com.hcmute.drink.payment.Config;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.OrderRepository;
+import com.hcmute.drink.utils.MongoDbUtils;
 import com.hcmute.drink.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class OrderServiceImpl {
     private final SecurityUtils securityUtils;
     private final VNPayUtils vnPayUtils;
     private final ModelMapper modelMapper;
+    private final MongoDbUtils mongoDbUtils;
 
     @Autowired
     @Lazy
@@ -134,7 +136,7 @@ public class OrderServiceImpl {
                 .orderStatus(orderStatus)
                 .description(description)
                 .employeeId(new ObjectId(employeeId))
-                .time(new Date())
+                .time(mongoDbUtils.createCurrentTime())
                 .build()
         );
         return orderRepository.save(order);
@@ -202,5 +204,11 @@ public class OrderServiceImpl {
         int skip = (page - 1) * size;
         int limit = size;
         return orderRepository.getAllOrderHistoryForEmployee(skip, limit);
+    }
+
+    public GetOrderQuantityByStatusResponse getOrderQuantityByStatusAtCurrentDate(OrderStatus orderStatus)  {
+        Date startDate = mongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
+        Date endDate = mongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
+        return orderRepository.getOrderQuantityByStatusAtCurrentDate(orderStatus, startDate, endDate);
     }
 }

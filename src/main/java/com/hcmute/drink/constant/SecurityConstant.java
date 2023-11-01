@@ -64,6 +64,8 @@ public class SecurityConstant {
             EMPLOYEE_GET_ALL_PATH,
             CATEGORY_GET_ALL_PATH,
             PRODUCT_GET_ALL_PATH,
+            TRANSACTION_GET_REVENUE_BY_TIME_PATH,TRANSACTION_GET_REVENUE_CURRENT_DATE_PATH,
+
     };
     public static final String[] PUT_ADMIN_PATH = {
             PRODUCT_UPDATE_BY_ID_PATH,
@@ -99,7 +101,7 @@ public class SecurityConstant {
             EMPLOYEE_GET_BY_ID_PATH,
             ORDER_GET_ALL_SHIPPING_PATH,
             ORDER_GET_ALL_BY_STATUS_AND_TYPE_PATH,
-            ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH,
+            ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH, ORDER_GET_ORDER_QUANTITY_BY_STATUS_PATH
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {
