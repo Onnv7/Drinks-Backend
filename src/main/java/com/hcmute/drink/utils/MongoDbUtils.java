@@ -17,4 +17,9 @@ public class MongoDbUtils {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         return Date.from(now.toInstant());
     }
+    public Date createPreviousDay(int hour, int minute, int second, int millisecond, int prevDay) {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime previousDay = now.minusDays(prevDay).withHour(hour).withMinute(minute).withSecond(second).withNano(millisecond);
+        return Date.from(previousDay.toInstant());
+    }
 }

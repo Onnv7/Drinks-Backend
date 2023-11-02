@@ -1,16 +1,11 @@
 package com.hcmute.drink.service.impl;
 
-import com.hcmute.drink.collection.OrderCollection;
-import com.hcmute.drink.collection.ProductCollection;
-import com.hcmute.drink.collection.TransactionCollection;
+import com.hcmute.drink.collection.*;
 import com.hcmute.drink.collection.embedded.*;
 import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.*;
-import com.hcmute.drink.enums.OrderStatus;
-import com.hcmute.drink.enums.OrderType;
-import com.hcmute.drink.enums.PaymentStatus;
-import com.hcmute.drink.enums.PaymentType;
+import com.hcmute.drink.enums.*;
 import com.hcmute.drink.payment.Config;
 import com.hcmute.drink.payment.VNPayUtils;
 import com.hcmute.drink.repository.OrderRepository;
@@ -43,6 +38,7 @@ public class OrderServiceImpl {
     private final VNPayUtils vnPayUtils;
     private final ModelMapper modelMapper;
     private final MongoDbUtils mongoDbUtils;
+    private final EmployeeServiceImpl employeeService;
 
     @Autowired
     @Lazy
@@ -129,17 +125,18 @@ public class OrderServiceImpl {
         return resData;
     }
 
-    public OrderCollection updateOrderEvent(String id, OrderStatus orderStatus, String description) throws Exception {
+    public void updateOrderEvent(Maker maker, String id, OrderStatus orderStatus, String description) throws Exception {
         OrderCollection order = exceptionIfNotExistedOrderById(id);
         String employeeId = securityUtils.getCurrentUserId();
         order.getEventLogs().add(OrderLogEmbedded.builder()
                 .orderStatus(orderStatus)
                 .description(description)
-                .employeeId(new ObjectId(employeeId))
+                .isEmployee(maker.equals(Maker.employee))
+                .makerId(new ObjectId(employeeId))
                 .time(mongoDbUtils.createCurrentTime())
                 .build()
         );
-        return orderRepository.save(order);
+        orderRepository.save(order);
     }
 
     public List<GetAllShippingOrdersResponse> getAllShippingOrdersQueueForEmployee() throws Exception {
@@ -190,12 +187,12 @@ public class OrderServiceImpl {
         return orderRepository.save(order);
     }
 
-    public List<OrderLogModel> getOrderEventLogById(String orderId) throws Exception {
+    public List<GetOrderStatusLineResponse> getOrderEventLogById(String orderId) throws Exception {
         OrderCollection order = orderRepository.findById(orderId).orElseThrow();
-        List<OrderLogModel> resData = new ArrayList<OrderLogModel>();
+        List<GetOrderStatusLineResponse> resData = new ArrayList<GetOrderStatusLineResponse>();
         List<OrderLogEmbedded> logs = order.getEventLogs();
         for (OrderLogEmbedded log : logs) {
-            resData.add(modelMapper.map(log, OrderLogModel.class));
+            resData.add(modelMapper.map(log, GetOrderStatusLineResponse.class));
         }
         return resData;
     }
@@ -206,9 +203,27 @@ public class OrderServiceImpl {
         return orderRepository.getAllOrderHistoryForEmployee(skip, limit);
     }
 
+
+
     public GetOrderQuantityByStatusResponse getOrderQuantityByStatusAtCurrentDate(OrderStatus orderStatus)  {
         Date startDate = mongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
         Date endDate = mongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
-        return orderRepository.getOrderQuantityByStatusAtCurrentDate(orderStatus, startDate, endDate);
+        GetOrderQuantityByStatusResponse current = orderRepository.getOrderQuantityByStatus(orderStatus, startDate, endDate);
+        if (current == null) {
+            current = new GetOrderQuantityByStatusResponse();
+            current.setOrderQuantity(0);
+        }
+        Date startDatePrev = mongoDbUtils.createPreviousDay(0, 0, 0, 0, 1);
+        Date endDatePrev = mongoDbUtils.createPreviousDay(23, 59, 59, 999, 1);
+        GetOrderQuantityByStatusResponse prev = orderRepository.getOrderQuantityByStatus(orderStatus, startDatePrev, endDatePrev);
+        int difference = 0;
+        if(prev != null) {
+            difference = current.getOrderQuantity() - prev.getOrderQuantity();
+        } else {
+            difference = current.getOrderQuantity();
+        }
+        current.setDifference(difference);
+        return current;
     }
+
 }

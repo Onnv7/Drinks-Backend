@@ -95,9 +95,9 @@ public class EmployeeController {
     @PutMapping(path = EMPLOYEE_UPDATE_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> updateEmployeeById(@PathVariable("employeeId") String id, @RequestBody @Validated UpdateEmployeeRequest body) {
         try {
-            EmployeeCollection data = modelMapper.map(body, EmployeeCollection.class);
-            data.setId(id);
-            EmployeeCollection dataUpdated = employeeService.updateEmployee(data);
+//            EmployeeCollection data = modelMapper.map(body, EmployeeCollection.class);
+//            data.setId(id);
+            EmployeeCollection dataUpdated = employeeService.updateEmployee(body, id);
             UpdateEmployeeResponse resData = modelMapper.map(dataUpdated, UpdateEmployeeResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())

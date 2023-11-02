@@ -5,6 +5,7 @@ import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.ChangePasswordEmployeeRequest;
 import com.hcmute.drink.dto.GetAllEmployeeResponse;
 
+import com.hcmute.drink.dto.UpdateEmployeeRequest;
 import com.hcmute.drink.dto.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.utils.JwtUtils;
@@ -47,6 +48,12 @@ public class EmployeeServiceImpl {
 //        employee.setPassword(null);
         return employee;
     }
+
+    public EmployeeCollection getEmployeeByIdNotException(String id)  {
+        EmployeeCollection  employee = employeeRepository.findById(id).orElse(null);
+
+        return employee;
+    }
     // SERVICES =================================================================
 
     public List<GetAllEmployeeResponse> getAllEmployees() throws Exception {
@@ -78,8 +85,8 @@ public class EmployeeServiceImpl {
         employee.setPassword(passwordEncoder.encode(data.getPassword()));
         employeeRepository.save(employee);
     }
-    public EmployeeCollection updateEmployee(EmployeeCollection data) throws Exception {
-        EmployeeCollection employee = exceptionIfNotExistedEmployeeById(data.getId());
+    public EmployeeCollection updateEmployee(UpdateEmployeeRequest data, String id) throws Exception {
+        EmployeeCollection employee = exceptionIfNotExistedEmployeeById(id);
         modelMapperNotNull.map(data, employee);
         return employeeRepository.save(employee);
     }

@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class GetRevenueCurrentDateResponse {
     private double revenue;
+    private double ratio;
 }

@@ -110,7 +110,7 @@ public class RouterConstant {
     public static final String ORDER_ID = "{orderId}";
     public static final String ORDER_CREATE_SUB_PATH = "";
     public static final String ORDER_CREATE_PATH = ORDER_BASE_PATH + ORDER_CREATE_SUB_PATH;
-    public static final String ORDER_UPDATE_STATUS_SUB_PATH = "/" + ORDER_ID;
+    public static final String ORDER_UPDATE_STATUS_SUB_PATH = "/{maker}/" + ORDER_ID;
     public static final String ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + ORDER_UPDATE_STATUS_SUB_PATH;
     public static final String ORDER_GET_ALL_SHIPPING_SUB_PATH = "/shipping";
     public static final String ORDER_GET_ALL_SHIPPING_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_SHIPPING_SUB_PATH;

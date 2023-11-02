@@ -82,7 +82,7 @@ public class TransactionController {
 
     @Operation(summary = TRANSACTION_GET_REVENUE_BY_TIME_SUM, description = TRANSACTION_GET_REVENUE_BY_TIME_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PatchMapping(path = TRANSACTION_GET_REVENUE_BY_TIME_SUB_PATH)
+    @GetMapping(path = TRANSACTION_GET_REVENUE_BY_TIME_SUB_PATH)
     public ResponseEntity<ResponseAPI> getRevenueByTime(@RequestParam("time") String time) {
         try {
             List<GetRevenueByTimeResponse> newData =  transactionService.getRevenueByTime(time);
@@ -99,7 +99,7 @@ public class TransactionController {
 
     @Operation(summary = TRANSACTION_GET_REVENUE_CURRENT_DATE_SUM, description = TRANSACTION_GET_REVENUE_CURRENT_DATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PatchMapping(path = TRANSACTION_GET_REVENUE_CURRENT_DATE_SUB_PATH)
+    @GetMapping(path = TRANSACTION_GET_REVENUE_CURRENT_DATE_SUB_PATH)
     public ResponseEntity<ResponseAPI> getRevenueCurrentDate() {
         try {
             GetRevenueCurrentDateResponse revenue = transactionService.getRevenueCurrentDate();

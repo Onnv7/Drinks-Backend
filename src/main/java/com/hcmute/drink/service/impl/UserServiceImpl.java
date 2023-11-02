@@ -36,6 +36,10 @@ public class UserServiceImpl implements UserService {
         UserCollection user = userRepository.findByEmail(email);
         return user;
     }
+    public UserCollection findById(String id) {
+        UserCollection user = userRepository.findById(id).orElse(null);
+        return user;
+    }
     // UTILS =================================================================
 
     public UserCollection exceptionIfNotExistedUserById(String id) throws Exception {

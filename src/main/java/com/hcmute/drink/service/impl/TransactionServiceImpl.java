@@ -3,8 +3,10 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.GetOrderQuantityByStatusResponse;
 import com.hcmute.drink.dto.GetRevenueByTimeResponse;
 import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
+import com.hcmute.drink.enums.Maker;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.payment.VNPayUtils;
@@ -67,7 +69,7 @@ public class TransactionServiceImpl {
                 transaction.setTimeCode(transInfo.get("vnp_PayDate").toString());
                 transaction.setStatus(PaymentStatus.PAID);
             } else {
-                orderService.updateOrderEvent(order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+                orderService.updateOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
                 transaction.setTimeCode(transInfo.get("vnp_PayDate").toString());
                 transaction.setStatus(PaymentStatus.UNPAID);
             }
@@ -99,7 +101,7 @@ public class TransactionServiceImpl {
                 transaction.setStatus(PaymentStatus.PAID);
                 transaction.setTotalPaid(Double.parseDouble(transInfo.get("vnp_Amount").toString())/100);
             } else {
-                orderService.updateOrderEvent(order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+                orderService.updateOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
                 transaction.setStatus(PaymentStatus.UNPAID);
                 transaction.setTotalPaid(0);
             }
@@ -131,6 +133,25 @@ public class TransactionServiceImpl {
     public GetRevenueCurrentDateResponse getRevenueCurrentDate() {
         Date startDate = mongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
         Date endDate = mongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
-        return transactionRepository.getRevenueCurrentDate(startDate,  endDate);
+        GetRevenueCurrentDateResponse current = transactionRepository.getRevenueCurrentDate(startDate,  endDate);
+
+        if (current == null) {
+            current = new GetRevenueCurrentDateResponse();
+            current.setRevenue(0);
+            current.setRatio(-100);
+            return current;
+        }
+
+        Date startDatePrev = mongoDbUtils.createPreviousDay(0, 0, 0, 0, 1);
+        Date endDatePrev = mongoDbUtils.createPreviousDay(23, 59, 59, 999, 1);
+        GetRevenueCurrentDateResponse prev = transactionRepository.getRevenueCurrentDate(startDatePrev,  endDatePrev);
+
+        if(prev == null) {
+            prev = new GetRevenueCurrentDateResponse();
+            prev.setRevenue(0);
+        }
+        double ratio =(current.getRevenue() - prev.getRevenue()) / (prev.getRevenue());
+        current.setRatio(ratio);
+        return current;
     }
 }

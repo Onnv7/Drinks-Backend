@@ -95,7 +95,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$match: {$and: [{'lastEventLog.orderStatus': ?0}, {'lastEventLog.time': {$gte: ?1, $lt: ?2}}]}}",
             "{$group: {_id: null, orderQuantity: {$sum: 1}}}"
     })
-    GetOrderQuantityByStatusResponse getOrderQuantityByStatusAtCurrentDate(OrderStatus orderStatus, Date from, Date to);
+    GetOrderQuantityByStatusResponse getOrderQuantityByStatus(OrderStatus orderStatus, Date from, Date to);
     @Query("{'_id' : ?0}")
     @Update("{$push: {eventLogs: ?1}}")
     void completeOrder(String id, OrderStatus orderStatus);

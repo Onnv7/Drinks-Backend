@@ -6,6 +6,7 @@ import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
+import com.hcmute.drink.enums.Maker;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.model.ResponseAPI;
@@ -81,13 +82,12 @@ public class OrderController {
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @PatchMapping(path = ORDER_UPDATE_STATUS_SUB_PATH)
     // nhân viên cập nhật trạng thái order vào event logs
-    public ResponseEntity<ResponseAPI> addNewOrderEvent(@PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
+    public ResponseEntity<ResponseAPI> addNewOrderEvent(@PathVariable("maker") Maker maker, @PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {
-            OrderCollection savedData =  orderService.updateOrderEvent(id, body.getOrderStatus(), body.getDescription());
-            UpdateOrderStatusResponse resData = modelMapper.map(savedData, UpdateOrderStatusResponse.class);
+            orderService.updateOrderEvent(maker, id, body.getOrderStatus(), body.getDescription());
+//            UpdateOrderStatusResponse resData = modelMapper.map(savedData, UpdateOrderStatusResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
-                    .data(resData)
                     .message(SuccessConstant.CREATED)
                     .build();
             return new ResponseEntity<>(res, StatusCode.CREATED);
@@ -197,7 +197,7 @@ public class OrderController {
     public ResponseEntity<ResponseAPI> getOrderStatusLine(@PathVariable("orderId") String orderId) {
         try {
 
-            List<OrderLogModel> resData =  orderService.getOrderEventLogById(orderId);
+            List<GetOrderStatusLineResponse> resData =  orderService.getOrderEventLogById(orderId);
 
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
