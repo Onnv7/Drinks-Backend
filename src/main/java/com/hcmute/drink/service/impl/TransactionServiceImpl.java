@@ -3,7 +3,6 @@ package com.hcmute.drink.service.impl;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.GetOrderQuantityByStatusResponse;
 import com.hcmute.drink.dto.GetRevenueByTimeResponse;
 import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
 import com.hcmute.drink.enums.Maker;
@@ -69,7 +68,7 @@ public class TransactionServiceImpl {
                 transaction.setTimeCode(transInfo.get("vnp_PayDate").toString());
                 transaction.setStatus(PaymentStatus.PAID);
             } else {
-                orderService.updateOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+                orderService.addNewOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
                 transaction.setTimeCode(transInfo.get("vnp_PayDate").toString());
                 transaction.setStatus(PaymentStatus.UNPAID);
             }
@@ -101,7 +100,7 @@ public class TransactionServiceImpl {
                 transaction.setStatus(PaymentStatus.PAID);
                 transaction.setTotalPaid(Double.parseDouble(transInfo.get("vnp_Amount").toString())/100);
             } else {
-                orderService.updateOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+                orderService.addNewOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
                 transaction.setStatus(PaymentStatus.UNPAID);
                 transaction.setTotalPaid(0);
             }

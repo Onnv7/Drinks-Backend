@@ -2,7 +2,6 @@ package com.hcmute.drink.service.impl;
 
 import com.hcmute.drink.collection.*;
 import com.hcmute.drink.collection.embedded.*;
-import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.*;
@@ -112,9 +111,11 @@ public class OrderServiceImpl {
         TransactionCollection savedData = transactionService.createTransaction(transData);
         data.setOrderType(OrderType.SHIPPING);
         data.setTransactionId(new ObjectId(savedData.getId()));
-
+        String makerId = securityUtils.getCurrentUserId();
         OrderLogEmbedded log = OrderLogEmbedded.builder()
                 .orderStatus(OrderStatus.CREATED)
+                .isEmployee(false)
+                .makerId(new ObjectId(makerId))
                 .time(new Date()).build();
         data.setEventLogs(new ArrayList<>(Arrays.<OrderLogEmbedded>asList(log)));
         OrderCollection order = orderRepository.save(data);
@@ -125,7 +126,7 @@ public class OrderServiceImpl {
         return resData;
     }
 
-    public void updateOrderEvent(Maker maker, String id, OrderStatus orderStatus, String description) throws Exception {
+    public void addNewOrderEvent(Maker maker, String id, OrderStatus orderStatus, String description) throws Exception {
         OrderCollection order = exceptionIfNotExistedOrderById(id);
         String employeeId = securityUtils.getCurrentUserId();
         order.getEventLogs().add(OrderLogEmbedded.builder()
@@ -197,10 +198,10 @@ public class OrderServiceImpl {
         return resData;
     }
 
-    public List<GetOrderHistoryPageForEmployeeResponse> getOrderHistoryPageForEmployee(int page, int size)  {
+    public List<GetOrderHistoryPageForEmployeeResponse> getOrderHistoryPageForEmployee(OrderStatus orderStatus, int page, int size)  {
         int skip = (page - 1) * size;
         int limit = size;
-        return orderRepository.getAllOrderHistoryForEmployee(skip, limit);
+        return orderRepository.getAllOrderHistoryForEmployee(orderStatus, skip, limit);
     }
 
 

@@ -2,7 +2,6 @@ package com.hcmute.drink.controller;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.embedded.ReviewEmbedded;
-import com.hcmute.drink.common.OrderLogModel;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
@@ -63,9 +62,9 @@ public class OrderController {
     @Operation(summary = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM, description = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getOrderHistoryPageForEmployee(@RequestParam("page") int page, @RequestParam("size") int size) {
+    public ResponseEntity<ResponseAPI> getOrderHistoryPageForEmployee(@PathVariable("orderStatus") OrderStatus orderStatus, @RequestParam("page") int page, @RequestParam("size") int size) {
         try {
-            List<GetOrderHistoryPageForEmployeeResponse> resData =  orderService.getOrderHistoryPageForEmployee(page, size);
+            List<GetOrderHistoryPageForEmployeeResponse> resData =  orderService.getOrderHistoryPageForEmployee(orderStatus, page, size);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)
@@ -84,7 +83,7 @@ public class OrderController {
     // nhân viên cập nhật trạng thái order vào event logs
     public ResponseEntity<ResponseAPI> addNewOrderEvent(@PathVariable("maker") Maker maker, @PathVariable("orderId") String id, @RequestBody @Validated UpdateOrderStatusRequest body) {
         try {
-            orderService.updateOrderEvent(maker, id, body.getOrderStatus(), body.getDescription());
+            orderService.addNewOrderEvent(maker, id, body.getOrderStatus(), body.getDescription());
 //            UpdateOrderStatusResponse resData = modelMapper.map(savedData, UpdateOrderStatusResponse.class);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())

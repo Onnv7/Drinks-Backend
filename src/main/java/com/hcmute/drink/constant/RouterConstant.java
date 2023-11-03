@@ -124,7 +124,7 @@ public class RouterConstant {
     public static final String ORDER_CREATE_REVIEW_PATH = ORDER_BASE_PATH + ORDER_CREATE_REVIEW_SUB_PATH;
     public static final String ORDER_GET_STATUS_LINE_SUB_PATH = "/status/" + ORDER_ID;
     public static final String ORDER_GET_STATUS_LINE_PATH = ORDER_BASE_PATH + ORDER_GET_STATUS_LINE_SUB_PATH;
-    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH = "/history";
+    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH = "/history/{orderStatus}";
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH;
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH = "/quantity/today";
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH;

@@ -76,7 +76,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
     @Aggregation(pipeline = {
             "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
             "{$addFields: {'productQuantity': {$size: '$products'}}}",
-            "{$match: {$or: [{'lastEventLog.orderStatus': 'CANCELED'}, {'lastEventLog.orderStatus': 'SUCCEED'}]}}",
+            "{$match: {'lastEventLog.orderStatus': ?0}}",
             "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
             "{ $unwind: '$user' }",
             "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
@@ -85,10 +85,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{ $unwind: '$products.productSample' }",
             "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {'timeLastEvent': -1}}",
-            "{$skip: ?0}",
-            "{$limit: ?1}",
+            "{$skip: ?1}",
+            "{$limit: ?2}",
     })
-    List<GetOrderHistoryPageForEmployeeResponse> getAllOrderHistoryForEmployee(int skip, int limit);
+    List<GetOrderHistoryPageForEmployeeResponse> getAllOrderHistoryForEmployee(OrderStatus orderStatus, int skip, int limit);
 
     @Aggregation(pipeline = {
             "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
