@@ -10,10 +10,13 @@ import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.payment.VNPayUtils;
-import com.hcmute.drink.service.impl.OrderServiceImpl;
-import com.hcmute.drink.service.impl.TransactionServiceImpl;
+import com.hcmute.drink.service.OrderService;
+import com.hcmute.drink.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +41,8 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 public class OrderController {
     private final ModelMapper modelMapper;
     private final VNPayUtils vnPayUtils;
-    private final OrderServiceImpl orderService;
-    private final TransactionServiceImpl transactionService;
+    private final OrderService orderService;
+    private final TransactionService transactionService;
 
 
     @Operation(summary = ORDER_CREATE_SHIPPING_SUM, description = ORDER_CREATE_SHIPPING_DES)
@@ -62,9 +66,25 @@ public class OrderController {
     @Operation(summary = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM, description = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getOrderHistoryPageForEmployee(@PathVariable("orderStatus") OrderStatus orderStatus, @RequestParam("page") int page, @RequestParam("size") int size) {
+    public ResponseEntity<ResponseAPI> getOrderHistoryPageForEmployee(
+            @PathVariable("orderStatus") OrderStatus orderStatus,
+            @Parameter(name = "key", description = "Key is order's id, customer name or phone number", required = false, example = "65439a55e9818f43f8b8e02c")
+            @RequestParam(name = "key", required = false) String key,
+            @Parameter(name = "page", required = true, example = "1")
+            @RequestParam("page") int page,
+            @Parameter(name = "size", required = true, example = "10")
+            @RequestParam("size") int size) {
         try {
-            List<GetOrderHistoryPageForEmployeeResponse> resData =  orderService.getOrderHistoryPageForEmployee(orderStatus, page, size);
+            if(page <= 0 || size <= 0) {
+                throw new RuntimeException("Invalid's page or size");
+            }
+            List<GetOrderHistoryPageForEmployeeResponse> resData = new ArrayList<>();
+            if(key == null) {
+                resData =  orderService.getOrderHistoryPageForEmployee(orderStatus, page, size);
+            } else {
+                resData =  orderService.searchOrderHistoryForEmployee(orderStatus, key, page, size);
+            }
+
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(resData)

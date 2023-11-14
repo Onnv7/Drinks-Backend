@@ -6,8 +6,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.UserServiceImpl;
-import com.hcmute.drink.utils.SecurityUtils;
+import com.hcmute.drink.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +28,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(USER_BASE_PATH)
 @RequiredArgsConstructor
 public class UserController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Operation(summary = USER_GET_ALL_SUM, description = USER_GET_ALL_DES)

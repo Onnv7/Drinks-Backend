@@ -5,19 +5,24 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.ProductServiceImpl;
+import com.hcmute.drink.service.OrderService;
+import com.hcmute.drink.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.hcmute.drink.constant.RouterConstant.*;
@@ -29,7 +34,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequiredArgsConstructor
 public class ProductController {
     private final ModelMapper modelMapper;
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
 
     @Operation(summary = PRODUCT_CREATE_SUM, description = PRODUCT_CREATE_DES)
@@ -106,12 +111,28 @@ public class ProductController {
         }
     }
 
-    @Operation(summary = PRODUCT_GET_ALL_ENABLED_SUM, description = PRODUCT_GET_ALL_ENABLED_DES)
+    @Operation(summary = PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM, description = PRODUCT_GET_ALL_OR_SEARCH_ENABLED_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = PRODUCT_GET_ALL_ENABLED_SUB_PATH)
-    protected ResponseEntity<ResponseAPI> getAllProductsEnabled() {
+    protected ResponseEntity<ResponseAPI> getAllProductsEnabled(
+            @Parameter(name = "key", description = "Key is name or description",required = false, example = "name or description")
+            @RequestParam(name = "key", required = false) String key,
+            @Parameter(name = "page", required = true, example = "1")
+            @RequestParam("page") int page,
+            @Parameter(name = "size", required = true, example = "10")
+            @RequestParam("size") int size
+    ) {
         try {
-            List<GetAllProductsEnabledResponse> resData = productService.getAllProductsEnabled();
+            if(page <= 0 || size <= 0) {
+                throw new RuntimeException("Invalid's page or size");
+            }
+            List<GetAllProductsEnabledResponse> resData = new ArrayList<>();
+            if(key == null) {
+                resData = productService.getAllProductsEnabled(page, size);
+            } else {
+                resData = productService.searchProductByNameOrDescription(key, page, size);
+            }
+
 
             ResponseAPI res = ResponseAPI.builder()
                     .message(SuccessConstant.GET)
@@ -176,6 +197,29 @@ public class ProductController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    @Operation(summary = PRODUCT_GET_TOP_ORDER_QUANTITY_SUM, description = PRODUCT_GET_TOP_ORDER_QUANTITY_DES)
+    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
+    @GetMapping(path = PRODUCT_GET_TOP_QUANTITY_ORDER_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> getTopProductQuantityOrder(
+            @Parameter(name = "itemQuantity", required = true, example = "10")
+            @PathVariable("itemQuantity") int itemQuantity
+    ) {
+        try {
+            if(itemQuantity <= 0) {
+                throw new RuntimeException("Invalid's itemQuantity");
+            }
 
+            List<GetAllProductsEnabledResponse>  resData = productService.getTopProductQuantityOrder(itemQuantity);
+
+            ResponseAPI res = ResponseAPI.builder()
+                    .message(SuccessConstant.GET)
+                    .timestamp(new Date())
+                    .data(resData)
+                    .build();
+            return new ResponseEntity<>(res, StatusCode.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

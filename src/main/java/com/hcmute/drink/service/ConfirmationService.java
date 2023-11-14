@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.ConfirmationCollection;
 import com.hcmute.drink.repository.ConfirmationRepository;
@@ -12,7 +12,7 @@ import static com.hcmute.drink.constant.ErrorConstant.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmationServiceImpl {
+public class ConfirmationService {
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
     @Autowired

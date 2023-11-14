@@ -5,9 +5,8 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.GetRevenueByTimeResponse;
 import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
-import com.hcmute.drink.dto.UpdateTransactionRequest;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.TransactionServiceImpl;
+import com.hcmute.drink.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,9 +17,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +29,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(TRANSACTION_BASE_PATH)
 @RequiredArgsConstructor
 public class TransactionController {
-    private final TransactionServiceImpl transactionService;
+    private final TransactionService transactionService;
     private final ModelMapper modelMapper;
     @Autowired
     @Qualifier("modelMapperNotNull")

@@ -20,9 +20,11 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
 
     @Aggregation(pipeline = {
             "{$match: {enabled: true}}",
-            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}"
+            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}",
+            "{$skip: ?0}",
+            "{$limit: ?1}",
     })
-    List<GetAllProductsEnabledResponse> getAllProductsEnabled();
+    List<GetAllProductsEnabledResponse> getAllProductsEnabled(int skip, int limit);
 
     @Aggregation(pipeline = {
             "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, image: '$image.url', thumbnail: '$thumbnail.url', enabled: 1}}"
@@ -37,4 +39,19 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
     GetProductEnabledByIdResponse getProductEnabledById(String id);
     @Query(value = "{$and : [{_id: ?0}]}", fields = "{_id: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: 1, categoryId: 1, enabled: 1}}")
     GetProductByIdResponse getProductDetailsById(String id);
+
+    @Aggregation(pipeline = {
+            "{$match: {$or: [{name: {$regex: ?0, $options: 'i'}}, {description: {$regex: ?0, $options: 'i'}}]}}",
+            "{$project: {_id: 1, name: 1, description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}",
+            "{$skip: ?1}",
+            "{$limit: ?2}",
+    })
+    List<GetAllProductsEnabledResponse> searchProductByNameOrDescription(String key, int skip, int limit);
+    @Aggregation(pipeline = {
+            "{$match: {_id: { $nin: ?1 }}}",
+            "{$project: {_id: 1, name: 1, price: {$min: '$sizeList.price'}, description: 1, thumbnail: '$thumbnail.url'}}",
+            "{$limit: ?0}"
+    })
+
+    List<GetAllProductsEnabledResponse> getSomeProduct(int quantity, List<ObjectId> excludeId);
 }

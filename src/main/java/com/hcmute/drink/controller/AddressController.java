@@ -5,7 +5,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.AddressServiceImpl;
+import com.hcmute.drink.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,7 +28,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(ADDRESS_BASE_PATH)
 @RequiredArgsConstructor
 public class AddressController {
-    private final AddressServiceImpl addressService;
+    private final AddressService addressService;
     private final ModelMapper modelMapper;
 
     @Operation(summary = ADDRESS_ADD_ADDRESS_BY_ID_SUM, description = ADDRESS_ADD_ADDRESS_BY_ID_DES)

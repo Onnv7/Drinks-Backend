@@ -69,6 +69,8 @@ public class RouterConstant {
     public static final String PRODUCT_SOFT_DELETE_BY_ID_PATH = PRODUCT_BASE_PATH + PRODUCT_SOFT_DELETE_BY_ID_SUB_PATH;
     public static final String PRODUCT_CREATE_SUB_PATH = "";
     public static final String PRODUCT_CREATE_PATH = PRODUCT_BASE_PATH + PRODUCT_CREATE_SUB_PATH;
+    public static final String PRODUCT_GET_TOP_QUANTITY_ORDER_SUB_PATH = "/top/{itemQuantity}";
+    public static final String PRODUCT_GET_TOP_QUANTITY_ORDER_PATH = PRODUCT_BASE_PATH + PRODUCT_GET_TOP_QUANTITY_ORDER_SUB_PATH;
 
 
     // ENDPOINT URL EMPLOYEE =================================================================
@@ -128,6 +130,8 @@ public class RouterConstant {
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH = ORDER_BASE_PATH + ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUB_PATH;
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH = "/quantity/today";
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_PATH = ORDER_BASE_PATH + ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUB_PATH;
+    public static final String ORDER_SEARCH_HISTORY_FOR_EMPLOYEE_SUB_PATH = "/{orderStatus}/search";
+    public static final String ORDER_SEARCH_HISTORY_FOR_EMPLOYEE_PATH = ORDER_BASE_PATH + ORDER_SEARCH_HISTORY_FOR_EMPLOYEE_SUB_PATH;
 
     // ENDPOINT URL TRANSACTION =================================================================
     public static final String TRANSACTION_ID = "{transId}";

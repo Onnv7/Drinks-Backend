@@ -4,7 +4,7 @@ import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.security.UserPrincipal;
-import com.hcmute.drink.service.impl.UserServiceImpl;
+import com.hcmute.drink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @SneakyThrows
     @Override

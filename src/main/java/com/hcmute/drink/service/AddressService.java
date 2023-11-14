@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.AddressCollection;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -21,8 +21,8 @@ import static com.hcmute.drink.constant.ErrorConstant.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl {
-    private final UserServiceImpl userService;
+public class AddressService {
+    private final UserService userService;
     private final AddressRepository addressRepository;
     @Autowired
     @Qualifier("modelMapperNotNull")

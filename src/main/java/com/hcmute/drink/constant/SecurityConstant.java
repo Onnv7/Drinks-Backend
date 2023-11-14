@@ -15,7 +15,7 @@ public class SecurityConstant {
             "/IPN/**",
             "/openapi/**", "/v3/api-docs/**", "/openapi/swagger-config/**",
             "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html",
-            PRODUCT_GET_ALL_ENABLED_PATH, PRODUCT_GET_BY_CATEGORY_ID_PATH, PRODUCT_GET_ENABLED_BY_ID_PATH,
+            PRODUCT_GET_ALL_ENABLED_PATH, PRODUCT_GET_BY_CATEGORY_ID_PATH, PRODUCT_GET_ENABLED_BY_ID_PATH, PRODUCT_GET_TOP_QUANTITY_ORDER_PATH,
              CATEGORY_GET_BY_ID_PATH,
             USER_CHECK_EXISTED_PATH, CATEGORY_GET_ALL_WITHOUT_DELETED_PATH,
             "/api/order/test"

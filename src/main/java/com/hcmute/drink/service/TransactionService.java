@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
@@ -24,9 +24,9 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionServiceImpl {
+public class TransactionService {
     private final TransactionRepository transactionRepository;
-    private final OrderServiceImpl orderService;
+    private final OrderService orderService;
     private final VNPayUtils vnPayUtils;
     private final MongoDbUtils mongoDbUtils;
 

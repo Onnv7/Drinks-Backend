@@ -5,7 +5,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.CategoryServiceImpl;
+import com.hcmute.drink.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +30,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequiredArgsConstructor
 public class CategoryController {
     private final ModelMapper modelMapper;
-    private final CategoryServiceImpl categoryService;
+    private final CategoryService categoryService;
 
     @Operation(summary = CATEGORY_CREATE_SUM, description = CATEGORY_CREATE_DES)
     @ApiResponse(responseCode = StatusCode.CODE_CREATED, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))

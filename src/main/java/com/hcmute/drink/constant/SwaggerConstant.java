@@ -75,16 +75,19 @@ public class SwaggerConstant {
     public static final String PRODUCT_GET_ENABLED_BY_ID_DES= "This endpoint returns a product's information which enabled";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_SUM = "Get products by category id";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_DES= "This endpoint returns products list";
-    public static final String PRODUCT_GET_ALL_ENABLED_SUM = "Get all products have enabled";
-    public static final String PRODUCT_GET_ALL_ENABLED_DES= "This endpoint returns all products which enabled";
+    public static final String PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM = "Get all or search products which have enabled";
+    public static final String PRODUCT_GET_ALL_OR_SEARCH_ENABLED_DES = "This endpoint returns all products which enabled";
     public static final String PRODUCT_GET_ALL_SUM = "Get all products";
     public static final String PRODUCT_GET_ALL_DES= "This endpoint returns all products";
     public static final String PRODUCT_DELETE_BY_ID_SUM = "Delete a product by product id";
     public static final String PRODUCT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
-    public static final String PRODUCT_SOFT_DELETE_BY_ID_SUM = "Set enabled is false for product by id";
-    public static final String PRODUCT_SOFT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
+
     public static final String PRODUCT_UPDATE_BY_ID_SUM = "Update product's information by product id";
     public static final String PRODUCT_UPDATE_BY_ID_DES= "This endpoint returns new product's information after it were updated";
+    public static final String PRODUCT_SEARCH_BY_NAME_OR_DESC_SUM = "Get all products by name or description";
+    public static final String PRODUCT_SEARCH_BY_NAME_OR_DESC_DES= "This endpoint returns some products";
+    public static final String PRODUCT_GET_TOP_ORDER_QUANTITY_SUM = "Get top products and sort by quantity order";
+    public static final String PRODUCT_GET_TOP_ORDER_QUANTITY_DES= "This endpoint returns some products top";
 
     // For category =================================================================
 

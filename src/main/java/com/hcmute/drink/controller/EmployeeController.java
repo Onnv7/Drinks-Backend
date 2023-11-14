@@ -5,7 +5,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.EmployeeServiceImpl;
+import com.hcmute.drink.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +27,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(EMPLOYEE_BASE_PATH)
 @RequiredArgsConstructor
 public class EmployeeController {
-    private final EmployeeServiceImpl employeeService;
+    private final EmployeeService employeeService;
     private final ModelMapper modelMapper;
 
     @Operation(summary = EMPLOYEE_GET_ALL_SUM, description = EMPLOYEE_GET_ALL_DES)

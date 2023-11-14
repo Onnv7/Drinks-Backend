@@ -145,6 +145,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.DELETE, DELETE_USER_PATH).hasRole(USER)
 
                                 // Only EMPLOYEE
+                                .requestMatchers(HttpMethod.GET, GET_EMPLOYEE_PATH).hasRole(EMPLOYEE)
                                 .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_PATH).hasRole(EMPLOYEE)
 
                                 // Only ADMIN

@@ -5,9 +5,9 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.impl.AuthServiceImpl;
-import com.hcmute.drink.service.impl.EmployeeServiceImpl;
-import com.hcmute.drink.service.impl.UserServiceImpl;
+import com.hcmute.drink.service.AuthService;
+import com.hcmute.drink.service.EmployeeService;
+import com.hcmute.drink.service.UserService;
 import com.hcmute.drink.utils.EmailUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,9 +33,9 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(AUTH_BASE_PATH)
 @Slf4j
 public class AuthController {
-    private final AuthServiceImpl authService;
-    private final UserServiceImpl userService;
-    private final EmployeeServiceImpl employeeService;
+    private final AuthService authService;
+    private final UserService userService;
+    private final EmployeeService employeeService;
     private final EmailUtils emailUtils;
     private final ModelMapper modelMapper;
 

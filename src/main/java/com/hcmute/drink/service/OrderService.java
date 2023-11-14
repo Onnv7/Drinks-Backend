@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.*;
 import com.hcmute.drink.collection.embedded.*;
@@ -29,19 +29,19 @@ import static com.hcmute.drink.constant.VNPayConstant.*;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl {
+public class OrderService {
     private final OrderRepository orderRepository;
-    private final UserServiceImpl userService;
-    private final ProductServiceImpl productService;
+    private final UserService userService;
+    private final ProductService productService;
     private final SecurityUtils securityUtils;
     private final VNPayUtils vnPayUtils;
     private final ModelMapper modelMapper;
     private final MongoDbUtils mongoDbUtils;
-    private final EmployeeServiceImpl employeeService;
+    private final EmployeeService employeeService;
 
     @Autowired
     @Lazy
-    private TransactionServiceImpl transactionService;
+    private TransactionService transactionService;
 
     public OrderCollection exceptionIfNotExistedOrderByTransactionId(String transactionId) throws Exception {
         OrderCollection order = orderRepository.findByTransactionId(new ObjectId(transactionId));
@@ -226,5 +226,13 @@ public class OrderServiceImpl {
         current.setDifference(difference);
         return current;
     }
+    public List<GetOrderHistoryPageForEmployeeResponse> searchOrderHistoryForEmployee(OrderStatus orderStatus, String key, int page, int size) {
+        int skip = (page - 1) * size;
+        int limit = size;
+        return orderRepository.searchOrderHistoryForEmployee(orderStatus, key, skip, limit);
+    }
 
+    public List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int top) {
+        return orderRepository.getTopProductQuantityOrder(top);
+    }
 }

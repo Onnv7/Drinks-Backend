@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.EmployeeTokenCollection;
 import com.hcmute.drink.collection.TokenCollection;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeTokenServiceImpl {
+public class EmployeeTokenService {
     private final EmployeeTokenRepository employeeTokenRepository;
     private final JwtUtils jwtUtils;
 

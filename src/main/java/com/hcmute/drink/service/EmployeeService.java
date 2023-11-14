@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -23,9 +23,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeServiceImpl {
+public class EmployeeService {
     private final EmployeeRepository employeeRepository;
-    private final TokenServiceImpl tokenService;
+    private final TokenService tokenService;
 
 
     @Lazy

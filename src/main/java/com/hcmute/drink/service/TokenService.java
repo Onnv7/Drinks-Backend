@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.impl;
+package com.hcmute.drink.service;
 
 import com.hcmute.drink.collection.TokenCollection;
 import com.hcmute.drink.repository.TokenRepository;
@@ -7,11 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
-public class TokenServiceImpl {
+public class TokenService {
 
     private final TokenRepository tokenRepository;
     private final JwtUtils jwtUtils;
