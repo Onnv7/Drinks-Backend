@@ -1,24 +1,32 @@
-//package com.hcmute.drink.socket;
-//
-//import org.springframework.messaging.handler.annotation.MessageMapping;
-//import org.springframework.messaging.handler.annotation.Payload;
-//import org.springframework.messaging.handler.annotation.SendTo;
-//import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-//import org.springframework.stereotype.Controller;
-//
-//@Controller
-//public class SocketController {
-//    @MessageMapping("/chat.register")
-//    @SendTo("/topic/public")
-//    public ChatMessage register(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-//        headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
-//        return chatMessage;
-//    }
-//
-//    @MessageMapping("/chat.sendMessage")
-//    @SendTo("/topic/public")
-//    public String sendMessage() {
-//
-//        return "chatMessage";
-//    }
-//}
+package com.hcmute.drink.socket;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+
+@CrossOrigin("*")
+@RestController
+public class SocketController {
+
+
+    @MessageMapping("/nva")
+    @SendTo("/a")
+    public String sendMessage() {
+
+        System.out.println("Handling =>>>>>>>>");
+        return "chatMessage";
+    }
+    @MessageMapping("/chat")
+    @SendTo("/topic/messages")
+    public String send(String message) throws Exception {
+        System.out.println("=>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        return "test";
+    }
+}

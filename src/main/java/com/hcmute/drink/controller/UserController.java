@@ -7,6 +7,7 @@ import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.UserService;
+import com.hcmute.drink.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,6 +31,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 public class UserController {
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final SecurityUtils securityUtils;
 
     @Operation(summary = USER_GET_ALL_SUM, description = USER_GET_ALL_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_USER, content = @Content(mediaType = JSON_MEDIA_TYPE))
@@ -53,6 +55,7 @@ public class UserController {
     @GetMapping(path = USER_GET_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> getUserProfileById(@PathVariable String userId) {
         try {
+            securityUtils.exceptionIfNotMe(userId);
             GetUserByIdResponse resData = userService.getUserProfileById(userId);
 
             ResponseAPI res = ResponseAPI.builder()
@@ -71,6 +74,7 @@ public class UserController {
     public ResponseEntity<ResponseAPI> changePasswordProfile(@PathVariable String userId,
                                                              @RequestBody @Validated UpdatePasswordRequest body) {
         try {
+            securityUtils.exceptionIfNotMe(userId);
             userService.changePasswordProfile(userId, body);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
@@ -90,6 +94,7 @@ public class UserController {
                                                          @RequestBody @Validated UpdateUserRequest body
     ) {
         try {
+            securityUtils.exceptionIfNotMe(userId);
             UserCollection data = modelMapper.map(body, UserCollection.class);
             UserCollection updatedData = userService.updateUserProfile(userId, data);
             UpdateUserResponse resData = modelMapper.map(updatedData, UpdateUserResponse.class);

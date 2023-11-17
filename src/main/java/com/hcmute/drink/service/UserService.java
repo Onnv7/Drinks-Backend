@@ -62,7 +62,6 @@ public class UserService {
     }
 
     public GetUserByIdResponse getUserProfileById(String userId) throws Exception {
-        securityUtils.exceptionIfNotMe(userId);
         GetUserByIdResponse user = userRepository.getUserProfileById(userId);
         if (user == null) {
             throw new Exception(ErrorConstant.USER_NOT_FOUND);
@@ -72,7 +71,6 @@ public class UserService {
 
     public void changePasswordProfile(String userId, UpdatePasswordRequest data) throws Exception {
 
-        securityUtils.exceptionIfNotMe(userId);
         UserCollection user = exceptionIfNotExistedUserById(userId);
 
         boolean isValid = passwordEncoder.matches(data.getOldPassword(), user.getPassword());
@@ -93,7 +91,6 @@ public class UserService {
 
 
     public UserCollection updateUserProfile(String userId, UserCollection body) throws Exception {
-        securityUtils.exceptionIfNotMe(userId);
         UserCollection user = exceptionIfNotExistedUserById(userId);
         modelMapperNotNull.map(body, user);
         user.setUpdatedAt(new Date());

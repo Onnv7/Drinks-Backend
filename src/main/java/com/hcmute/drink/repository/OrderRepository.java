@@ -55,7 +55,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$group: {_id: '$_id', userId: { $first: '$userId' }, note: { $first: '$note' }, review: { $first: '$review'}, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: { _id: '$products._id', quantity: '$products.quantity', size: '$products.size', toppings: '$products.toppings', price: '$products.price', note: '$products.note', name: '$products.productInfo.name', _id: '$products.productInfo._id' } } }}",
             "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
             "{$unwind: '$transaction'}",
-            "{$project: {'userId': 0, 'transactionId': 0}}",
+            "{$project: {'transactionId': 0}}",
     })
     GetOrderDetailsResponse getOrderDetailsById(String id);
     @Aggregation(pipeline = {

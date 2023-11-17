@@ -6,6 +6,7 @@ import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.AddressService;
+import com.hcmute.drink.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,6 +30,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequiredArgsConstructor
 public class AddressController {
     private final AddressService addressService;
+    private final SecurityUtils securityUtils;
     private final ModelMapper modelMapper;
 
     @Operation(summary = ADDRESS_ADD_ADDRESS_BY_ID_SUM, description = ADDRESS_ADD_ADDRESS_BY_ID_DES)
@@ -60,6 +62,7 @@ public class AddressController {
                                                          @RequestBody @Validated UpdateAddressRequest body
     ) {
         try {
+//            securityUtils.exceptionIfNotMe(userId);
             AddressCollection data = modelMapper.map(body, AddressCollection.class);
             data.setId(addressId);
             AddressCollection updatedData = addressService.updateAddressById(data);

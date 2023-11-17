@@ -20,6 +20,7 @@ public class GetOrderDetailsResponse {
     private String note;
     private double total;
     private OrderType orderType;
+    private String userId;
 
     private Address address;
     private Date createdAt;

@@ -37,7 +37,7 @@ public class TransactionController {
 
     @Operation(summary = TRANSACTION_UPDATE_BY_ID_SUM, description = TRANSACTION_UPDATE_BY_ID_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @GetMapping(path = TRANSACTION_UPDATE_BY_ID_SUB_PATH)
+    @PatchMapping(path = TRANSACTION_UPDATE_BY_ID_SUB_PATH)
     // sau khi thanh toán (thành công/thất bại) => update transaction
     public ResponseEntity<ResponseAPI> updateTransaction(@PathVariable("transId") String id, HttpServletRequest request) { // @RequestBody @Validated UpdateTransactionRequest body,
         try {
