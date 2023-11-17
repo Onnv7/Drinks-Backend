@@ -2,6 +2,7 @@ package com.hcmute.drink.exception;
 
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.model.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,11 @@ public class ExceptionHandlerController {
             if (ex instanceof AccessDeniedException) {
                 httpStatus = StatusCode.FORBIDDEN;
                 msg = ACCESS_DENIED;
-            } else {
+            } else if (ex instanceof ConstraintViolationException) {
+                httpStatus = StatusCode.BAD_REQUEST;
+                msg = ex.getMessage();
+            }
+            else {
                 log.error(ex.getMessage());
             }
         }

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
@@ -118,14 +119,11 @@ public class ProductController {
             @Parameter(name = "key", description = "Key is name or description",required = false, example = "name or description")
             @RequestParam(name = "key", required = false) String key,
             @Parameter(name = "page", required = true, example = "1")
-            @RequestParam("page") int page,
+            @RequestParam("page")   @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
-            @RequestParam("size") int size
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0")  int size
     ) {
         try {
-            if(page <= 0 || size <= 0) {
-                throw new RuntimeException("Invalid's page or size");
-            }
             List<GetAllProductsEnabledResponse> resData = new ArrayList<>();
             if(key == null) {
                 resData = productService.getAllProductsEnabled(page, size);

@@ -44,8 +44,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{ $unwind: '$products.productSample' }",
             "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{ $sort: {timeLastEvent: -1 }}",
+            "{$skip: ?4}",
+            "{$limit: ?5}",
     })
-    List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus);
+    List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus, int skip, int limit);
 
     @Aggregation(pipeline = {
             "{$match: {'_id': ?0}}",
@@ -70,8 +72,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $addToSet: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
             "{ $unwind: '$productName' }",
             "{$sort: {'timeLastEvent': -1}}",
+            "{$skip: ?2}",
+            "{$limit: ?3}",
     })
-    List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(ObjectId id, OrderStatus orderStatus);
+    List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserIdAndOrderStatus(ObjectId id, OrderStatus orderStatus, int skip, int limit);
 
 
     @Aggregation(pipeline = {

@@ -14,12 +14,12 @@ import com.hcmute.drink.service.OrderService;
 import com.hcmute.drink.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +38,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(ORDER_BASE_PATH)
+@Validated
 public class OrderController {
     private final ModelMapper modelMapper;
     private final VNPayUtils vnPayUtils;
@@ -71,13 +72,11 @@ public class OrderController {
             @Parameter(name = "key", description = "Key is order's id, customer name or phone number", required = false, example = "65439a55e9818f43f8b8e02c")
             @RequestParam(name = "key", required = false) String key,
             @Parameter(name = "page", required = true, example = "1")
-            @RequestParam("page") int page,
+            @RequestParam("page")   @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
-            @RequestParam("size") int size) {
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0")  int size) {
         try {
-            if(page <= 0 || size <= 0) {
-                throw new RuntimeException("Invalid's page or size");
-            }
+
             List<GetOrderHistoryPageForEmployeeResponse> resData = new ArrayList<>();
             if(key == null) {
                 resData =  orderService.getOrderHistoryPageForEmployee(orderStatus, page, size);
@@ -137,9 +136,16 @@ public class OrderController {
     @Operation(summary = ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM, description = ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_ALL_BY_STATUS_AND_TYPE_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllByTypeAndStatusInDay(@PathVariable("orderType") OrderType orderType, @PathVariable("orderStatus") OrderStatus orderStatus) {
+    public ResponseEntity<ResponseAPI> getAllByTypeAndStatusInDay(
+            @PathVariable("orderType") OrderType orderType,
+            @PathVariable("orderStatus") OrderStatus orderStatus,
+            @Parameter(name = "page", required = true, example = "1")
+            @RequestParam("page")   @Min(value = 1, message = "Page must be greater than 0") int page,
+            @Parameter(name = "size", required = true, example = "10")
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0")  int size
+    ) {
         try {
-            List<GetAllOrdersByStatusResponse> dataRes =  orderService.getAllByTypeAndStatusInDay(orderType, orderStatus);
+            List<GetAllOrdersByStatusResponse> dataRes =  orderService.getAllByTypeAndStatusInDay(orderType, orderStatus, page, size);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(dataRes)
@@ -173,9 +179,17 @@ public class OrderController {
     @Operation(summary = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM, description = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_DES)
     @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET, content = @Content(mediaType = JSON_MEDIA_TYPE))
     @GetMapping(path = ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getOrdersHistoryByUserId(@PathVariable("userId") String id, @RequestParam("orderStatus") OrderStatus orderStatus) {
+    public ResponseEntity<ResponseAPI> getOrdersHistoryByUserIdAndOrderStatus(
+            @PathVariable("userId") String id,
+            @RequestParam("orderStatus") OrderStatus orderStatus,
+            @Parameter(name = "page", required = true, example = "1")
+            @Min(value = 1, message = "Page must be greater than 0")
+            @RequestParam("page") int page,
+            @Parameter(name = "size", required = true, example = "10")
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0")  int size
+    ) {
         try {
-            List<GetAllOrderHistoryByUserIdResponse> savedData =  orderService.getOrdersHistoryByUserId(id, orderStatus);
+            List<GetAllOrderHistoryByUserIdResponse> savedData =  orderService.getOrdersHistoryByUserId(id, orderStatus, page, size);
             ResponseAPI res = ResponseAPI.builder()
                     .timestamp(new Date())
                     .data(savedData)

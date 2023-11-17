@@ -149,11 +149,13 @@ public class OrderService {
         return ordersCreatedOnDate;
     }
 
-    public List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(OrderType orderType, OrderStatus orderStatus) throws Exception {
+    public List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(OrderType orderType, OrderStatus orderStatus, int page, int size) throws Exception {
+        int skip = (page - 1) * size;
+        int limit = size;
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime startOfDay = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
         ZonedDateTime endOfDay = now.withHour(23).withMinute(59).withSecond(59).withNano(999);
-        List<GetAllOrdersByStatusResponse> data = orderRepository.getAllByTypeAndStatusInDay(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()), orderType, orderStatus);
+        List<GetAllOrdersByStatusResponse> data = orderRepository.getAllByTypeAndStatusInDay(Date.from(startOfDay.toInstant()), Date.from(endOfDay.toInstant()), orderType, orderStatus, skip, limit);
         return data;
     }
 
@@ -168,8 +170,10 @@ public class OrderService {
         return order;
     }
 
-    public List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String userId, OrderStatus orderStatus) throws Exception {
-        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserId(new ObjectId(userId), orderStatus);
+    public List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String userId, OrderStatus orderStatus, int page, int size) throws Exception {
+        int skip = (page - 1) * size;
+        int limit = size;
+        List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserIdAndOrderStatus(new ObjectId(userId), orderStatus, skip, limit);
         if (order == null) {
             throw new Exception(ErrorConstant.NOT_FOUND + userId);
         }
