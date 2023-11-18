@@ -9,6 +9,7 @@ public class SecurityConstant {
 
     // ALL =================================================================
     public static final String[] GET_AUTH_WHITELIST = {
+            "/kafka/**",
             "/api/test/**",
             "/api/payment/**", AUTH_BASE_PATH + "/get-client-info",
             "/create_payment",

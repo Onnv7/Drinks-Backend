@@ -101,7 +101,7 @@ public class OrderService {
             transData = TransactionCollection.builder()
                     .invoiceCode(paymentData.get(VNP_TXN_REF_KEY).toString())
                     .timeCode(paymentData.get(VNP_CREATE_DATE_KEY))
-                    .status(PaymentStatus.UNPAID)
+                    .status(PaymentStatus.PAID)
                     .paymentType(paymentType)
                     .build();
             resData.setPaymentUrl(paymentData.get(VNP_URL_KEY));

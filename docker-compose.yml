@@ -24,3 +24,18 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: hcmute
 #      docker exec -it mongodb bash
 #      mongosh -u hcmute -p hcmute --authenticationDatabase admin
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # docker exec -it kafka /bin/sh
+      # cd opt/kafka_2.13-2.8.1/bin

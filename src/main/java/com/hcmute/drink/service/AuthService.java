@@ -8,6 +8,7 @@ import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.kafka.KafkaMessagePublisher;
 import com.hcmute.drink.repository.ConfirmationRepository;
 import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.repository.UserRepository;
@@ -40,9 +41,10 @@ import static com.hcmute.drink.utils.JwtUtils.ROLES_CLAIM_KEY;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private final KafkaMessagePublisher kafkaMessagePublisher;
     private final UserRepository userRepository;
     private final RandomCodeUtils randomCodeUtils;
-    private final EmailUtils emailService;
+    private final EmailUtils emailUtils;
     private final ConfirmationRepository confirmationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
@@ -148,7 +150,7 @@ public class AuthService {
         String code = randomCodeUtils.generateRandomCode(6);
         confirmation.setCode(code);
         confirmationService.updateConfirmationInfo(confirmation);
-        emailService.sendHtmlVerifyCodeToRegister(email, code);
+        kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
 
     }
 
@@ -160,14 +162,14 @@ public class AuthService {
         }
         String code = randomCodeUtils.generateRandomCode(6);
         confirmationService.createOrUpdateConfirmationInfo(email, code);
-        emailService.sendHtmlVerifyCodeToRegister(email, code);
+        kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
     }
 
     public void sendCodeToGetPassword(String email) throws Exception {
         userService.exceptionIfNotExistedUserByEmail(email);
         String code = randomCodeUtils.generateRandomCode(6);
         confirmationService.createOrUpdateConfirmationInfo(email, code);
-        emailService.sendHtmlVerifyCodeToRegister(email, code);
+        kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
     }
 
 
