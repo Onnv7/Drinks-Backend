@@ -69,7 +69,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$products'}",
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $addToSet: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $first: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
             "{ $unwind: '$productName' }",
             "{$sort: {'timeLastEvent': -1}}",
             "{$skip: ?2}",
