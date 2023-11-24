@@ -8,7 +8,7 @@ import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
 import com.hcmute.drink.enums.Maker;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
-import com.hcmute.drink.payment.VNPayUtils;
+import com.hcmute.drink.utils.VNPayUtils;
 import com.hcmute.drink.repository.TransactionRepository;
 import com.hcmute.drink.utils.MongoDbUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,17 +94,18 @@ public class TransactionService {
         Map<String, Object> transInfo = vnPayUtils.getTransactionInfo(transaction.getInvoiceCode(), transaction.getTimeCode(), request);
 
         // nếu giao dịch vnpay thành công
-        if (transInfo.get("vnp_TransactionStatus").equals("00")) {
+        if (transInfo.get("vnp_TransactionStatus").equals("00") && transInfo.get("vnp_Amount").equals(String.valueOf(order.getTotal() * 100))) {
             // nếu số tiền vnpay nhận được = total của order
-            if (transInfo.get("vnp_Amount").equals(String.valueOf(order.getTotal() * 100))) {
+//            if () {
                 transaction.setStatus(PaymentStatus.PAID);
                 transaction.setTotalPaid(Double.parseDouble(transInfo.get("vnp_Amount").toString())/100);
-            } else {
-                orderService.addNewOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
-                transaction.setStatus(PaymentStatus.UNPAID);
-                transaction.setTotalPaid(0);
-            }
+//            } else {
+//                orderService.addNewOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
+//                transaction.setStatus(PaymentStatus.UNPAID);
+//                transaction.setTotalPaid(0);
+//            }
         } else {
+            orderService.addNewOrderEvent(Maker.user ,order.getId(), OrderStatus.CANCELED, "You have not completed the full payment amount");
             transaction.setStatus(PaymentStatus.UNPAID);
             transaction.setTotalPaid(0);
         }

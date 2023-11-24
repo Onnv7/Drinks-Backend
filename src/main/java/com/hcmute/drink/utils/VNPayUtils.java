@@ -1,7 +1,8 @@
-package com.hcmute.drink.payment;
+package com.hcmute.drink.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import com.hcmute.drink.config.VNPayConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,14 +22,14 @@ import static com.hcmute.drink.constant.VNPayConstant.*;
 public class VNPayUtils {
     private ObjectMapper objectMapper = new ObjectMapper();
     public Map<String, String> createUrlPayment(HttpServletRequest request, long amount, String orderInfo) throws UnsupportedEncodingException {
-        String vnp_TxnRef = Config.getRandomNumber(8);
-        String vnp_IpAddr = Config.getIpAddress(request);
-        String vnp_TmnCode = Config.vnp_TmnCode;
+        String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
+        String vnp_IpAddr = VNPayConfig.getIpAddress(request);
+        String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
 
         Map<String, String> result = new HashMap<>();
         Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", Config.vnp_Version);
-        vnp_Params.put("vnp_Command", Config.vnp_Command);
+        vnp_Params.put("vnp_Version", VNPayConfig.vnp_Version);
+        vnp_Params.put("vnp_Command", VNPayConfig.vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
@@ -76,19 +77,19 @@ public class VNPayUtils {
         }
 
         String queryUrl = query.toString();
-        String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-        String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
         result.put("vnp_url", paymentUrl);
         return result;
     }
 
 
     public Map<String, Object> getTransactionInfo(String txnref, String transId, HttpServletRequest request) throws IOException {
-        String vnp_RequestId = Config.getRandomNumber(8);
+        String vnp_RequestId = VNPayConfig.getRandomNumber(8);
         String vnp_Version = VNP_VERSION;
         String vnp_Command = QUERY_DR;
-        String vnp_TmnCode = Config.vnp_TmnCode;
+        String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         String vnp_TxnRef = txnref;//req.getParameter("order_id");
         String vnp_OrderInfo = "Hoan tien GD OrderId:" + vnp_TxnRef;
         String vnp_TransactionNo = "";
@@ -98,7 +99,7 @@ public class VNPayUtils {
         SimpleDateFormat formatter = new SimpleDateFormat(VNP_TIME_FORMAT);
         String vnp_CreateDate = formatter.format(cld.getTime());
 
-        String vnp_IpAddr = Config.getIpAddress(request);
+        String vnp_IpAddr = VNPayConfig.getIpAddress(request);
 
 
 
@@ -126,11 +127,11 @@ public class VNPayUtils {
 
         String hash_Data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TxnRef + "|" + vnp_TransactionDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
 
-        String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hash_Data.toString());
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hash_Data.toString());
 
         vnp_Params.addProperty(VNP_SECURE_HASH_KEY, vnp_SecureHash);
 
-        URL url = new URL(Config.vnp_ApiUrl);
+        URL url = new URL(VNPayConfig.vnp_ApiUrl);
         HttpURLConnection con = (HttpURLConnection)url.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");

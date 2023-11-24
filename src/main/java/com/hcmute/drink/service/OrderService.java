@@ -5,8 +5,8 @@ import com.hcmute.drink.collection.embedded.*;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.*;
-import com.hcmute.drink.payment.Config;
-import com.hcmute.drink.payment.VNPayUtils;
+import com.hcmute.drink.config.VNPayConfig;
+import com.hcmute.drink.utils.VNPayUtils;
 import com.hcmute.drink.repository.OrderRepository;
 import com.hcmute.drink.utils.MongoDbUtils;
 import com.hcmute.drink.utils.SecurityUtils;
@@ -90,7 +90,7 @@ public class OrderService {
             String vnp_CreateDate = formatter.format(cld.getTime());
 
             transData = TransactionCollection.builder()
-                    .invoiceCode(Config.getRandomNumber(8))
+                    .invoiceCode(VNPayConfig.getRandomNumber(8))
                     .timeCode(vnp_CreateDate)
                     .status(PaymentStatus.UNPAID)
                     .paymentType(PaymentType.CASHING).build();
@@ -101,7 +101,7 @@ public class OrderService {
             transData = TransactionCollection.builder()
                     .invoiceCode(paymentData.get(VNP_TXN_REF_KEY).toString())
                     .timeCode(paymentData.get(VNP_CREATE_DATE_KEY))
-                    .status(PaymentStatus.PAID)
+                    .status(PaymentStatus.UNPAID)
                     .paymentType(paymentType)
                     .build();
             resData.setPaymentUrl(paymentData.get(VNP_URL_KEY));
