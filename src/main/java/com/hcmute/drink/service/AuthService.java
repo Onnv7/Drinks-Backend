@@ -59,8 +59,6 @@ public class AuthService {
     private final TokenService tokenService;
     private final EmployeeTokenService employeeTokenService;
 
-    @Value("${twilio.trial_number}")
-    private String trialNumber;
 
     public LoginResponse attemptLogin(String email, String password) throws Exception {
         UserPrincipal principal = UserPrincipal.builder()
@@ -172,12 +170,6 @@ public class AuthService {
         kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
     }
 
-
-    public void sendMessageToPhoneNumber(String phoneNumber, String text) {
-        PhoneNumber to = new PhoneNumber(phoneNumber);
-        PhoneNumber from = new PhoneNumber(trialNumber);
-        Message message = Message.creator(to, from, text).create();
-    }
 
     public boolean verifyCodeByEmail(String code, String email) throws Exception {
         ConfirmationCollection confirmationCollection = confirmationRepository.findByEmail(email);
