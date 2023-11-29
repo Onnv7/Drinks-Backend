@@ -22,7 +22,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.NOT_NULL_DES;
 @Data
 @Builder
 @Document(collection = "address")
-public class AddressCollection {
+public class  AddressCollection {
     @Id
     private String id;
     private String details;

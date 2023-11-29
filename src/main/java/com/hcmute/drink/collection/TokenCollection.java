@@ -8,12 +8,14 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 @Document(collection = "token")
-public class TokenCollection {
+public class TokenCollection implements Serializable {
     @Id
     private String id;
     private String refreshToken;

@@ -9,21 +9,22 @@ import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.kafka.KafkaMessagePublisher;
+import com.hcmute.drink.model.redis.EmployeeToken;
+import com.hcmute.drink.model.redis.UserToken;
 import com.hcmute.drink.repository.ConfirmationRepository;
 import com.hcmute.drink.repository.EmployeeRepository;
 import com.hcmute.drink.repository.UserRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
+import com.hcmute.drink.service.redis.EmployeeRefreshTokenRedisService;
+import com.hcmute.drink.service.redis.UserRefreshTokenRedisService;
 import com.hcmute.drink.utils.EmailUtils;
 import com.hcmute.drink.utils.JwtUtils;
 import com.hcmute.drink.utils.RandomCodeUtils;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -56,9 +57,8 @@ public class AuthService {
     private final ConfirmationService confirmationService;
     private final UserService userService;
     private final EmployeeService employeeService;
-    private final TokenService tokenService;
-    private final EmployeeTokenService employeeTokenService;
-
+    private final UserRefreshTokenRedisService userRefreshTokenRedisService;
+    private final EmployeeRefreshTokenRedisService employeeRefreshTokenRedisService;
 
     public LoginResponse attemptLogin(String email, String password) throws Exception {
         UserPrincipal principal = UserPrincipal.builder()
@@ -78,12 +78,13 @@ public class AuthService {
         var roles = authentication.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)
                 .toList();
+        String userId = principalAuthenticated.getUserId();
+        String username = principalAuthenticated.getUsername();
+        var accessToken = jwtUtils.issueAccessToken(userId, username, roles);
+        String refreshToken = jwtUtils.issueRefreshToken(userId, username, roles);
 
-        var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        tokenService.createToken(refreshToken, principalAuthenticated.getUserId());
-
-        return LoginResponse.builder().accessToken(accessToken).userId(principalAuthenticated.getUserId()).refreshToken(refreshToken).build();
+        userRefreshTokenRedisService.createNewUserRefreshToken(refreshToken, principalAuthenticated.getUserId());
+        return LoginResponse.builder().accessToken(accessToken).userId(userId).refreshToken(refreshToken).build();
     }
     public EmployeeLoginResponse attemptEmployeeLogin(String username, String password) throws Exception {
         UserPrincipal principal = UserPrincipal.builder()
@@ -107,8 +108,8 @@ public class AuthService {
 
         var accessToken = jwtUtils.issueAccessToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
         String refreshToken = jwtUtils.issueRefreshToken(principalAuthenticated.getUserId(), principalAuthenticated.getUsername(), roles);
-        employeeTokenService.createToken(refreshToken, principalAuthenticated.getUserId());
 
+        employeeRefreshTokenRedisService.createNewEmployeeRefreshToken(refreshToken, principalAuthenticated.getUserId());
         return EmployeeLoginResponse.builder().accessToken(accessToken).refreshToken(refreshToken).employeeId(principalAuthenticated.getUserId()).build();
     }
 
@@ -185,37 +186,27 @@ public class AuthService {
     }
 
     public RefreshTokenResponse refreshToken(String refreshToken) throws Exception {
-        DecodedJWT jwt = null;
+        DecodedJWT jwt = jwtUtils.decodeRefreshToken(refreshToken);
 
-        try {
-            jwt = jwtUtils.decodeRefreshToken(refreshToken);
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        TokenCollection token = tokenService.findByRefreshToken(refreshToken);
 
         String userId = jwt.getSubject().toString();
-        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+        UserToken token =  userRefreshTokenRedisService.getInfoOfRefreshToken(refreshToken, userId);
 
         UserCollection user = userService.exceptionIfNotExistedUserById(userId);
 
-        String newAccessToken = "";
-        String newRefreshToken = "";
-
-
         if (token == null) {
             throw new Exception(INVALID_TOKEN);
-        } else {
-            if(token.isUsed()) {
-                tokenService.deleteAllByUserId(userId);
-
-                throw new Exception(STOLEN_TOKEN);
-            }
-            newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getEmail(), roles);
-            newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getEmail(), roles);
-            tokenService.updateTokenIsUsed(token.getId());
-            tokenService.createToken(newRefreshToken, userId);
         }
+        if(token.isUsed()) {
+            userRefreshTokenRedisService.deleteUserRefreshToken(userId);
+            throw new Exception(STOLEN_TOKEN);
+        }
+        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+        String newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getEmail(), roles);
+        String newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getEmail(), roles);
+        userRefreshTokenRedisService.createNewUserRefreshToken(newAccessToken, userId);
+        userRefreshTokenRedisService.updateUsedUserRefreshToken(token);
+
 
         RefreshTokenResponse resData = RefreshTokenResponse.builder()
                 .accessToken(newAccessToken)
@@ -224,37 +215,28 @@ public class AuthService {
         return resData;
     }
     public RefreshEmployeeTokenResponse refreshEmployeeToken(String refreshToken) throws Exception {
-        DecodedJWT jwt = null;
-
-        try {
-            jwt = jwtUtils.decodeRefreshToken(refreshToken);
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        TokenCollection token = employeeTokenService.findByRefreshToken(refreshToken);
+        DecodedJWT jwt =  jwtUtils.decodeRefreshToken(refreshToken);
 
         String userId = jwt.getSubject().toString();
-        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+        EmployeeToken token = employeeRefreshTokenRedisService.getInfoOfRefreshToken(refreshToken, userId);
 
         EmployeeCollection user = employeeService.exceptionIfNotExistedEmployeeById(userId);
 
-
-        String newAccessToken = "";
-        String newRefreshToken = "";
-
-
         if (token == null) {
             throw new Exception(INVALID_TOKEN);
-        } else {
-            if(token.isUsed()) {
-                employeeTokenService.deleteAllByUserId(userId);
-                throw new Exception(STOLEN_TOKEN);
-            }
-            newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getUsername(), roles);
-            newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getUsername(), roles);
-            employeeTokenService.updateTokenIsUsed(token.getId());
-            employeeTokenService.createToken(newRefreshToken, userId);
         }
+        if(token.isUsed()) {
+            employeeRefreshTokenRedisService.deleteUserRefreshToken(userId);
+            throw new Exception(STOLEN_TOKEN);
+        }
+
+        List<String> roles = jwt.getClaim(ROLES_CLAIM_KEY).asList(String.class);
+
+        String newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getUsername(), roles);
+        String newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getUsername(), roles);
+        employeeRefreshTokenRedisService.updateUsedEmployeeRefreshToken(token);
+        employeeRefreshTokenRedisService.createNewEmployeeRefreshToken(refreshToken, userId);
+
 
         RefreshEmployeeTokenResponse resData = RefreshEmployeeTokenResponse.builder()
                 .accessToken(newAccessToken)

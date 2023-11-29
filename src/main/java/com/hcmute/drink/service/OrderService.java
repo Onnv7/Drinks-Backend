@@ -159,9 +159,6 @@ public class OrderService {
         return data;
     }
 
-
-
-
     public GetOrderDetailsResponse getOrderDetailsById(String id) throws Exception {
         GetOrderDetailsResponse order = orderRepository.getOrderDetailsById(id);
         if (order == null) {
@@ -238,5 +235,24 @@ public class OrderService {
 
     public List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int top) {
         return orderRepository.getTopProductQuantityOrder(top);
+    }
+
+    public void cancelOrderPreviousDay(OrderStatus orderStatus) {
+        Date startDatePrev = mongoDbUtils.createPreviousDay(0, 0, 0, 0, 1);
+        Date endDatePrev = mongoDbUtils.createPreviousDay(23, 59, 59, 999, 1);
+        List<OrderCollection> orderList = orderRepository.getAllOrderByStatusLastAndTimeCreated(startDatePrev, endDatePrev, orderStatus);
+        Iterator itr = orderList.iterator();
+
+        while (itr.hasNext()) {
+            OrderCollection order = (OrderCollection) itr.next();
+            List<OrderLogEmbedded> orderStatusList = order.getEventLogs();
+            orderStatusList.add(OrderLogEmbedded.builder()
+                    .orderStatus(OrderStatus.CANCELED)
+                    .description("Order automatically canceled")
+                    .time(new Date())
+                    .build());
+            order.setEventLogs(orderStatusList);
+            orderRepository.save(order);
+        }
     }
 }

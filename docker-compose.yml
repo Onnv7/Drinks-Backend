@@ -39,3 +39,19 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       # docker exec -it kafka /bin/sh
       # cd opt/kafka_2.13-2.8.1/bin
+  redis:
+    image: redis:6.0.7
+    container_name: redis
+    restart: always
+#    volumes:
+#      - redis_volume_data:/data
+    ports:
+      - 6379:6379
+  redis_insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight
+    restart: always
+    ports:
+      - 8001:8001
+#    volumes:
+#      - redis_insight_volume_data:/db

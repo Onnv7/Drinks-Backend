@@ -43,7 +43,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
             "{ $unwind: '$products.productSample' }",
             "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
-            "{ $sort: {timeLastEvent: -1 }}",
+            "{ $sort: {timeLastEvent: 1 }}",
             "{$skip: ?4}",
             "{$limit: ?5}",
     })
@@ -134,9 +134,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
     })
     List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int top);
 
-
-    @Query("{'_id' : ?0}")
-    @Update("{$push: {eventLogs: ?1}}")
-    void completeOrder(String id, OrderStatus orderStatus);
-
+    @Aggregation(pipeline = {
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$addFields: {productQuantity: {$size: '$products'}}}",
+            "{$match: {orderType: 'SHIPPING', createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?2}}"
+    })
+    List<OrderCollection> getAllOrderByStatusLastAndTimeCreated(Date from, Date to, OrderStatus orderStatus);
 }
