@@ -1,5 +1,6 @@
 package com.hcmute.drink.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -13,12 +14,11 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName("127.0.0.1");
-        redisStandaloneConfiguration.setPort(6379);
+//        redisStandaloneConfiguration.setHostName("127.0.0.1");
+//        redisStandaloneConfiguration.setPort(Integer.parseInt(host));
 //        JedisClientConfiguration.JedisClientConfigurationBuilder builder = JedisClientConfiguration.builder();
 //        builder.connectTimeout(Duration.ofMinutes(1));
 //        return new JedisConnectionFactory(redisStandaloneConfiguration, builder.build());

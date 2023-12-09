@@ -3,7 +3,6 @@ package com.hcmute.drink.service;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hcmute.drink.collection.ConfirmationCollection;
 import com.hcmute.drink.collection.EmployeeCollection;
-import com.hcmute.drink.collection.TokenCollection;
 import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.dto.*;
 import com.hcmute.drink.enums.Role;
