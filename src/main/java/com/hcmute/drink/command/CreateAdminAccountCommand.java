@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CreateAdminAccountCommand implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
+    @Value("${app.redis_host}")
+    private String redis_host;
 
     @Value("${app.username_admin}")
     private String username;

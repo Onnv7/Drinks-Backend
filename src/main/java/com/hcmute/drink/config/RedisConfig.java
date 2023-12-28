@@ -14,9 +14,13 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
+    @Value("${app.redis_host}")
+    private String host;
+    @Value("${app.redis_port}")
+    private int port;
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
 //        redisStandaloneConfiguration.setHostName("127.0.0.1");
 //        redisStandaloneConfiguration.setPort(Integer.parseInt(host));
 //        JedisClientConfiguration.JedisClientConfigurationBuilder builder = JedisClientConfiguration.builder();
