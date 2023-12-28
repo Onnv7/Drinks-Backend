@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class KafkaConfig {
     @Bean
     public NewTopic createTopic() {
+        System.out.println("KAFKA SEND_CODE_EMAIL_TOPIC");
         return new NewTopic(KafkaConstant.SEND_CODE_EMAIL_TOPIC,  5, (short) 1);
     }
 }

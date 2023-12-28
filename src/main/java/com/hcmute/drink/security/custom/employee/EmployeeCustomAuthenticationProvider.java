@@ -32,6 +32,7 @@ public class EmployeeCustomAuthenticationProvider implements AuthenticationProvi
         }
         UserPrincipal emplPrincipal = (UserPrincipal) employeeDetailsService.loadUserByUsername(username);
         if(passwordEncoder.matches(password, emplPrincipal.getPassword())) {
+            // FIXME: Sao lao dung USER?
             return new UserUsernamePasswordAuthenticationToken(emplPrincipal, emplPrincipal.getPassword(), emplPrincipal.getAuthorities());
         }
         else {
