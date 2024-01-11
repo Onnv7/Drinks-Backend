@@ -1,13 +1,18 @@
 package com.hcmute.drink.exception;
 
+import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.constant.StatusCode;
+import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.ErrorResponse;
+import com.hcmute.drink.model.FieldError;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,16 +26,11 @@ import static com.hcmute.drink.constant.ErrorConstant.*;
 @ControllerAdvice
 @Slf4j
 public class ExceptionHandlerController {
-    private static final List<String> error400= Arrays.asList(
-            EMAIL_UNVERIFIED,
-            REGISTERED_EMAIL,
-            CREATED_FAILED,
-            UPDATE_FAILED,
-            CATEGORY_EXISTED,
-            ACCOUNT_BLOCKED,
-            OVER_FIVE_ADDRESS,
-            ORDER_NOT_COMPLETED
-    );
+    @Value("spring.profile.active")
+    private String environment;
+    private String dev = "dev";
+    private String prod = "prod";
+
     private static final List<String> error404= Arrays.asList(
             USER_NOT_FOUND,
             EMPLOYEE_NOT_FOUND,
@@ -38,56 +38,71 @@ public class ExceptionHandlerController {
             CATEGORY_NOT_FOUND,
             PRODUCT_NOT_FOUND
     );
-    private static final List<String> error403= Arrays.asList(
-            ACCESS_DENIED
+    private static final List<String> error400= Arrays.asList(
+            REGISTERED_EMAIL
     );
-    private static final List<String> error401= Arrays.asList(
-            INVALID_TOKEN, EXPIRED_TOKEN
-    );
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException ex) {
-        ex.printStackTrace();
-        ErrorResponse errorResponse = new ErrorResponse(new Date(), false, ex.getMessage(), Arrays.toString(ex.getStackTrace()));
-        return new ResponseEntity<>(errorResponse, StatusCode.BAD_REQUEST);
-    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        Throwable throwable = ex.getCause();
-        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        String msg = "";
-
-        // nếu không phải lỗi tự throws, là lỗi do server
-        if(throwable == null) {
-            Class<?> type = ex.getClass();
-            if (ex instanceof AccessDeniedException) {
-                httpStatus = StatusCode.FORBIDDEN;
-                msg = ACCESS_DENIED;
-            } else if (ex instanceof ConstraintViolationException) {
-                httpStatus = StatusCode.BAD_REQUEST;
-                msg = ex.getMessage();
-            }
-            else {
-                log.error(ex.getMessage());
-            }
-        }
-        // lỗi tự custom throw ra
-        else {
-            msg = throwable.getMessage();
-            if(error400.contains(throwable.getMessage())) {
-                httpStatus = StatusCode.BAD_REQUEST;
-            } else if(error404.contains(throwable.getMessage())) {
-                httpStatus = StatusCode.NOT_FOUND;
-            } else if(error403.contains(throwable.getMessage())) {
-                httpStatus = StatusCode.NOT_FOUND;
-            } else if(throwable.getClass() == BadCredentialsException.class) {
-                httpStatus = StatusCode.UNAUTHORIZED;
-            }
-        }
         ex.printStackTrace();
 
-        ErrorResponse errorResponse = new ErrorResponse(new Date(), false, msg, Arrays.toString(ex.getStackTrace()));
+        ErrorResponse res = ErrorResponse.builder()
+                .message(ErrorConstant.REQUEST_BODY_INVALID)
+                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+                .build();
+        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        ex.printStackTrace();
+        ErrorResponse res = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+                .build();
+        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-        return new ResponseEntity<>(errorResponse, httpStatus);
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
+        ex.printStackTrace();
+        ErrorResponse res = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+                .build();
+        return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        ex.printStackTrace();
+        if(error404.contains(ex.getMessage())) {
+            httpStatus = StatusCode.NOT_FOUND;
+        } else if(error400.contains(ex.getMessage())) {
+            httpStatus = StatusCode.BAD_REQUEST;
+        }
+        ErrorResponse res = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+                .build();
+        return new ResponseEntity<>(res, httpStatus);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        ex.printStackTrace();
+
+        ErrorResponse res = ErrorResponse.builder()
+                .message(ErrorConstant.REQUEST_BODY_INVALID)
+                .details(
+                        ex.getFieldErrors().stream()
+                                .map(
+                                        it-> FieldError.builder()
+                                                .field(it.getField())
+                                                .valueReject(it.getRejectedValue())
+                                                .validate(it.getDefaultMessage())
+                                                .build()
+                                ).toList()
+                )
+                .build();
+        return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
 }

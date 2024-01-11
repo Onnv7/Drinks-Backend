@@ -1,4 +1,4 @@
-package com.hcmute.drink.repository;
+package com.hcmute.drink.repository.database;
 
 import com.hcmute.drink.collection.ConfirmationCollection;
 import com.hcmute.drink.collection.UserCollection;

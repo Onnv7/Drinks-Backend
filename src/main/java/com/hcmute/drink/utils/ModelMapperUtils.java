@@ -1,4 +1,4 @@
-package com.onnv.household.utils;
+package com.hcmute.drink.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.onnv.household.constants.BeanConstant.MODEL_MAPPER_NOT_NULL;
+import static com.hcmute.drink.constant.BeanConstant.MODEL_MAPPER_NOT_NULL;
+
 
 @Component
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.hcmute.drink.dto;
+package com.hcmute.drink.dto.kafka;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

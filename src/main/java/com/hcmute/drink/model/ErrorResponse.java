@@ -11,9 +11,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
-    private Date timestamp;
+public class ErrorResponse<T> {
+    @Builder.Default
+    private Date timestamp = new Date();
     private boolean success;
     private String message;
+    private T details;
     private String stack;
 }

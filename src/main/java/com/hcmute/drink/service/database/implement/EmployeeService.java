@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.EmployeeCollection;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -11,8 +11,8 @@ import com.hcmute.drink.dto.response.GetAllEmployeeResponse;
 import com.hcmute.drink.dto.response.GetEmployeeByIdResponse;
 import com.hcmute.drink.dto.response.UpdateEmployeeResponse;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.repository.EmployeeRepository;
-import com.hcmute.drink.service.IEmployeeService;
+import com.hcmute.drink.repository.database.EmployeeRepository;
+import com.hcmute.drink.service.database.IEmployeeService;
 import com.hcmute.drink.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final SequenceService sequenceService;
     @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -63,6 +65,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    @Transactional
     public void registerEmployee(CreateEmployeeRequest body)  {
 
         EmployeeCollection data = modelMapperUtils.mapClass(body, EmployeeCollection.class);
@@ -71,7 +74,9 @@ public class EmployeeService implements IEmployeeService {
             throw new CustomException(ErrorConstant.REGISTERED_EMAIL);
         }
         data.setPassword(passwordEncoder.encode(data.getPassword()));
+        data.setCode(sequenceService.generateCode(EmployeeCollection.SEQUENCE_NAME, EmployeeCollection.PREFIX_CODE, EmployeeCollection.LENGTH_NUMBER));
         employeeRepository.save(data);
+//        throw new CustomException("43953405dfsdfsd");
     }
     @Override
     public void updatePasswordByAdmin(UpdatePasswordEmployeeRequest data, String id)  {

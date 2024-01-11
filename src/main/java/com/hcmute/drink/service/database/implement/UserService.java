@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -8,8 +8,8 @@ import com.hcmute.drink.dto.response.GetUserByIdResponse;
 import com.hcmute.drink.dto.request.UpdatePasswordRequest;
 import com.hcmute.drink.dto.response.UpdateUserResponse;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.repository.UserRepository;
-import com.hcmute.drink.service.IUserService;
+import com.hcmute.drink.repository.database.UserRepository;
+import com.hcmute.drink.service.database.IUserService;
 import com.hcmute.drink.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

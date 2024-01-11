@@ -17,6 +17,7 @@ import java.util.List;
 @Data
 public class GetOrderDetailsResponse {
     private String id;
+    private String code;
     private String note;
     private double total;
     private OrderType orderType;

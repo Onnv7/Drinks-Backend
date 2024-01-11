@@ -1,6 +1,7 @@
 package com.hcmute.drink.utils;
 
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.security.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,11 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityUtils {
-    public void exceptionIfNotMe(String userId) throws Exception {
-        String myId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserId();
-
+    public void checkMySelf(String userId) {
+        String myId = getCurrentUserId();
         if(!myId.equals(userId)) {
-            throw new Exception(ErrorConstant.CANT_ACCESS);
+            throw new CustomException(ErrorConstant.CANT_ACCESS);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.hcmute.drink.service;
+package com.hcmute.drink.service.database;
 
 import com.hcmute.drink.dto.request.CreateOrderRequest;
 import com.hcmute.drink.dto.request.CreateReviewRequest;

@@ -132,6 +132,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/**").permitAll()
 //                        .requestMatchers("/socket.io/**").permitAll()
 //                        .requestMatchers("/socket.io").permitAll()
+
                                 // ALL
                                 .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
                                 .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
@@ -143,7 +144,6 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, PUT_USER_PATH).hasRole(USER)
                                 .requestMatchers(HttpMethod.POST, POST_USER_PATH).hasRole(USER)
                                 .requestMatchers(HttpMethod.DELETE, DELETE_USER_PATH).hasRole(USER)
-
                                 // Only EMPLOYEE
                                 .requestMatchers(HttpMethod.GET, GET_EMPLOYEE_PATH).hasRole(EMPLOYEE)
                                 .requestMatchers(HttpMethod.PATCH, PATCH_EMPLOYEE_PATH).hasRole(EMPLOYEE)
@@ -154,6 +154,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, PATCH_ADMIN_PATH).hasRole(ADMIN)
                                 .requestMatchers(HttpMethod.POST, POST_ADMIN_PATH).hasRole(ADMIN)
                                 .requestMatchers(HttpMethod.DELETE, DELETE_ADMIN_PATH).hasRole(ADMIN)
+
 
 
                                 // ADMIN + EMPLOYEE
@@ -174,6 +175,7 @@ public class WebSecurityConfig {
 
                                 // EMPLOYEE + USER
                                 .requestMatchers(HttpMethod.GET, GET_ADMIN_EMPLOYEE_USER_PATH).hasAnyRole(ADMIN, EMPLOYEE, USER)
+
 
                                 .anyRequest().authenticated()
                 );

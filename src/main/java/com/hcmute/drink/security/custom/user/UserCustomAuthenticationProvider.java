@@ -29,7 +29,7 @@ public class UserCustomAuthenticationProvider implements AuthenticationProvider
         if(username == null || password == null) {
             throw new BadCredentialsException("No pre-authenticated credentials found in request.");
         }
-        // check username and password != null  nếu null thì  throw new BadCredentialsException("No pre-authenticated credentials found in request.");
+
         UserPrincipal userPrincipal = (UserPrincipal) customUserDetailsService.loadUserByUsername(username);
         if(passwordEncoder.matches(password, userPrincipal.getPassword())) {
             return new UserUsernamePasswordAuthenticationToken(userPrincipal, userPrincipal.getPassword(), userPrincipal.getAuthorities());

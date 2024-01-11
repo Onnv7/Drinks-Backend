@@ -2,6 +2,7 @@ package com.hcmute.drink.dto.request;
 
 import com.hcmute.drink.common.SizeModel;
 import com.hcmute.drink.common.ToppingModel;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.bson.types.ObjectId;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,18 +23,9 @@ public class CreateProductRequest {
     @NotBlank
     private String name;
 
-//    @Schema(example = PRODUCT_PRICE_EX, description = MIN_VALUE_DES + PRODUCT_PRICE_MIN)
-//    @Min(PRODUCT_PRICE_MIN)
-//    private double price;
-
     @Schema(description = NOT_NULL_DES)
     @NotNull
     private MultipartFile image;
-
-    // example = PRODUCT_SIZE_EX
-//    @Schema(description = OPTIONAL_DES)
-//    private List<String> size;
-
 
     @Schema(description = NOT_EMPTY_DES)
     @NotEmpty

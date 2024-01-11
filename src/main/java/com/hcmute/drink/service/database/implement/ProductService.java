@@ -1,24 +1,27 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
+import com.hcmute.drink.collection.embedded.SizeEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.request.CreateProductRequest;
 import com.hcmute.drink.dto.request.UpdateProductRequest;
 import com.hcmute.drink.dto.response.*;
+import com.hcmute.drink.enums.ProductStatus;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.repository.ProductRepository;
-import com.hcmute.drink.service.IProductService;
+import com.hcmute.drink.repository.database.ProductRepository;
+import com.hcmute.drink.service.database.IProductService;
+import com.hcmute.drink.service.elasticsearch.ProductSearchService;
 import com.hcmute.drink.utils.CloudinaryUtils;
 import com.hcmute.drink.utils.ImageUtils;
 import com.hcmute.drink.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,10 +36,10 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CloudinaryUtils cloudinaryUtils;
     private final CategoryService categoryService;
-    private final ModelMapper modelMapper;
     private final ImageUtils imageUtils;
     private final ModelMapperUtils modelMapperUtils;
-
+    private final SequenceService sequenceService;
+    private final ProductSearchService productSearchService;
     @Autowired
     @Lazy
     private OrderService orderService;
@@ -47,8 +50,19 @@ public class ProductService implements IProductService {
                 .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
 
+    public static double getMinPrice(List<SizeEmbedded> sizeList) {
+        double min = sizeList.get(0).getPrice();
+        for (SizeEmbedded item : sizeList) {
+            if(min > item.getPrice()) {
+                min = item.getPrice();
+            }
+        }
+        return min;
+    }
+
     // SERVICE =================================================================
 
+    @Transactional
     @Override
     public void createProduct(CreateProductRequest body, MultipartFile image) {
 
@@ -84,8 +98,10 @@ public class ProductService implements IProductService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        productRepository.save(data);
+        data.setStatus(ProductStatus.HIDDEN);
+        data.setCode(sequenceService.generateCode(ProductCollection.SEQUENCE_NAME, ProductCollection.PREFIX_CODE, ProductCollection.LENGTH_NUMBER));
+        ProductCollection dataSaved = productRepository.save(data);
+        productSearchService.createProduct(dataSaved);
     }
 
     @Override
@@ -112,29 +128,37 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<GetAllProductsEnabledResponse> getAllProductsEnabled(int page, int size) {
+    public List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size) {
         int skip = (page - 1) * size;
         int limit = size;
         return productRepository.getAllProductsEnabled(skip, limit);
     }
 
     @Override
-    public List<GetAllProductsResponse> getAllProducts() {
-        return productRepository.getAllProducts();
+    public List<GetAllProductsResponse> getAllProducts(int page, int size) {
+        int skip = (page - 1) * size;
+        int limit = size;
+        return productRepository.getAllProducts(skip, limit);
     }
 
+    @Transactional
     @Override
     public void deleteProductById(String id) {
         ProductCollection product = getById(id);
         ImageEmbedded image = product.getImage();
+
+        productRepository.deleteById(id);
+        productSearchService.deleteProduct(id);
+
         try {
             cloudinaryUtils.deleteImage(image.getId());
         } catch (IOException e) {
+            productSearchService.createProduct(product);
             throw new RuntimeException(e);
         }
-        productRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void updateProductById(UpdateProductRequest data, String id) {
         ProductCollection product = productRepository.findById(id).orElse(null);
@@ -143,7 +167,7 @@ public class ProductService implements IProductService {
             throw new CustomException(NOT_FOUND);
         }
 
-        modelMapper.map(data, product);
+        modelMapperUtils.map(data, product);
 
         if (data.getImage() != null) {
             ImageEmbedded oldImage = product.getImage();
@@ -171,23 +195,26 @@ public class ProductService implements IProductService {
         }
 
         productRepository.save(product);
+
+        productSearchService.upsertProduct(product);
     }
 
     @Override
-    public List<GetAllProductsEnabledResponse> searchProductByNameOrDescription(String key, int page, int size) {
-        int skip = (page - 1) * size;
-        int limit = size;
-        return productRepository.searchProductByNameOrDescription(key, skip, limit);
+    public List<GetAllVisibleProductResponse> searchProductVisible(String key, int page, int size) {
+        return modelMapperUtils.mapList(productSearchService.searchVisibleProduct(key, page, size), GetAllVisibleProductResponse.class);
     }
-
     @Override
-    public List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int quantity)  {
-        List<GetAllProductsEnabledResponse> resData = orderService.getTopProductQuantityOrder(quantity);
+    public List<GetAllProductsResponse> searchProduct(String key, int page, int size) {
+        return modelMapperUtils.mapList(productSearchService.searchProduct(key, page, size), GetAllProductsResponse.class);
+    }
+    @Override
+    public List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int quantity)  {
+        List<GetAllVisibleProductResponse> resData = orderService.getTopProductQuantityOrder(quantity);
         if (resData.size() < quantity) {
             Iterator itr = resData.iterator();
             List<ObjectId> excludeId = new ArrayList<>();
             while (itr.hasNext()) {
-                GetAllProductsEnabledResponse product = (GetAllProductsEnabledResponse) itr.next();
+                GetAllVisibleProductResponse product = (GetAllVisibleProductResponse) itr.next();
                 excludeId.add(new ObjectId(product.getId()));
             }
             resData.addAll(productRepository.getSomeProduct(quantity - resData.size(), excludeId));

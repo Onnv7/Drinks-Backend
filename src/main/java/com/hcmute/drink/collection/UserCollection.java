@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,8 +27,19 @@ import java.util.List;
 @Document(collection = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCollection {
+    @Transient
+    public static final String SEQUENCE_NAME = "user_sequence";
+
+    @Transient
+    public static final String PREFIX_CODE = "U";
+
+    @Transient
+    public static final int LENGTH_NUMBER = 9;
+
     @Id
     private String id;
+    @Indexed(unique = true)
+    private String code;
     private String firstName;
     private String lastName;
     private Gender gender;

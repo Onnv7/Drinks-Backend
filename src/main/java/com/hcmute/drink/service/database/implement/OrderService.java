@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.*;
 import com.hcmute.drink.collection.embedded.*;
@@ -7,12 +7,12 @@ import com.hcmute.drink.dto.request.CreateOrderRequest;
 import com.hcmute.drink.dto.request.CreateReviewRequest;
 import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.enums.*;
-import com.hcmute.drink.config.VNPayConfig;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.service.IOrderService;
+import com.hcmute.drink.service.database.IOrderService;
+import com.hcmute.drink.service.elasticsearch.OrderSearchService;
 import com.hcmute.drink.utils.ModelMapperUtils;
 import com.hcmute.drink.utils.VNPayUtils;
-import com.hcmute.drink.repository.OrderRepository;
+import com.hcmute.drink.repository.database.OrderRepository;
 import com.hcmute.drink.utils.MongoDbUtils;
 import com.hcmute.drink.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -42,6 +41,8 @@ public class OrderService implements IOrderService {
     private final VNPayUtils vnPayUtils;
     private final MongoDbUtils mongoDbUtils;
     private final ModelMapperUtils modelMapperUtils;
+    private final SequenceService sequenceService;
+    private final OrderSearchService orderSearchService;
 
     @Autowired
     @Lazy
@@ -56,6 +57,22 @@ public class OrderService implements IOrderService {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
+    public long calculateOrderBill(List<OrderDetailsEmbedded> products) {
+        long totalPrice = 0;
+        for (OrderDetailsEmbedded product : products) {
+            ProductCollection productInfo = productService.getById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
+
+            double totalPriceToppings = 0;
+            List<ToppingEmbedded> toppings = product.getToppings() != null ? product.getToppings() : new ArrayList<>();
+            for (ToppingEmbedded topping : toppings) {
+                totalPriceToppings += topping.getPrice();
+            }
+
+            SizeEmbedded size = productInfo.getSizeList().stream().filter(it -> it.getSize().equals(product.getSize())).findFirst().orElseThrow();
+            totalPrice += (long) ((size.getPrice() + totalPriceToppings) * product.getQuantity());
+        }
+        return totalPrice;
+    }
     // SERVICES =================================================================
 
     @Override
@@ -66,22 +83,9 @@ public class OrderService implements IOrderService {
         userService.getById(data.getUserId().toString());
 
         List<OrderDetailsEmbedded> products = data.getProducts();
-        long totalPrice = 0;
-        for (OrderDetailsEmbedded product : products) {
-            ProductCollection productInfo = productService.getById(product.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
-
-            double totalPriceToppings = 0;
-            List<ToppingEmbedded> toppings = product.getToppings() != null ? product.getToppings() : new ArrayList<>();
-            for (ToppingEmbedded topping : toppings) {
-                totalPriceToppings += topping.getPrice();
-            }
-            ;
-
-            SizeEmbedded size = productInfo.getSizeList().stream().filter(it -> it.getSize().equals(product.getSize())).findFirst().orElseThrow();
-            totalPrice += (size.getPrice() + totalPriceToppings) * product.getQuantity();
-
-        }
+        long totalPrice = calculateOrderBill(products);
         data.setTotal(totalPrice);
+
         TransactionCollection transData = new TransactionCollection();
         CreateShippingOrderResponse resData = new CreateShippingOrderResponse();
         if (paymentType == PaymentType.CASHING) {
@@ -104,10 +108,10 @@ public class OrderService implements IOrderService {
             resData.setPaymentUrl(paymentData.get(VNP_URL_KEY));
         }
 
+        TransactionCollection transSaved = transactionService.saveTransaction(transData);
 
-        TransactionCollection savedData = transactionService.saveTransaction(transData);
         data.setOrderType(OrderType.SHIPPING);
-        data.setTransactionId(new ObjectId(savedData.getId()));
+        data.setTransactionId(new ObjectId(transSaved.getId()));
         String makerId = securityUtils.getCurrentUserId();
         OrderLogEmbedded log = OrderLogEmbedded.builder()
                 .orderStatus(OrderStatus.CREATED)
@@ -115,11 +119,12 @@ public class OrderService implements IOrderService {
                 .makerId(new ObjectId(makerId))
                 .time(new Date()).build();
         data.setEventLogs(new ArrayList<>(Arrays.<OrderLogEmbedded>asList(log)));
-        OrderCollection order = orderRepository.save(data);
+        data.setCode(sequenceService.generateCode(OrderCollection.SEQUENCE_NAME, OrderCollection.PREFIX_CODE, OrderCollection.LENGTH_NUMBER));
 
+        OrderCollection order = orderRepository.save(data);
         resData.setOrderId(order.getId());
         resData.setTransactionId(transData.getId());
-
+        orderSearchService.createOrder(order);
         return resData;
     }
 
@@ -238,7 +243,7 @@ public class OrderService implements IOrderService {
         return orderRepository.searchOrderHistoryForEmployee(orderStatus, key, skip, limit);
     }
 
-    public List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int top) {
+    public List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int top) {
         return orderRepository.getTopProductQuantityOrder(top);
     }
 

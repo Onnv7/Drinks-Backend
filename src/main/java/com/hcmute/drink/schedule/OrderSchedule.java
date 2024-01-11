@@ -1,7 +1,7 @@
 package com.hcmute.drink.schedule;
 
 import com.hcmute.drink.enums.OrderStatus;
-import com.hcmute.drink.service.OrderService;
+import com.hcmute.drink.service.database.implement.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

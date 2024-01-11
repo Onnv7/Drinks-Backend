@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import static com.hcmute.drink.constant.BeanConstant.MODEL_MAPPER_NOT_NULL;
+
 @Configuration
 @Slf4j
 public class ModelMapperConfig {
@@ -25,7 +27,7 @@ public class ModelMapperConfig {
         return modelMapper;
     }
 
-    @Bean("modelMapperNotNull")
+    @Bean(MODEL_MAPPER_NOT_NULL)
     public ModelMapper modelMapperNotNull() {
         log.info("modelMapperNotNull");
         ModelMapper modelMapper = new ModelMapper();

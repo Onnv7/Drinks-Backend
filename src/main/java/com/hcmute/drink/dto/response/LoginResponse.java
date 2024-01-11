@@ -1,4 +1,4 @@
-package com.hcmute.drink.dto;
+package com.hcmute.drink.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

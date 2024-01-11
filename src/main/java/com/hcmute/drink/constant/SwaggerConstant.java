@@ -15,162 +15,95 @@ public class SwaggerConstant {
     // For authentication =================================================================
     public static final String AUTH_CONTROLLER_TITLE = "AUTH MANAGEMENT";
     public static final String AUTH_LOGIN_SUM = "User login to get token";
-    public static final String AUTH_LOGIN_DES= "This endpoint returns a token";
     public static final String AUTH_REGISTER_SUM = "Register new user account with some information";
-    public static final String AUTH_REGISTER_DES= "This endpoint returns a token and a user id";
     public static final String AUTH_VERIFY_EMAIL_SUM = "Verify confirmation code by email";
-    public static final String AUTH_VERIFY_EMAIL_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_RE_SEND_EMAIL_SUM = "Send email confirmation code a second time or later to update the Confirmation collection";
-    public static final String AUTH_RE_SEND_EMAIL_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM = "Send email confirmation code to register account";
-    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM = "Send email confirmation code to change password";
-    public static final String AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES = NOTIFICATION_NOT_DATA;
     public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM = "Send OTP code to phone number (The function is under maintenance)";
-    public static final String AUTH_SEND_OTP_TO_PHONE_NUMBER_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_CHANGE_PASSWORD_SUM = "Change password by email when forgot password";
-    public static final String AUTH_CHANGE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
     public static final String AUTH_EMPLOYEE_LOGIN_SUM = "Employee login to get token";
-    public static final String AUTH_EMPLOYEE_LOGIN_DES = "This endpoint returns a token";
     public static final String AUTH_REFRESH_TOKEN_SUM = "Create new access token and refresh token for user";
-    public static final String AUTH_REFRESH_TOKEN_DES = "This endpoint returns a new token for user";
     public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_SUM = "Create new access token and refresh token for employee";
-    public static final String AUTH_REFRESH_EMPLOYEE_TOKEN_DES = "This endpoint returns a new token for employee";
 
     // For user =================================================================
     public static final String USER_CONTROLLER_TITLE = "USER MANAGEMENT";
     public static final String USER_GET_BY_ID_SUM = "Get a user by user id";
-    public static final String USER_GET_BY_ID_DES= "This endpoint returns a user info";
     public static final String USER_GET_ALL_SUM = "Get all users";
-    public static final String USER_GET_ALL_DES= "This endpoint returns all users info";
     public static final String USER_CHANGE_PWD_SUM = "Change password by user id";
-    public static final String USER_CHANGE_PWD_DES= NOTIFICATION_NOT_DATA;
     public static final String USER_UPDATE_BY_ID_SUM = "Update user's profile by user id";
-    public static final String USER_UPDATE_BY_ID_DES = "This endpoint returns new user's profile after it were updated";
     public static final String USER_CHECK_EXISTED_BY_EMAIL_SUM = "Check user existence by email";
-    public static final String USER_CHECK_EXISTED_BY_EMAIL_DES = "This endpoint returns user name or null";
     // For address =================================================================
     public static final String ADDRESS_CONTROLLER_TITLE = "ADDRESS MANAGEMENT";
     public static final String ADDRESS_ADD_ADDRESS_BY_ID_SUM = "Add new address for user";
-    public static final String ADDRESS_ADD_ADDRESS_BY_ID_DES = "This endpoint returns a list of addresses";
     public static final String ADDRESS_UPDATE_ADDRESS_BY_ID_SUM = "Update address by address id";
-    public static final String ADDRESS_UPDATE_ADDRESS_BY_ID_DES = "This endpoint returns new user's address after it were updated";
     public static final String ADDRESS_DELETE_ADDRESS_BY_ID_SUM = "Delete address by address id";
-    public static final String ADDRESS_DELETE_ADDRESS_BY_ID_DES = NOTIFICATION_NOT_DATA;
     public static final String ADDRESS_GET_BY_USER_ID_SUM = "Get all addresses by user id";
-    public static final String ADDRESS_GET_BY_USER_ID_DES = "This endpoint returns all addresses info of an user";
     public static final String ADDRESS_GET_DETAILS_BY_ID_SUM = "Get an address details by id";
-    public static final String ADDRESS_GET_DETAILS_BY_ID_DES = "This endpoint returns an address details by id";
-    public static final String ADDRESS_SET_DEFAULT_BY_ID_SUM = "Set default address for user";
-    public static final String ADDRESS_SET_DEFAULT_BY_ID_DES = NOTIFICATION_NOT_DATA;
 
     // For product =================================================================
 
     public static final String PRODUCT_CONTROLLER_TITLE = "PRODUCT MANAGEMENT";
     public static final String PRODUCT_CREATE_SUM = "Create a new product";
-    public static final String PRODUCT_CREATE_DES = "This endpoint returns new product after saved on database";
     public static final String PRODUCT_GET_BY_ID_SUM = "Get a product's details by product id";
-    public static final String PRODUCT_GET_BY_ID_DES= "This endpoint returns a product's information";
     public static final String PRODUCT_GET_ENABLED_BY_ID_SUM = "Get a product enabled by product id";
-    public static final String PRODUCT_GET_ENABLED_BY_ID_DES= "This endpoint returns a product's information which enabled";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_SUM = "Get products by category id";
-    public static final String PRODUCT_GET_BY_CATEGORY_ID_DES= "This endpoint returns products list";
     public static final String PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM = "Get all or search products which have enabled";
-    public static final String PRODUCT_GET_ALL_OR_SEARCH_ENABLED_DES = "This endpoint returns all products which enabled";
     public static final String PRODUCT_GET_ALL_SUM = "Get all products";
-    public static final String PRODUCT_GET_ALL_DES= "This endpoint returns all products";
     public static final String PRODUCT_DELETE_BY_ID_SUM = "Delete a product by product id";
-    public static final String PRODUCT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     public static final String PRODUCT_UPDATE_BY_ID_SUM = "Update product's information by product id";
-    public static final String PRODUCT_UPDATE_BY_ID_DES= "This endpoint returns new product's information after it were updated";
-    public static final String PRODUCT_SEARCH_BY_NAME_OR_DESC_SUM = "Get all products by name or description";
-    public static final String PRODUCT_SEARCH_BY_NAME_OR_DESC_DES= "This endpoint returns some products";
     public static final String PRODUCT_GET_TOP_ORDER_QUANTITY_SUM = "Get top products and sort by quantity order";
-    public static final String PRODUCT_GET_TOP_ORDER_QUANTITY_DES= "This endpoint returns some products top";
 
     // For category =================================================================
 
     public static final String CATEGORY_CONTROLLER_TITLE = "CATEGORY MANAGEMENT";
     public static final String CATEGORY_CREATE_SUM = "Create a new category";
-    public static final String CATEGORY_CREATE_DES = "This endpoint returns new category after saved on database";
     public static final String CATEGORY_GET_BY_ID_SUM = "Get a category by category id";
-    public static final String CATEGORY_GET_BY_ID_DES= "This endpoint returns a category's information";
-
     public static final String CATEGORY_GET_ALL_SUM = "Get all categories";
-    public static final String CATEGORY_GET_ALL_DES= "This endpoint returns all categories";
     public static final String CATEGORY_GET_ALL_WITHOUT_DELETED_SUM = "Get all categories without disabled";
-    public static final String CATEGORY_GET_ALL_WITHOUT_DELETED_DES= "This endpoint returns all categories without disabled";
     public static final String CATEGORY_UPDATE_BY_ID_SUM = "Update category's information by category id";
-    public static final String CATEGORY_UPDATE_BY_ID_DES= "This endpoint returns new category's information after it were updated";
     public static final String CATEGORY_DELETE_BY_ID_SUM = "Delete a category by category id";
-    public static final String CATEGORY_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
-    public static final String CATEGORY_SOFT_DELETE_BY_ID_SUM = "Set enabled is false for category by category's id";
-    public static final String CATEGORY_SOFT_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     // For transaction =======================================================
 
     public static final String TRANSACTION_CONTROLLER_TITLE = "TRANSACTION MANAGEMENT";
-    public static final String TRANSACTION_CREATE_SUM = "Create a new transaction";
-    public static final String TRANSACTION_CREATE_DES = "This endpoint returns new transaction after saved on database";
     public static final String TRANSACTION_UPDATE_BY_ID_SUM = "Update transaction's information by transaction id after paid/canceled at vnpay page";
-    public static final String TRANSACTION_UPDATE_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
     public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_SUM = "Update transaction's status successfully by transaction id";
-    public static final String TRANSACTION_UPDATE_SUCCESS_STATUS_BY_ID_DES= "This endpoint returns new transaction's information after it were updated";
     public static final String TRANSACTION_GET_REVENUE_BY_TIME_SUM = "Get all revenue of store by time [day, month, year]";
-    public static final String TRANSACTION_GET_REVENUE_BY_TIME_DES= "This endpoint returns revenue's information";
     public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_SUM = "Get revenue of store at current date";
-    public static final String TRANSACTION_GET_REVENUE_CURRENT_DATE_DES= "This endpoint returns revenue's information at current date";
 
 
     // For Order =============================================================
 
     public static final String ORDER_CONTROLLER_TITLE = "ORDER MANAGEMENT";
-
-    public static final String ORDER_UPDATE_BY_ID_SUM = "Update order's information by order id";
-    public static final String ORDER_UPDATE_BY_ID_DES= "This endpoint returns new order's information after it were updated";
-
-
     public static final String ORDER_UPDATE_EVENT_SUM = "Add an order event to the status line";
-    public static final String ORDER_UPDATE_EVENT_DES = "This endpoint returns new order's information after it were updated";
     public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
-    public static final String ORDER_CREATE_SHIPPING_DES = "This endpoint returns new shipping order after saved on database";
     public static final String ORDER_GET_ALL_IN_DAY_SUM = "Get all shipping orders in current day for employee";
-    public static final String ORDER_GET_ALL_IN_DAY_DES = "This endpoint returns all orders in current day";
     public static final String ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM = "Get all orders for employee by type and status of order in current day";
-    public static final String ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_DES = "This endpoint returns all orders by type and status of order in current day";
     public static final String ORDER_GET_DETAILS_BY_ID_SUM = "Get a details order by order id";
-    public static final String ORDER_GET_DETAILS_BY_ID_DES= "This endpoint returns a detail order";
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM = "Get orders history by user id and order status";
-    public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_DES = "This endpoint returns orders history information";
     public static final String ORDER_CREATE_REVIEW_SUM = "Create review for order by order id";
-    public static final String ORDER_CREATE_REVIEW_DES = "This endpoint returns new order information";
     public static final String ORDER_GET_STATUS_LINE_SUM = "Get order status line by order id";
-    public static final String ORDER_GET_STATUS_LINE_DES = "This endpoint returns order status line";
     public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM = "Get all order history for employee by page and size";
-    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_DES = "This endpoint returns all order history";
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUM = "Get order's quantity by status at today";
-    public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_DES = "This endpoint returns order's quantity at today";
 
     // For Employee =============================================================
     public static final String EMPLOYEE_CONTROLLER_TITLE = "EMPLOYEE MANAGEMENT";
     public static final String EMPLOYEE_UPDATE_BY_ID_SUM = "Update employee's information by employee id";
-    public static final String EMPLOYEE_UPDATE_BY_ID_DES= "This endpoint returns new employee's information after it were updated";
     public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_SUM = "Update employee's new password by employee id for admin";
-    public static final String EMPLOYEE_UPDATE_PASSWORD_BY_ID_DES= NOTIFICATION_NOT_DATA;
 
     public static final String EMPLOYEE_DELETE_BY_ID_SUM = "Delete a employee by employee id";
-    public static final String EMPLOYEE_DELETE_BY_ID_DES= NOTIFICATION_NOT_DATA;
     public static final String EMPLOYEE_REGISTER_SUM = "Register new employee account with some information";
-    public static final String EMPLOYEE_REGISTER_DES= NOTIFICATION_NOT_DATA;
 
     public static final String EMPLOYEE_GET_BY_ID_SUM = "Get a employee by employee id";
-    public static final String EMPLOYEE_GET_BY_ID_DES= "This endpoint returns a employee's information";
     public static final String EMPLOYEE_GET_ALL_SUM = "Get all employees";
-    public static final String EMPLOYEE_GET_ALL_DES= "This endpoint returns all employees";
     public static final String EMPLOYEE_UPDATE_PASSWORD_SUM = "Update new password for employee by employee id for employee";
-    public static final String EMPLOYEE_UPDATE_PASSWORD_DES= NOTIFICATION_NOT_DATA;
 
+    // For Branch =============================================================
+    public static final String BRANCH_CONTROLLER_TITLE = "BRANCH MANAGEMENT";
+    public static final String BRANCH_CREATE = "Create a new branch";
+    public static final String BRANCH_UPDATE_BY_ID = "Update branch's information by id";
 
 
 
@@ -230,6 +163,11 @@ public class SwaggerConstant {
     public static final String PAYMENT_TYPE_EX = "BANKING";
     public static final String REVIEW_DES_EX = "Good service";
     public static final String BOOLEAN_EX = "false";
+    public static final String PRODUCT_STATUS_EX = "HIDDEN";
     public static final String USERNAME_EX = "employee";
     public static final String REFRESH_TOKEN_EX = "wesaferg534vbdrbtgertyrrw6b456ertbvw354t";
+    public static final String PROVINCE_EX = "Binh Duong";
+    public static final String COMMUNE_EX = "Di An";
+    public static final String DISTRICT_EX = "Tan Binh";
+    public static final String ADDRESS_DETAILS_EX = "Nguyen Thi Tuoi - tan hiep";
 }

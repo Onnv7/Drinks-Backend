@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 public class GetOrderHistoryPageForEmployeeResponse {
     private String id;
+    private String code;
     private String customerName;
     private String phoneNumber;
     private String productName;
@@ -17,7 +18,8 @@ public class GetOrderHistoryPageForEmployeeResponse {
     @JsonProperty("thumbnailUrl")
     private String productThumbnail;
     private Date timeLastEvent;
+    private Date createdAt;
     private double total;
-    private OrderStatus statusLastEvent;
+//    private OrderStatus statusLastEvent;
     private OrderType orderType;
 }

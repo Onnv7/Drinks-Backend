@@ -4,9 +4,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-@Component
-public class RandomCodeUtils {
-    public String generateRandomCode(int length) {
+public class GeneratorUtils {
+    public static String generateRandomCode(int length) {
         StringBuilder code = new StringBuilder();
         Random random = new Random();
 
@@ -16,5 +15,10 @@ public class RandomCodeUtils {
         }
 
         return code.toString();
+    }
+    public static String formatCodeItem(long number, String prefix, int lengthNumber) {
+        String formatString = "%0" + lengthNumber + "d";
+        String formattedNumber = String.format(formatString, number);
+        return prefix + formattedNumber;
     }
 }

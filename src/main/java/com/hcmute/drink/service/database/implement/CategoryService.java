@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.CategoryCollection;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
@@ -11,8 +11,8 @@ import com.hcmute.drink.dto.response.GetAllCategoriesWithoutDisabledResponse;
 import com.hcmute.drink.dto.response.GetAllCategoryResponse;
 import com.hcmute.drink.dto.response.UpdateCategoryResponse;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.repository.CategoryRepository;
-import com.hcmute.drink.service.ICategoryService;
+import com.hcmute.drink.repository.database.CategoryRepository;
+import com.hcmute.drink.service.database.ICategoryService;
 import com.hcmute.drink.utils.CloudinaryUtils;
 import com.hcmute.drink.utils.ImageUtils;
 import com.hcmute.drink.utils.ModelMapperUtils;
@@ -27,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
+    private final SequenceService sequenceService;
     private final CategoryRepository categoryRepository;
     private final CloudinaryUtils cloudinaryUtils;
     private final ImageUtils imageUtils;
@@ -58,6 +59,7 @@ public class CategoryService implements ICategoryService {
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, cgrName + "_" + currentTimeMillis, newImage);
             ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
             CategoryCollection category = CategoryCollection.builder()
+                    .code(sequenceService.generateCode(CategoryCollection.SEQUENCE_NAME, CategoryCollection.PREFIX_CODE, CategoryCollection.LENGTH_NUMBER))
                     .image(imageEmbedded)
                     .name(body.getName())
                     .enabled(true)

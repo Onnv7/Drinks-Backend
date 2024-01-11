@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "code": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    }
+  }
+}

@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 public class GetAllEmployeeResponse {
     private String id;
+    private String code;
     private String firstName;
     private String lastName;
     private String username;

@@ -1,13 +1,10 @@
-package com.hcmute.drink.repository;
+package com.hcmute.drink.repository.database;
 
 import com.hcmute.drink.collection.TransactionCollection;
-import com.hcmute.drink.dto.GetRevenueByTimeResponse;
-import com.hcmute.drink.dto.GetRevenueCurrentDateResponse;
-import com.hcmute.drink.enums.OrderStatus;
+import com.hcmute.drink.dto.response.GetRevenueByTimeResponse;
+import com.hcmute.drink.dto.response.GetRevenueCurrentDateResponse;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;

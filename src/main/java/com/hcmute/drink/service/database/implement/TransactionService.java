@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.TransactionCollection;
@@ -9,9 +9,9 @@ import com.hcmute.drink.enums.Maker;
 import com.hcmute.drink.enums.OrderStatus;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.model.CustomException;
-import com.hcmute.drink.service.ITransactionService;
+import com.hcmute.drink.service.database.ITransactionService;
 import com.hcmute.drink.utils.VNPayUtils;
-import com.hcmute.drink.repository.TransactionRepository;
+import com.hcmute.drink.repository.database.TransactionRepository;
 import com.hcmute.drink.utils.MongoDbUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,7 @@
-package com.hcmute.drink.repository;
+package com.hcmute.drink.repository.database;
 
 import com.hcmute.drink.collection.AddressCollection;
-import com.hcmute.drink.dto.GetAddressByUserIdResponse;
-import com.hcmute.drink.dto.GetAddressDetailsByIdResponse;
+import com.hcmute.drink.dto.response.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;

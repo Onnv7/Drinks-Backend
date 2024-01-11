@@ -14,6 +14,7 @@ import java.util.Date;
 @Data
 public class GetEmployeeByIdResponse {
     private String id;
+    private String code;
     private String username;
     private String firstName;
     private String lastName;

@@ -1,4 +1,4 @@
-package com.hcmute.drink.service;
+package com.hcmute.drink.service.database;
 
 public interface IConfirmationService {
 }

@@ -1,22 +1,21 @@
 package com.hcmute.drink.controller;
 
-import com.hcmute.drink.collection.UserCollection;
+import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.*;
+
+import com.hcmute.drink.dto.request.*;
+import com.hcmute.drink.dto.response.*;
+import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.ResponseAPI;
-import com.hcmute.drink.service.AuthService;
-import com.hcmute.drink.service.EmployeeService;
-import com.hcmute.drink.service.UserService;
-import com.hcmute.drink.utils.EmailUtils;
+import com.hcmute.drink.service.database.IAuthService;
+import com.hcmute.drink.service.database.implement.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -33,144 +32,111 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequestMapping(AUTH_BASE_PATH)
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
+    private final IAuthService authService;
     private final UserService userService;
-    private final EmployeeService employeeService;
-    private final EmailUtils emailUtils;
-    private final ModelMapper modelMapper;
 
 
-    @Operation(summary = AUTH_LOGIN_SUM, description = AUTH_LOGIN_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_LOGIN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> login(@RequestBody @Validated LoginRequest body) {
-        try {
-            LoginResponse data = authService.attemptLogin(body.getEmail(), body.getPassword());
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .success(true)
-                    .message(SuccessConstant.LOGIN)
-                    .data(data)
-                    .build();
+    @Operation(summary = AUTH_LOGIN_SUM)
+    @PostMapping(POST_AUTH_LOGIN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> userLogin(@RequestBody @Valid LoginRequest body) {
+        LoginResponse data = authService.userLogin(body.getEmail(), body.getPassword());
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .success(true)
+                .message(SuccessConstant.LOGIN)
+                .data(data)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
 
-            return new ResponseEntity<>(res, StatusCode.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    @Operation(summary = AUTH_REGISTER_SUM, description = AUTH_REGISTER_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.CREATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_REGISTER_SUB_PATH)
-    public ResponseEntity<ResponseAPI> register(@RequestBody @Validated RegisterRequest body) {
-        try {
-            UserCollection data = modelMapper.map(body, UserCollection.class);
-            RegisterResponse resDate = authService.registerUser(data);
+    @Operation(summary = AUTH_REGISTER_SUM)
+    @PostMapping(POST_AUTH_REGISTER_SUB_PATH)
+    public ResponseEntity<ResponseAPI> registerUser(@RequestBody @Valid RegisterRequest body) {
+        RegisterResponse resDate = authService.registerUser(body);
 
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .data(resDate)
-                    .message(SuccessConstant.CREATED)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.CREATED);
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .data(resDate)
+                .message(SuccessConstant.CREATED)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.CREATED);
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
-    @Operation(summary = AUTH_RE_SEND_EMAIL_SUM, description = AUTH_RE_SEND_EMAIL_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_RE_SEND_EMAIL_SUB_PATH)
-    public ResponseEntity<ResponseAPI> resendEmail(@RequestBody @Validated ResendEmailRequest body) {
-        try {
-            authService.resendCode(body.getEmail());
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Operation(summary = AUTH_RE_SEND_EMAIL_SUM)
+    @PostMapping(POST_AUTH_RE_SEND_EMAIL_SUB_PATH)
+    public ResponseEntity<ResponseAPI> resendEmail(@RequestBody @Valid ResendEmailRequest body) {
+        authService.resendCode(body.getEmail());
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .message(SuccessConstant.SEND_CODE_TO_EMAIL)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
     }
 
-    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM, description = AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_SEND_CODE_TO_REGISTER_SUB_PATH)
-    public ResponseEntity<ResponseAPI> sendCodeToRegister(@RequestBody @Validated SendCodeRequest body) {
-        try {
-            authService.sendCodeToRegister(body.getEmail());
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_REGISTER_SUM)
+    @PostMapping(POST_AUTH_SEND_CODE_TO_REGISTER_SUB_PATH)
+    public ResponseEntity<ResponseAPI> sendCodeToRegister(@RequestBody @Valid SendCodeRequest body) {
+
+        authService.sendCodeToRegister(body.getEmail());
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .message(SuccessConstant.SEND_CODE_TO_EMAIL)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
+
     }
 
-    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM, description = AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_SEND_CODE_TO_GET_PWD_SUB_PATH)
-    public ResponseEntity<ResponseAPI> sendCodeToGetPassword(@RequestBody @Validated SendCodeRequest body) {
-        try {
-            authService.sendCodeToGetPassword(body.getEmail());
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .message(SuccessConstant.SEND_CODE_TO_EMAIL)
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Operation(summary = AUTH_SEND_CODE_TO_EMAIL_TO_GET_PWD_SUM)
+    @PostMapping(POST_AUTH_SEND_CODE_TO_GET_PWD_SUB_PATH)
+    public ResponseEntity<ResponseAPI> sendCodeToGetPassword(@RequestBody @Valid SendCodeRequest body) {
+
+        authService.sendCodeToGetPassword(body.getEmail());
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .message(SuccessConstant.SEND_CODE_TO_EMAIL)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
+
     }
 
 
-    @Operation(summary = AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM, description = AUTH_SEND_OTP_TO_PHONE_NUMBER_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_SEND_OPT_SUB_PATH)
-    public ResponseEntity<ResponseAPI> sendOTP(@RequestBody @Validated VerifyPhoneNumberRequest body) {
-        try {
-            log.info("YOUR CODE: " + body.getMessage());
-//            authService.sendMessageToPhoneNumber(body.getPhoneNumber(), body.getMessage());
-            ResponseAPI res = ResponseAPI.builder()
-                    .message(SuccessConstant.SEND_OTP)
-                    .timestamp(new Date())
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//    @Operation(summary = AUTH_SEND_OTP_TO_PHONE_NUMBER_SUM)
+//    @PostMapping(POST_AUTH_SEND_OPT_SUB_PATH)
+//    public ResponseEntity<ResponseAPI> sendOTP(@RequestBody @Validated VerifyPhoneNumberRequest body) {
+//        try {
+//            log.info("YOUR CODE: " + body.getMessage());
+////            authService.sendMessageToPhoneNumber(body.getPhoneNumber(), body.getMessage());
+//            ResponseAPI res = ResponseAPI.builder()
+//                    .message(SuccessConstant.SEND_OTP)
+//                    .timestamp(new Date())
+//                    .build();
+//            return new ResponseEntity<>(res, StatusCode.OK);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    @Operation(summary = AUTH_VERIFY_EMAIL_SUM)
+    @PostMapping(POST_AUTH_VERIFY_EMAIL_SUB_PATH)
+    public ResponseEntity<ResponseAPI> verifyCodeByEmail(@RequestBody @Valid VerifyEmailRequest body) {
+
+        log.debug("YOUR CODE: " + body.getCode());
+        authService.verifyCodeByEmail(body.getCode(), body.getEmail());
+        ResponseAPI res = ResponseAPI.builder()
+                .message(SuccessConstant.EMAIL_VERIFIED)
+                .timestamp(new Date())
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
+
     }
 
-    @Operation(summary = AUTH_VERIFY_EMAIL_SUM, description = AUTH_VERIFY_EMAIL_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.SEND_CODE_TO_EMAIL, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(AUTH_VERIFY_EMAIL_SUB_PATH)
-    public ResponseEntity<ResponseAPI> verifyCodeByEmail(@RequestBody @Validated VerifyEmailRequest body) {
-        try {
-            log.debug("YOUR CODE: " + body.getCode());
-            boolean result = authService.verifyCodeByEmail(body.getCode(), body.getEmail());
-            ResponseAPI res = ResponseAPI.builder()
-                    .message(SuccessConstant.EMAIL_VERIFIED)
-                    .timestamp(new Date())
-                    .build();
-            return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Operation(summary = AUTH_CHANGE_PASSWORD_SUM, description = AUTH_CHANGE_PASSWORD_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.UPDATED, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PatchMapping(AUTH_CHANGE_PASSWORD_SUB_PATH)
-    public ResponseEntity<ResponseAPI> changePasswordForgot(@RequestBody @Validated ChangePasswordRequest body) {
+    // TODO: xem lai cho userService trong auth controller
+    @Operation(summary = AUTH_CHANGE_PASSWORD_SUM)
+    @PatchMapping(PATCH_AUTH_CHANGE_PASSWORD_SUB_PATH)
+    public ResponseEntity<ResponseAPI> changePasswordForgot(@RequestBody @Valid ChangePasswordRequest body) {
         try {
             userService.changePasswordForgot(body.getEmail(), body.getPassword());
 
@@ -179,74 +145,71 @@ public class AuthController {
                     .timestamp(new Date())
                     .build();
             return new ResponseEntity<>(res, StatusCode.OK);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Operation(summary = AUTH_EMPLOYEE_LOGIN_SUM, description = AUTH_EMPLOYEE_LOGIN_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.LOGIN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(path = AUTH_EMPLOYEE_LOGIN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Validated EmployeeLoginRequest body, HttpServletResponse response) {
-        try {
-            EmployeeLoginResponse data = authService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
-
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .data(data)
-                    .message(SuccessConstant.LOGIN)
-                    .build();
-
-
-            HttpHeaders headers = new HttpHeaders();
-
-
-            // TODO: kiem tra expire coookie
-            headers.add(HttpHeaders.SET_COOKIE,"refreshToken=" + data.getRefreshToken() +"; Max-Age=604800; Path=/; Secure; HttpOnly");
-
-
-            return new ResponseEntity<>(res, headers, StatusCode.OK);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Operation(summary = AUTH_REFRESH_TOKEN_SUM, description = AUTH_REFRESH_TOKEN_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_NEW_TOKEN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(path = AUTH_REFRESH_TOKEN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> refreshToken(@RequestBody @Validated RefreshTokenRequest body) {
-        try {
-            RefreshTokenResponse data = authService.refreshToken(body.getRefreshToken());
+    @Operation(summary = AUTH_EMPLOYEE_LOGIN_SUM)
+    @PostMapping(path = POST_AUTH_EMPLOYEE_LOGIN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> loginEmployee(@RequestBody @Valid EmployeeLoginRequest body) {
+        EmployeeLoginResponse data = authService.attemptEmployeeLogin(body.getUsername(), body.getPassword());
 
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .data(data)
-                    .message(SuccessConstant.GET_NEW_TOKEN)
-                    .build();
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .data(data)
+                .message(SuccessConstant.LOGIN)
+                .build();
 
-            return new ResponseEntity<>(res, StatusCode.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+
+        // TODO: kiem tra expire coookie
+        headers.add(HttpHeaders.SET_COOKIE, "refreshToken=" + data.getRefreshToken() + "; Max-Age=604800; Path=/; Secure; HttpOnly");
+
+
+        return new ResponseEntity<>(res, headers, StatusCode.OK);
+
     }
 
-    @Operation(summary = AUTH_REFRESH_EMPLOYEE_TOKEN_SUM, description = AUTH_REFRESH_EMPLOYEE_TOKEN_DES)
-    @ApiResponse(responseCode = StatusCode.CODE_OK, description = SuccessConstant.GET_NEW_TOKEN, content = @Content(mediaType = JSON_MEDIA_TYPE))
-    @PostMapping(path = AUTH_REFRESH_EMPLOYEE_TOKEN_SUB_PATH)
-    public ResponseEntity<ResponseAPI> refreshEmployeeToken(@RequestBody @Validated RefreshEmployeeTokenRequest body) {
-        try {
-            RefreshEmployeeTokenResponse data = authService.refreshEmployeeToken(body.getRefreshToken());
+    @Operation(summary = AUTH_REFRESH_TOKEN_SUM)
+    @PostMapping(path = POST_AUTH_REFRESH_TOKEN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> refreshToken(@RequestBody @Valid RefreshTokenRequest body) {
+        RefreshTokenResponse data = authService.refreshToken(body.getRefreshToken());
 
-            ResponseAPI res = ResponseAPI.builder()
-                    .timestamp(new Date())
-                    .data(data)
-                    .message(SuccessConstant.GET_NEW_TOKEN)
-                    .build();
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .data(data)
+                .message(SuccessConstant.GET_NEW_TOKEN)
+                .build();
 
-            return new ResponseEntity<>(res, StatusCode.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        return new ResponseEntity<>(res, StatusCode.OK);
+    }
+
+    @Operation(summary = AUTH_REFRESH_EMPLOYEE_TOKEN_SUM)
+    @PostMapping(path = POST_AUTH_REFRESH_EMPLOYEE_TOKEN_SUB_PATH)
+    public ResponseEntity<ResponseAPI> refreshEmployeeToken(
+            @RequestBody(required = false)  RefreshEmployeeTokenRequest body, HttpServletRequest request
+            , @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        System.out.println(request);
+        if (refreshToken == null &&  body == null) {
+            throw new CustomException(ErrorConstant.INVALID_TOKEN);
         }
+        RefreshEmployeeTokenResponse data = authService.refreshEmployeeToken( body == null ? refreshToken : body.getRefreshToken());
+
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .data(data)
+                .message(SuccessConstant.GET_NEW_TOKEN)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+
+
+        // TODO: kiem tra expire coookie
+        headers.add(HttpHeaders.SET_COOKIE, "refreshToken=" + data.getRefreshToken() + "; Max-Age=604800; Path=/; Secure; HttpOnly");
+
+        return new ResponseEntity<>(res, headers, StatusCode.OK);
     }
 }

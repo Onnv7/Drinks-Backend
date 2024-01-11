@@ -1,13 +1,10 @@
 package com.hcmute.drink.kafka;
 
-import com.hcmute.drink.dto.CodeEmailDto;
+import com.hcmute.drink.dto.kafka.CodeEmailDto;
 import com.hcmute.drink.utils.EmailUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 

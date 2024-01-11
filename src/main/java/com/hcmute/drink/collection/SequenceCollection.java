@@ -11,10 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Data
 @Builder
-@Document(collection = "transaction")
-public class CounterCollection {
+@Document(collection = "sequence")
+public class SequenceCollection {
     @Id
     private String id;
-    private String collectionName;
     private long count;
 }

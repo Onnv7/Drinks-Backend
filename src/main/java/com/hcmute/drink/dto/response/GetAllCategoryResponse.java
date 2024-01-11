@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class GetAllCategoryResponse {
     private String id;
+    private String code;
     private String name;
     private ImageModel image;
     private boolean enabled;

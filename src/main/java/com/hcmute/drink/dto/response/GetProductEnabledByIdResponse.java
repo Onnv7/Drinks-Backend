@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.collection.embedded.SizeEmbedded;
 import com.hcmute.drink.collection.embedded.ToppingEmbedded;
+import com.hcmute.drink.enums.ProductStatus;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.UniqueElements;
@@ -25,4 +26,6 @@ public class GetProductEnabledByIdResponse {
     private String description;
     @UniqueElements
     private List<ToppingEmbedded> toppingList;
+
+    private ProductStatus status;
 }

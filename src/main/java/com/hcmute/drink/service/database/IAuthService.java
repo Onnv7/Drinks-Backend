@@ -1,7 +1,9 @@
-package com.hcmute.drink.service;
+package com.hcmute.drink.service.database;
 
+import com.hcmute.drink.dto.request.RefreshEmployeeTokenRequest;
 import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.dto.request.RegisterRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface IAuthService {
     LoginResponse userLogin(String email, String password);

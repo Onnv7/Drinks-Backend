@@ -1,4 +1,4 @@
-package com.hcmute.drink.service.implement;
+package com.hcmute.drink.service.database.implement;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hcmute.drink.collection.ConfirmationCollection;
@@ -13,24 +13,20 @@ import com.hcmute.drink.kafka.KafkaMessagePublisher;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.redis.EmployeeToken;
 import com.hcmute.drink.model.redis.UserToken;
-import com.hcmute.drink.repository.ConfirmationRepository;
-import com.hcmute.drink.repository.EmployeeRepository;
+import com.hcmute.drink.repository.database.ConfirmationRepository;
 import com.hcmute.drink.security.UserPrincipal;
 import com.hcmute.drink.security.custom.employee.EmployeeUsernamePasswordAuthenticationToken;
 import com.hcmute.drink.security.custom.user.UserUsernamePasswordAuthenticationToken;
-import com.hcmute.drink.service.IAuthService;
+import com.hcmute.drink.service.database.IAuthService;
 import com.hcmute.drink.service.redis.EmployeeRefreshTokenRedisService;
 import com.hcmute.drink.service.redis.UserRefreshTokenRedisService;
-import com.hcmute.drink.utils.EmailUtils;
 import com.hcmute.drink.utils.JwtUtils;
 import com.hcmute.drink.utils.ModelMapperUtils;
-import com.hcmute.drink.utils.RandomCodeUtils;
+import com.hcmute.drink.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,9 +43,9 @@ import static com.hcmute.drink.utils.JwtUtils.ROLES_CLAIM_KEY;
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
     private final KafkaMessagePublisher kafkaMessagePublisher;
-    private final RandomCodeUtils randomCodeUtils;
     private final ConfirmationRepository confirmationRepository;
     private final JwtUtils jwtUtils;
+    private final SequenceService sequenceService;
     @Autowired
     @Lazy
     private PasswordEncoder passwordEncoder;
@@ -129,6 +125,7 @@ public class AuthService implements IAuthService {
 
         data.setRoles(new Role[]{Role.ROLE_USER});
         data.setPassword(passwordEncoder.encode(data.getPassword()));
+        data.setCode(sequenceService.generateCode(UserCollection.SEQUENCE_NAME, UserCollection.PREFIX_CODE, UserCollection.LENGTH_NUMBER));
         UserCollection savedUser = userService.saveUser(data);
 
         List<String> roleList = new ArrayList<>();
@@ -150,7 +147,7 @@ public class AuthService implements IAuthService {
             throw new CustomException(ErrorConstant.NOT_FOUND + email);
         }
 
-        String code = randomCodeUtils.generateRandomCode(6);
+        String code = GeneratorUtils.generateRandomCode(6);
         confirmation.setCode(code);
         confirmationService.updateConfirmationInfo(confirmation);
         kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
@@ -163,7 +160,7 @@ public class AuthService implements IAuthService {
         if (user != null) {
             throw new CustomException(ErrorConstant.REGISTERED_EMAIL);
         }
-        String code = randomCodeUtils.generateRandomCode(6);
+        String code = GeneratorUtils.generateRandomCode(6);
         confirmationService.createOrUpdateConfirmationInfo(email, code);
         kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
     }
@@ -171,7 +168,7 @@ public class AuthService implements IAuthService {
     @Override
     public void sendCodeToGetPassword(String email) {
         userService.getByEmail(email);
-        String code = randomCodeUtils.generateRandomCode(6);
+        String code = GeneratorUtils.generateRandomCode(6);
         confirmationService.createOrUpdateConfirmationInfo(email, code);
         kafkaMessagePublisher.sendMessageToCodeEmail(new CodeEmailDto(code, email));
     }
@@ -243,7 +240,7 @@ public class AuthService implements IAuthService {
         String newAccessToken = jwtUtils.issueAccessToken(user.getId(), user.getUsername(), roles);
         String newRefreshToken = jwtUtils.issueRefreshToken(user.getId(), user.getUsername(), roles);
         employeeRefreshTokenRedisService.updateUsedEmployeeRefreshToken(token);
-        employeeRefreshTokenRedisService.createNewEmployeeRefreshToken(refreshToken, userId);
+        employeeRefreshTokenRedisService.createNewEmployeeRefreshToken(newRefreshToken, userId);
 
 
         RefreshEmployeeTokenResponse resData = RefreshEmployeeTokenResponse.builder()

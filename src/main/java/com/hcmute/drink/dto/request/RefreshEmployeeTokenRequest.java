@@ -10,6 +10,5 @@ import static com.hcmute.drink.constant.SwaggerConstant.REFRESH_TOKEN_EX;
 @Data
 public class RefreshEmployeeTokenRequest {
     @Schema(example = REFRESH_TOKEN_EX, description = NOT_BLANK_DES)
-    @NotBlank
     private String refreshToken;
 }

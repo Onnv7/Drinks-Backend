@@ -1,7 +1,7 @@
 package com.hcmute.drink.security.oauth;
 
 import com.hcmute.drink.collection.UserCollection;
-import com.hcmute.drink.repository.UserRepository;
+import com.hcmute.drink.repository.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -32,7 +32,7 @@ public class CustomOidcUserService extends OidcUserService {
 
         // see what other data from userRequest or oidcUser you need
 
-        UserCollection userOptional = userRepository.findByEmail(googleUserInfo.getEmail());
+        UserCollection userOptional = userRepository.findByEmail(googleUserInfo.getEmail()).orElse(null);
         if (userOptional != null) {
             UserCollection user = new UserCollection();
             user.setEmail(googleUserInfo.getEmail());

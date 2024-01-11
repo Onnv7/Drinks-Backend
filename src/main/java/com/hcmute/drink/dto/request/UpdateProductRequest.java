@@ -2,6 +2,7 @@ package com.hcmute.drink.dto.request;
 
 import com.hcmute.drink.common.SizeModel;
 import com.hcmute.drink.common.ToppingModel;
+import com.hcmute.drink.enums.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -45,4 +46,9 @@ public class UpdateProductRequest implements Serializable {
     @Schema(example = BOOLEAN_EX, description = NOT_NULL_DES)
     @NotNull
     private boolean enabled;
+
+
+    @Schema(example = PRODUCT_STATUS_EX, description = NOT_NULL_DES)
+    @NotNull
+    private ProductStatus status;
 }

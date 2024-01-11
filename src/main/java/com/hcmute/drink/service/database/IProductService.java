@@ -1,4 +1,4 @@
-package com.hcmute.drink.service;
+package com.hcmute.drink.service.database;
 
 import com.hcmute.drink.dto.request.CreateProductRequest;
 import com.hcmute.drink.dto.request.UpdateProductRequest;
@@ -12,10 +12,11 @@ public interface IProductService {
     GetProductByIdResponse getProductDetailsById(String id);
     GetProductEnabledByIdResponse getProductEnabledById(String id);
     List<GetProductsByCategoryIdResponse> getProductsByCategoryId(String categoryId);
-    List<GetAllProductsEnabledResponse> getAllProductsEnabled(int page, int size);
-    List<GetAllProductsEnabledResponse> searchProductByNameOrDescription(String key, int page, int size);
-    List<GetAllProductsResponse> getAllProducts();
+    List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size);
+    List<GetAllVisibleProductResponse> searchProductVisible(String key, int page, int size);
+    List<GetAllProductsResponse> getAllProducts(int page, int size);
+    List<GetAllProductsResponse> searchProduct(String key, int page, int size);
     void deleteProductById(String id);
     void updateProductById(UpdateProductRequest data, String id);
-    List<GetAllProductsEnabledResponse> getTopProductQuantityOrder(int quantity);
+    List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int quantity);
 }
