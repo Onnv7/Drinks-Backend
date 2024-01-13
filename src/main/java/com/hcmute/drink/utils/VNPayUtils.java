@@ -19,11 +19,9 @@ import java.util.*;
 
 import static com.hcmute.drink.constant.VNPayConstant.*;
 
-@Component
 @Slf4j
 public class VNPayUtils {
-    private ObjectMapper objectMapper = new ObjectMapper();
-    public Map<String, String> createUrlPayment(HttpServletRequest request, long amount, String orderInfo) throws UnsupportedEncodingException {
+    public static Map<String, String> createUrlPayment(HttpServletRequest request, long amount, String orderInfo) throws UnsupportedEncodingException {
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(request);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
@@ -87,7 +85,8 @@ public class VNPayUtils {
     }
 
 
-    public Map<String, Object> getTransactionInfo(String txnref, String transId, HttpServletRequest request) throws IOException {
+    public static Map<String, Object> getTransactionInfo(String txnref, String transId, HttpServletRequest request) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
         String vnp_RequestId = VNPayConfig.getRandomNumber(8);
         String vnp_Version = VNP_VERSION;
         String vnp_Command = QUERY_DR;
@@ -162,9 +161,10 @@ public class VNPayUtils {
      * timeId: thoi gian bill duoc tao <p>
      * invoiceCode: ma 8 chu so
     */
-    public Map<String, Object> refund(HttpServletRequest req, HttpServletResponse resp,
+    public static Map<String, Object> refund(HttpServletRequest req, HttpServletResponse resp,
                                     String timeId, String amount, String invoiceCode, String refundType)
             throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
         String vnp_RequestId = VNPayConfig.getRandomNumber(8);
         String vnp_Version = VNP_VERSION;
         String vnp_Command = REFUND_COMMAND;

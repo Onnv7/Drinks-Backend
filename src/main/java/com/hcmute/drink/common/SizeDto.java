@@ -9,7 +9,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 import static com.hcmute.drink.constant.SwaggerConstant.PRODUCT_PRICE_MIN;
 
 @Data
-public class SizeModel {
+public class SizeDto {
     @Schema(example = PRODUCT_SIZE_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String size;

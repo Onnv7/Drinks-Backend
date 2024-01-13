@@ -34,7 +34,7 @@ public class SecurityConstant {
     public static final String[] POST_USER_PATH = {
             POST_ADDRESS_CREATE_PATH,
             POST_ORDER_CREATE_REVIEW_PATH,
-            USER_GET_BY_ID_PATH,
+            USER_GET_BY_ID_PATH, POST_ORDER_CREATE_ONSITE_PATH
     };
     public static final String[] PATCH_USER_PATH = {
             USER_CHANGE_PASSWORD_PATH
@@ -49,6 +49,7 @@ public class SecurityConstant {
     public static final String[] GET_USER_PATH = {
             GET_ORDER_ORDERS_BY_USER_ID_AND_ORDER_STATUS_PATH,
             GET_ADDRESS_BY_USER_ID_PATH, GET_ADDRESS_DETAILS_BY_ID_PATH,
+
     };
 
     // Only ADMIN =================================================================
@@ -60,6 +61,7 @@ public class SecurityConstant {
             USER_GET_ALL_PATH, GET_EMPLOYEE_ALL_PATH,
             GET_CATEGORY_ALL_PATH, GET_PRODUCT_ALL_PATH,
             GET_TRANSACTION_REVENUE_BY_TIME_PATH, GET_TRANSACTION_REVENUE_CURRENT_DATE_PATH,
+            GET_BRANCH_ALL_PATH
 
     };
     public static final String[] PUT_ADMIN_PATH = {
@@ -78,7 +80,7 @@ public class SecurityConstant {
     public static final String[] DELETE_ADMIN_PATH = {
             DELETE_PRODUCT_BY_ID_PATH,
             DELETE_EMPLOYEE_BY_ID_PATH,
-            DELETE_CATEGORY_BY_ID_PATH,
+            DELETE_CATEGORY_BY_ID_PATH, DELETE_BRANCH_UPDATE_PATH
     };
 
     // Only EMPLOYEE =================================================================
@@ -130,7 +132,7 @@ public class SecurityConstant {
     };
 
     public static final String[] POST_EMPLOYEE_USER_PATH = {
-            POST_ORDER_CREATE_PATH,
+            POST_ORDER_CREATE_SHIPPING_PATH,
     };
     public static final String[] PATCH_EMPLOYEE_USER_PATH = {
             PATCH_ORDER_UPDATE_STATUS_PATH,

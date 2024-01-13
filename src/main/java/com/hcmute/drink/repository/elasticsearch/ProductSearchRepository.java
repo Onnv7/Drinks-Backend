@@ -5,10 +5,10 @@ import com.hcmute.drink.model.elasticsearch.ProductIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.annotations.SourceFilters;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Repository;
 
-//@Repository
+@Repository
 public interface ProductSearchRepository extends ElasticsearchRepository<ProductIndex, String> {
     @Query("""
             {
@@ -24,8 +24,8 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
                 }
             }
             """)
-    @SourceFilters(excludes = {"description"})
     Page<ProductIndex> searchVisibleProduct(String key, Pageable page);
+
     @Query("""
             {
                 "bool": {
@@ -37,6 +37,5 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
                 }
             }
             """)
-    @SourceFilters(excludes = {"description"})
     Page<ProductIndex> searchProduct(String key, Pageable page);
 }

@@ -13,13 +13,13 @@ public class UpdateBranchRequest {
     @NotBlank
     private String province;
 
-    @Schema(example = COMMUNE_EX)
-    @NotBlank
-    private String commune;
-
     @Schema(example = DISTRICT_EX)
     @NotBlank
     private String district;
+
+    @Schema(example = WARD_EX)
+    @NotBlank
+    private String ward;
 
     @Schema(example = ADDRESS_DETAILS_EX)
     @NotBlank

@@ -2,6 +2,10 @@ spring:
   #environment
   profiles:
     active: dev
+#  elasticsearch:
+#    rest:
+#      uris:
+#        - http://localhost:9200
   # database
   data:
     mongodb:
@@ -13,6 +17,10 @@ spring:
       database: ${MONGODB_DB_NAME}
 #      host: ${MONGODB_HOST}
       auto-index-creation: true
+#    elasticsearch:
+#      repositories.enabled: true
+#      cluster-nodes: localhost:9200
+#      cluster-name: docker-cluster
   #mail
   mail:
     host: ${EMAIL_HOST}
@@ -60,6 +68,8 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+elasticsearch:
+  index.name: order
 
 # swagger
 springdoc:
@@ -85,14 +95,23 @@ server:
 #%d{HH:mm:ss} [%thread]
 logging:
   level:
-    org.springframework:
-      security: TRACE
-      data:
-        mongodb.core:
-          MongoTemplate: DEBUG
-          ReactiveMongoTemplate: DEBUG
-        elasticsearch:
-          core: DEBUG
+    tracer: TRACE
+    org:
+      elasticsearch:
+        index:
+          search:
+            slowlog:
+              query: INFO
+      springframework:
+        security: TRACE
+        data:
+          mongodb.core:
+            MongoTemplate: DEBUG
+            ReactiveMongoTemplate: DEBUG
+          elasticsearch:
+            core: DEBUG
+#          client:
+#            WIRE: trace
   pattern:
     console: '[%-5level] %d{HH:mm:ss} %logger{36} - %msg%n'
 

@@ -79,13 +79,14 @@ public class SwaggerConstant {
     public static final String ORDER_CONTROLLER_TITLE = "ORDER MANAGEMENT";
     public static final String ORDER_UPDATE_EVENT_SUM = "Add an order event to the status line";
     public static final String ORDER_CREATE_SHIPPING_SUM = "Create a new shipping order";
+    public static final String ORDER_CREATE_ONSITE_SUM = "Create a new onsite order";
     public static final String ORDER_GET_ALL_IN_DAY_SUM = "Get all shipping orders in current day for employee";
     public static final String ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM = "Get all orders for employee by type and status of order in current day";
     public static final String ORDER_GET_DETAILS_BY_ID_SUM = "Get a details order by order id";
     public static final String ORDER_GET_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUM = "Get orders history by user id and order status";
     public static final String ORDER_CREATE_REVIEW_SUM = "Create review for order by order id";
     public static final String ORDER_GET_STATUS_LINE_SUM = "Get order status line by order id";
-    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM = "Get all order history for employee by page and size";
+    public static final String ORDER_GET_ALL_ORDER_HISTORY_FOR_EMPLOYEE_SUM = "Get all order history for employee by page and size or search by code, customerName, customerCode, phoneNumber, recipientName";
     public static final String ORDER_GET_ORDER_QUANTITY_BY_STATUS_SUM = "Get order's quantity by status at today";
 
     // For Employee =============================================================
@@ -102,8 +103,10 @@ public class SwaggerConstant {
 
     // For Branch =============================================================
     public static final String BRANCH_CONTROLLER_TITLE = "BRANCH MANAGEMENT";
-    public static final String BRANCH_CREATE = "Create a new branch";
-    public static final String BRANCH_UPDATE_BY_ID = "Update branch's information by id";
+    public static final String BRANCH_CREATE_SUM = "Create a new branch";
+    public static final String BRANCH_UPDATE_BY_ID_SUM = "Update branch's information by id";
+    public static final String BRANCH_DELETE_BY_ID_SUM = "Delete branch's information by id";
+    public static final String BRANCH_GET_ALL_SUM = "Get branch list";
 
 
 
@@ -160,14 +163,14 @@ public class SwaggerConstant {
     public static final String RECIPIENT_NAME_EX = "Luu Bang";
     public static final String ORDER_NOTE_EX = "Quickly";
     public static final String PAYMENT_STATUS_EX = "PAID";
-    public static final String PAYMENT_TYPE_EX = "BANKING";
+    public static final String PAYMENT_TYPE_EX = "BANKING_VNPAY";
     public static final String REVIEW_DES_EX = "Good service";
     public static final String BOOLEAN_EX = "false";
     public static final String PRODUCT_STATUS_EX = "HIDDEN";
     public static final String USERNAME_EX = "employee";
     public static final String REFRESH_TOKEN_EX = "wesaferg534vbdrbtgertyrrw6b456ertbvw354t";
     public static final String PROVINCE_EX = "Binh Duong";
-    public static final String COMMUNE_EX = "Di An";
-    public static final String DISTRICT_EX = "Tan Binh";
+    public static final String WARD_EX = "Tan Binh";
+    public static final String DISTRICT_EX = "Di An";
     public static final String ADDRESS_DETAILS_EX = "Nguyen Thi Tuoi - tan hiep";
 }

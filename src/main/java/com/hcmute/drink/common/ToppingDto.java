@@ -4,14 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
-public class ToppingModel {
+public class ToppingDto {
     @Schema(example = TOPPING_NAME_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String name;

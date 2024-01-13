@@ -4,9 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +28,18 @@ public class BranchCollection {
     private String id;
     private String code;
     private String province;
-    private String commune;
     private String district;
+    private String ward;
     private String details;
+    private double longitude;
+    private double latitude;
+    private String phoneNumber;
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+    public String getFullAddress() {
+        return this.getDetails() + " " + this.getWard() + " " + this.getDistrict() + " " + this.getProvince();
+    }
 }

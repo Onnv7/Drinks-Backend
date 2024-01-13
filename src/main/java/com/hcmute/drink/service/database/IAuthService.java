@@ -1,13 +1,11 @@
 package com.hcmute.drink.service.database;
 
-import com.hcmute.drink.dto.request.RefreshEmployeeTokenRequest;
 import com.hcmute.drink.dto.response.*;
-import com.hcmute.drink.dto.request.RegisterRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import com.hcmute.drink.dto.request.RegisterUserRequest;
 
 public interface IAuthService {
     LoginResponse userLogin(String email, String password);
-    RegisterResponse registerUser(RegisterRequest body);
+    RegisterResponse registerUser(RegisterUserRequest body);
     void resendCode(String email);
     void sendCodeToRegister(String email);
     void sendCodeToGetPassword(String email);

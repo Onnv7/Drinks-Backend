@@ -2,7 +2,6 @@ package com.hcmute.drink.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -12,7 +11,7 @@ import java.util.List;
 import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
-public class OrderDetailsModel {
+public class OrderItemDto {
     @Schema(example = OBJECT_ID_EX, description = NOT_NULL_DES)
     @NotNull
     private ObjectId productId;
@@ -22,7 +21,7 @@ public class OrderDetailsModel {
     private int quantity;
 
     @Schema(description = OPTIONAL_DES)
-    private List<ToppingModel> toppings;
+    private List<ToppingDto> toppingList;
 
 
     @Schema(example = PRODUCT_PRICE_EX, description = MIN_VALUE_DES + PRODUCT_PRICE_MIN)

@@ -1,6 +1,5 @@
 package com.hcmute.drink;
 
-//import com.hcmute.drink.config.TwilioConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
@@ -12,10 +11,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableMongoAuditing
 @EnableScheduling
 @EnableTransactionManagement
+//@EnableMongoRepositories(basePackages = "com.hcmute.drink.repository.database")
+@EnableElasticsearchRepositories(basePackages = "com.hcmute.drink.repository.elasticsearch")
+//@ComponentScan(basePackages = "com.hcmute.drink.repository.")
 public class DrinkApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(DrinkApplication.class, args);
     }
 }

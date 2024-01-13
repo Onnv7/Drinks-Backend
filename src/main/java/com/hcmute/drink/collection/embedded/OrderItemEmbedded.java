@@ -7,16 +7,15 @@ import java.util.List;
 
 
 @Data
-public class OrderDetailsEmbedded {
+public class OrderItemEmbedded {
     private ObjectId productId;
 
     private int quantity;
     private String size;
 
-    private List<ToppingEmbedded> toppings;
+    private List<ToppingEmbedded> toppingList;
 
-
-    private double price;
+    private long price;
 
     private String note;
 }

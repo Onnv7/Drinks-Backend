@@ -5,10 +5,10 @@ import com.hcmute.drink.enums.ProductStatus;
 import lombok.Data;
 
 @Data
-public class GetProductsByCategoryIdResponse {
+public class GetTopProductResponse {
     private String id;
+    private String code;
     private String name;
-    private String description;
     private double price;
     @JsonProperty("thumbnailUrl")
     private String thumbnail;

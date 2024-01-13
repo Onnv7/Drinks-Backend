@@ -31,8 +31,6 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final ModelMapper modelMapper;
-    private final SecurityUtils securityUtils;
 
     @Operation(summary = USER_GET_ALL_SUM)
     @GetMapping(path = USER_GET_ALL_SUB_PATH)

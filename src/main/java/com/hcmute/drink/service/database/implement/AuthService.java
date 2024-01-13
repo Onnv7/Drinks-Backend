@@ -112,7 +112,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public RegisterResponse registerUser(RegisterRequest body) {
+    public RegisterResponse registerUser(RegisterUserRequest body) {
 
         UserCollection data = modelMapperUtils.mapClass(body, UserCollection.class);
         UserCollection existedUser = userService.findByEmail(data.getEmail());

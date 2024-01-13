@@ -1,7 +1,7 @@
 package com.hcmute.drink.dto.request;
 
-import com.hcmute.drink.common.SizeModel;
-import com.hcmute.drink.common.ToppingModel;
+import com.hcmute.drink.common.SizeDto;
+import com.hcmute.drink.common.ToppingDto;
 import com.hcmute.drink.enums.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -30,14 +30,14 @@ public class UpdateProductRequest implements Serializable {
     // example = PRODUCT_SIZE_EX,
     @Schema(description = NOT_EMPTY_DES)
     @NotEmpty
-    private List<SizeModel> sizeList;
+    private List<SizeDto> sizeList;
 
     @Schema(example = PRODUCT_DESCRIPTION_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String description;
 
     @Schema(description = OPTIONAL_DES)
-    private List<ToppingModel> toppingList;
+    private List<ToppingDto> toppingList;
 
     @Schema(example = OBJECT_ID_EX, description = NOT_NULL_DES)
     @NotNull

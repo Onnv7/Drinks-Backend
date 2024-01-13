@@ -42,6 +42,7 @@ public class ProductCollection{
 //    private List<ImageEmbedded> imageList;
     private ImageEmbedded thumbnail;
     private ImageEmbedded image;
+    private long price;
 //    private double price;
     private List<SizeEmbedded> sizeList;
     private String description;

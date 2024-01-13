@@ -2,7 +2,8 @@ package com.hcmute.drink.controller;
 
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
-import com.hcmute.drink.dto.request.CreateOrderRequest;
+import com.hcmute.drink.dto.request.CreateOnsiteOrderRequest;
+import com.hcmute.drink.dto.request.CreateShippingOrderRequest;
 import com.hcmute.drink.dto.request.CreateReviewRequest;
 import com.hcmute.drink.dto.request.UpdateOrderStatusRequest;
 import com.hcmute.drink.dto.response.*;
@@ -38,9 +39,22 @@ public class OrderController {
     private final IOrderService orderService;
 
     @Operation(summary = ORDER_CREATE_SHIPPING_SUM)
-    @PostMapping(path = POST_ORDER_CREATE_SUB_PATH)
-    public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Valid CreateOrderRequest body) {
+    @PostMapping(path = POST_ORDER_CREATE_SHIPPING_SUB_PATH)
+    public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Valid CreateShippingOrderRequest body) {
         CreateShippingOrderResponse resData = orderService.createShippingOrder(body, request);
+        ResponseAPI res = ResponseAPI.builder()
+                .timestamp(new Date())
+                .data(resData)
+                .message(SuccessConstant.CREATED)
+                .build();
+        return new ResponseEntity<>(res, StatusCode.CREATED);
+    }
+
+    @Operation(summary = ORDER_CREATE_ONSITE_SUM)
+    @PostMapping(path = POST_ORDER_CREATE_ONSITE_SUB_PATH)
+    public ResponseEntity<ResponseAPI> createOnsiteOrder(HttpServletRequest request, @RequestBody @Valid CreateOnsiteOrderRequest body) {
+//        throw new CustomException("ádasd");
+        CreateShippingOrderResponse resData = orderService.createOnsiteOrder(body, request);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(resData)
@@ -59,7 +73,7 @@ public class OrderController {
             @RequestParam("page") @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
             @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size) {
-        List<GetOrderHistoryPageForEmployeeResponse> resData = new ArrayList<>();
+        List<GetOrderHistoryForEmployeeResponse> resData = new ArrayList<>();
         if (key == null) {
             resData = orderService.getOrderHistoryPageForEmployee(orderStatus, page, size);
         } else {
@@ -93,29 +107,24 @@ public class OrderController {
 
     }
 
-    @Operation(summary = ORDER_GET_ALL_IN_DAY_SUM)
-    @GetMapping(path = GET_ORDER_ALL_SHIPPING_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllShippingOrdersQueueForEmployee() {
-        List<GetAllShippingOrdersResponse> savedData = orderService.getAllShippingOrdersQueueForEmployee();
-        ResponseAPI res = ResponseAPI.builder()
-                .timestamp(new Date())
-                .data(savedData)
-                .message(SuccessConstant.GET)
-                .build();
-        return new ResponseEntity<>(res, StatusCode.OK);
-    }
 
     @Operation(summary = ORDER_GET_ALL_BY_TYPE_AND_STATUS_IN_DAY_SUM)
     @GetMapping(path = GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllByTypeAndStatusInDay(
             @PathVariable("orderType") OrderType orderType,
-            @PathVariable("orderStatus") OrderStatus orderStatus,
             @Parameter(name = "page", required = true, example = "1")
             @RequestParam("page") @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
-            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size,
+            @RequestParam("orderStatus") OrderStatus orderStatus
     ) {
-        List<GetAllOrdersByStatusResponse> dataRes = orderService.getAllByTypeAndStatusInDay(orderType, orderStatus, page, size);
+
+        List<?> dataRes = new ArrayList<>();
+        if(orderType == OrderType.ONSITE) {
+            dataRes = orderService.getOnsiteOrderQueueToday(orderStatus, page, size);
+        } else if(orderType == OrderType.SHIPPING) {
+            dataRes = orderService.getShippingOrderQueueToday(orderStatus, page, size);
+        }
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(dataRes)

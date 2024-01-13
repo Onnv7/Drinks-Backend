@@ -1,6 +1,6 @@
 package com.hcmute.drink.enums;
 
 public enum PaymentType {
-    BANKING,
+    BANKING_VNPAY,
     CASHING,
 }

@@ -28,12 +28,11 @@ import static com.hcmute.drink.constant.VNPayConstant.*;
 @RequestMapping(value = "/vnpay/refund")
 @RequiredArgsConstructor
 public class VNpayRefund {
-    private final VNPayUtils vnPayUtils;
     private  String transactionTypeValue = "03";
 
     @PostMapping("/{amount}")
     public ResponseEntity createUrl(HttpServletRequest request, @PathVariable int amount) throws UnsupportedEncodingException {
-        Map<String, String> parameters = vnPayUtils.createUrlPayment(request, amount, "check");
+        Map<String, String> parameters = VNPayUtils.createUrlPayment(request, amount, "check");
         System.out.println(parameters);
         ResponseAPI res = ResponseAPI.builder()
                 .data( parameters.get("vnp_url"))

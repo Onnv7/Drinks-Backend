@@ -49,8 +49,8 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
     })
     List<GetAllVisibleProductResponse> searchProductVisible(String key, int skip, int limit);
     @Aggregation(pipeline = {
-            "{$match: { $and: [{_id: { $nin: ?1 }, status: {$ne: 'HIDDEN'}}]}",
-            "{$project: {_id: 1, name: 1, price: {$min: '$sizeList.price'}, description: 1, thumbnail: '$thumbnail.url'}}",
+            "{$match:  { $and: [{_id: { $nin: ?1 }, status: 'AVAILABLE'}]}}",
+            "{$project: {_id: 1, status: 1, code: 1, name: 1, price: 1, description: 1, thumbnail: '$thumbnail.url'}}",
             "{$limit: ?0}"
     })
     List<GetAllVisibleProductResponse> getSomeProduct(int quantity, List<ObjectId> excludeId);

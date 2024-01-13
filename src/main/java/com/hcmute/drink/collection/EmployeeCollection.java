@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -44,10 +45,12 @@ public class EmployeeCollection {
     private String lastName;
     private Gender gender;
     private Date birthDate;
+    private String phoneNumber;
 
     @Builder.Default
     private Role[] roles = {Role.ROLE_EMPLOYEE};
 
+    private ObjectId branchId;
 
     @Builder.Default
     private boolean enabled = true;

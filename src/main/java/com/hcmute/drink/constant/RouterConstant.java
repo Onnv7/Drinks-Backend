@@ -115,13 +115,15 @@ public class RouterConstant {
     public static final String POST_CATEGORY_CREATE_PATH =  CATEGORY_BASE_PATH + POST_CATEGORY_CREATE_SUB_PATH;
 
     // ENDPOINT URL ORDER =================================================================
-    public static final String POST_ORDER_CREATE_SUB_PATH = "";
-    public static final String POST_ORDER_CREATE_PATH = ORDER_BASE_PATH + POST_ORDER_CREATE_SUB_PATH;
+    public static final String POST_ORDER_CREATE_SHIPPING_SUB_PATH = "/shipping";
+    public static final String POST_ORDER_CREATE_SHIPPING_PATH = ORDER_BASE_PATH + POST_ORDER_CREATE_SHIPPING_SUB_PATH;
+    public static final String POST_ORDER_CREATE_ONSITE_SUB_PATH = "/onsite";
+    public static final String POST_ORDER_CREATE_ONSITE_PATH = ORDER_BASE_PATH + POST_ORDER_CREATE_ONSITE_SUB_PATH;
     public static final String PATCH_ORDER_UPDATE_STATUS_SUB_PATH = ORDER_ID_PATH + "/by/{maker}";
     public static final String PATCH_ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + PATCH_ORDER_UPDATE_STATUS_SUB_PATH;
     public static final String GET_ORDER_ALL_SHIPPING_SUB_PATH = "/shipping";
     public static final String GET_ORDER_ALL_SHIPPING_PATH = ORDER_BASE_PATH + GET_ORDER_ALL_SHIPPING_SUB_PATH;
-    public static final String GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH = "/{orderType}/status/{orderStatus}";
+    public static final String GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH = "/{orderType}";
     public static final String GET_ORDER_ALL_BY_STATUS_AND_TYPE_PATH = ORDER_BASE_PATH + GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH;
     public static final String GET_ORDER_DETAILS_BY_ID_SUB_PATH = ORDER_ID_PATH + "/details";
     public static final String GET_ORDER_DETAILS_BY_ID_PATH = ORDER_BASE_PATH + GET_ORDER_DETAILS_BY_ID_SUB_PATH;
@@ -176,5 +178,9 @@ public class RouterConstant {
     public static final String POST_BRANCH_CREATE_PATH = BRANCH_BASE_PATH + POST_BRANCH_CREATE_SUB_PATH;
     public static final String PUT_BRANCH_UPDATE_SUB_PATH = BRANCH_ID_PATH;
     public static final String PUT_BRANCH_UPDATE_PATH = BRANCH_BASE_PATH + PUT_BRANCH_UPDATE_SUB_PATH;
+    public static final String DELETE_BRANCH_UPDATE_SUB_PATH = BRANCH_ID_PATH;
+    public static final String DELETE_BRANCH_UPDATE_PATH = BRANCH_BASE_PATH + DELETE_BRANCH_UPDATE_SUB_PATH;
+    public static final String GET_BRANCH_ALL_SUB_PATH = "";
+    public static final String GET_BRANCH_ALL_PATH = BRANCH_BASE_PATH + GET_BRANCH_ALL_SUB_PATH;
 
 }

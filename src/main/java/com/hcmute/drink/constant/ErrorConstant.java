@@ -21,4 +21,6 @@ public class ErrorConstant {
     public static final String STOLEN_TOKEN = "Stolen tokens";
     public static final String INVALID_PASSWORD = "INVALID PASSWORD";
     public static final String REQUEST_BODY_INVALID = "Request body is invalid";
+    public static final String TOPPING_PRICE_INVALID = "Topping's price is invalid";
+    public static final String SIZE_PRICE_INVALID = "Size's price is invalid";
 }

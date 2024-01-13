@@ -14,28 +14,32 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class CreateEmployeeRequest {
-    @Schema(example = USERNAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
+    @Schema(example = USERNAME_EMPLOYEE_EX)
     @NotBlank
     private String username;
 
-    @Schema(example = PASSWORD_EMPLOYEE_EX, description = PASSWORD_DES)
+    @Schema(example = PASSWORD_EMPLOYEE_EX)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;
 
-    @Schema(example = FIRST_NAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
+    @Schema(example = FIRST_NAME_EMPLOYEE_EX)
     @NotBlank
     private String firstName;
 
-    @Schema(example = LAST_NAME_EMPLOYEE_EX, description = NOT_BLANK_DES)
+    @Schema(example = LAST_NAME_EMPLOYEE_EX)
     @NotBlank
     private String lastName;
 
-    @Schema(example = BIRTH_DATE_EX, description = NOT_NULL_DES)
+    @Schema(example = BIRTH_DATE_EX)
     @NotNull
     private Date birthDate;
 
-    @Schema(example = GENDER_EX, description = NOT_NULL_DES)
+    @Schema(example = GENDER_EX)
     @NotNull
     private Gender gender;
+
+    @Schema(example = OBJECT_ID_EX)
+    @NotBlank
+    private String branchId;
 }

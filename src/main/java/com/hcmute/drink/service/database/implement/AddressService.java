@@ -24,6 +24,9 @@ public class AddressService implements IAddressService {
     private final AddressRepository addressRepository;
     private final ModelMapperUtils modelMapperUtils;
 
+    public AddressCollection getAddressById(String id) {
+        return addressRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND + id));
+    }
     @Override
     public AddressCollection createAddressToUser(CreateAddressRequest body, String userId)  {
         AddressCollection data = modelMapperUtils.mapClass(body, AddressCollection.class);

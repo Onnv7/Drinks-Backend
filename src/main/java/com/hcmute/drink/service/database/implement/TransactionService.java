@@ -27,8 +27,6 @@ import java.util.Map;
 public class TransactionService implements ITransactionService {
     private final TransactionRepository transactionRepository;
     private final OrderService orderService;
-    private final VNPayUtils vnPayUtils;
-    private final MongoDbUtils mongoDbUtils;
 
     public TransactionCollection getById(String transId) {
         return transactionRepository.findById(transId).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + transId));
@@ -47,7 +45,7 @@ public class TransactionService implements ITransactionService {
         // kiểm tra trạng thái transaction từ vnpay
 
         // Goi den VNPay de lay thong tin
-        Map<String, Object> transInfo = vnPayUtils.getTransactionInfo(invoiceCode, timeCode, request);
+        Map<String, Object> transInfo = VNPayUtils.getTransactionInfo(invoiceCode, timeCode, request);
 
         // nếu giao dịch vnpay thành công
         transaction.setInvoiceCode(transInfo.get("vnp_TxnRef").toString());
@@ -85,7 +83,7 @@ public class TransactionService implements ITransactionService {
         // Goi den VNPay de lay thong tin
         Map<String, Object> transInfo = null;
         try {
-            transInfo = vnPayUtils.getTransactionInfo(transaction.getInvoiceCode(), transaction.getTimeCode(), request);
+            transInfo = VNPayUtils.getTransactionInfo(transaction.getInvoiceCode(), transaction.getTimeCode(), request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -127,8 +125,8 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public GetRevenueCurrentDateResponse getRevenueCurrentDate() {
-        Date startDate = mongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
-        Date endDate = mongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
+        Date startDate = MongoDbUtils.createCurrentDateTime(0, 0, 0, 0);
+        Date endDate = MongoDbUtils.createCurrentDateTime(23, 59, 59, 999);
         GetRevenueCurrentDateResponse current = transactionRepository.getRevenueCurrentDate(startDate, endDate);
 
         if (current == null) {
@@ -138,8 +136,8 @@ public class TransactionService implements ITransactionService {
             return current;
         }
 
-        Date startDatePrev = mongoDbUtils.createPreviousDay(0, 0, 0, 0, 1);
-        Date endDatePrev = mongoDbUtils.createPreviousDay(23, 59, 59, 999, 1);
+        Date startDatePrev = MongoDbUtils.createPreviousDay(0, 0, 0, 0, 1);
+        Date endDatePrev = MongoDbUtils.createPreviousDay(23, 59, 59, 999, 1);
         GetRevenueCurrentDateResponse prev = transactionRepository.getRevenueCurrentDate(startDatePrev, endDatePrev);
 
         if (prev == null) {

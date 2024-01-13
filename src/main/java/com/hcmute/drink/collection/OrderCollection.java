@@ -1,9 +1,7 @@
 package com.hcmute.drink.collection;
 
 
-import com.hcmute.drink.collection.embedded.OrderDetailsEmbedded;
-import com.hcmute.drink.collection.embedded.OrderLogEmbedded;
-import com.hcmute.drink.collection.embedded.ReviewEmbedded;
+import com.hcmute.drink.collection.embedded.*;
 import com.hcmute.drink.enums.OrderType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +28,9 @@ public class OrderCollection {
     @Transient
     public static final String SEQUENCE_NAME = "order_sequence";
     @Transient
-    public static final String PREFIX_CODE = "OB";
+    public static final String PREFIX_CODE_SHIPPING = "OS";
+    @Transient
+    public static final String PREFIX_CODE_ONSITE = "OA";
     @Transient
     public static final int LENGTH_NUMBER = 8;
 
@@ -40,19 +40,21 @@ public class OrderCollection {
     @Indexed(unique = true)
     private String code;
 
-    private List<OrderDetailsEmbedded> products;
+    private List<OrderItemEmbedded> itemList;
     private String note;
 
     private long total;
     private OrderType orderType;
 
-    private List<OrderLogEmbedded> eventLogs;
+    private List<OrderEventEmbedded> eventList;
 
     @Builder.Default
     private ReviewEmbedded review = null;
 
     private ObjectId transactionId;
-    private AddressCollection address;
+    private RecipientInfoEmbedded recipientInfo;
+    private BranchEmbedded branch;
+    private Date receiveTime;
 
     @CreatedDate
     private Date createdAt;

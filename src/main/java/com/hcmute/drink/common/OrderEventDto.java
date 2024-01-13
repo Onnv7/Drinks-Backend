@@ -1,15 +1,13 @@
-package com.hcmute.drink.collection.embedded;
+package com.hcmute.drink.common;
 
 import com.hcmute.drink.enums.OrderStatus;
-import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
 import java.util.Date;
 
 @Data
-@Builder
-public class OrderLogEmbedded {
+public class OrderEventDto {
     private OrderStatus orderStatus;
     private Date time;
     private String description;

@@ -1,42 +1,37 @@
 package com.hcmute.drink.dto.response;
 
-import com.hcmute.drink.collection.TransactionCollection;
-import com.hcmute.drink.collection.embedded.OrderLogEmbedded;
-import com.hcmute.drink.collection.embedded.ToppingEmbedded;
-import com.hcmute.drink.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hcmute.drink.enums.OrderType;
 import com.hcmute.drink.enums.PaymentStatus;
 import com.hcmute.drink.enums.PaymentType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 
 import java.util.Date;
 import java.util.List;
 @Data
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class GetOrderDetailsResponse {
     private String id;
     private String code;
     private String note;
     private double total;
     private OrderType orderType;
-    private String userId;
+    private User recipientInfo;
 
-    private Address address;
     private Date createdAt;
     private List<Product> products;
 
     private Transaction transaction;
     private Review review;
+    private Date receiveTime;
 
     @Data
-    private class Review {
+    private static class Review {
         private int rating;
         private String content;
     }
     @Data
-    private class Transaction {
+    private static class Transaction {
         private String id;
         private PaymentStatus status;
         private PaymentType paymentType;
@@ -44,22 +39,17 @@ public class GetOrderDetailsResponse {
     }
 
     @Data
-    private class User {
-        private String id;
-        private String firstName;
-        private String lastName;
-        private String email;
-    }
-
-    @Data
-    private class Address {
+    private static class User {
         private String details;
+        private Double longitude;
+        private Double latitude;
         private String note;
         private String recipientName;
         private String phoneNumber;
     }
+    
     @Data
-    private class Product {
+    private static class Product {
         private int quantity;
         private List<Topping> toppings;
         private String size;
@@ -69,7 +59,7 @@ public class GetOrderDetailsResponse {
         private String name;
 
         @Data
-        public class Topping {
+        public static class Topping {
             private String name;
             private double price;
         }

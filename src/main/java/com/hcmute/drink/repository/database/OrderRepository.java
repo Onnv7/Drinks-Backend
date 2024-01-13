@@ -3,7 +3,6 @@ package com.hcmute.drink.repository.database;
 import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.enums.OrderStatus;
-import com.hcmute.drink.enums.OrderType;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -18,58 +17,61 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
     Optional<OrderCollection> findByTransactionId(ObjectId transactionId);
 
     @Aggregation(pipeline = {
-            "{$match: {'createdAt': {$gte: ?0, $lt: ?1}}}",
-            "{$match: {'orderType': 'SHIPPING'}}",
-            "{$addFields: {'lastEventLog': { $slice: ['$eventLogs', -1] }}}",
-            "{$match: {'lastEventLog.orderStatus': 'CREATED'}}",
-            "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
-            "{$unwind: '$transaction'}",
-            "{$match: {$or:[{'transaction.status': 'PAID', 'transaction.paymentType': 'BANKING'}, {'transaction.paymentType': 'CASHING'}]}}",
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
+            "{$addFields: {'productQuantity': {$size: '$itemList'}}}",
+            "{$match: {'branch._id': ?0,orderType: 'SHIPPING', createdAt: {$gte: ?1, $lte: ?2}, 'lastEventLog.orderStatus': ?5}}",
             "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
             "{$unwind: '$user'}",
-            "{$project: {user: 1, total: 1, orderType: 1}}"
+            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, itemList: {$push: '$itemList'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
+            "{$unwind: '$itemList'}",
+            "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
+            "{$unwind: '$itemList.productSample'}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$sort: {timeLastEvent: 1}}",
+            "{$skip: ?3}",
+            "{$limit: ?4}"
     })
-    List<GetAllShippingOrdersResponse> getAllShippingOrdersQueueForEmployee(Date from, Date to);
+    List<GetShippingOrderQueueResponse> getShippingOrderQueueToday(String branchId, Date from, Date to, int skip, int limit, OrderStatus orderStatus);
 
     @Aggregation(pipeline = {
-            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
-            "{$addFields: {'productQuantity': {$size: '$products'}}}",
-            "{$match: {orderType: ?2, createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?3}}",
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
+            "{$addFields: {'productQuantity': {$size: '$itemList'}}}",
+            "{$match: {'branch._id': ?0, orderType: 'ONSITE', createdAt: {$gte: ?1, $lte: ?2}, 'lastEventLog.orderStatus': ?5}}",
             "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
-            "{ $unwind: '$user' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
-            "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
-            "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
-            "{ $sort: {timeLastEvent: 1 }}",
-            "{$skip: ?4}",
-            "{$limit: ?5}",
+            "{$unwind: '$user'}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, receiveTime: {$first: '$receiveTime'}, productQuantity: {$first: '$productQuantity'}, itemList: {$push: '$itemList'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$user.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
+            "{$unwind: '$itemList'}",
+            "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
+            "{$unwind: '$itemList.productSample'}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, receiveTime: {$first: '$receiveTime'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$sort: {timeLastEvent: 1}}",
+            "{$skip: ?3}",
+            "{$limit: ?4}"
     })
-    List<GetAllOrdersByStatusResponse> getAllByTypeAndStatusInDay(Date from, Date to, OrderType orderType, OrderStatus orderStatus, int skip, int limit);
+    List<GetOnsiteOrderQueueResponse> getOnsiteOrderQueueToday(String branchId, Date from, Date to, int skip, int limit, OrderStatus orderStatus);
 
     @Aggregation(pipeline = {
             "{$match: {'_id': ?0}}",
-            "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productInfo'}}",
-            "{$unwind: '$products.productInfo'}",
-            "{$group: {_id: '$_id', code: { $first: 'code' }, userId: { $first: '$userId' }, note: { $first: '$note' }, review: { $first: '$review'}, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventLogs: { $first: '$eventLogs' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, products: { $push: { _id: '$products._id', quantity: '$products.quantity', size: '$products.size', toppings: '$products.toppings', price: '$products.price', note: '$products.note', name: '$products.productInfo.name', _id: '$products.productInfo._id' } } }}",
+            "{$unwind: '$itemList'}",
+            "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productInfo'}}",
+            "{$unwind: '$itemList.productInfo'}",
+            "{$group: {_id: '$_id', userId: { $first: '$userId' }, code: { $first: '$code' }, recipientInfo: { $first: '$recipientInfo' }, receiveTime: { $first: '$receiveTime' }, note: { $first: '$note' }, review: { $first: '$review'}, total: { $first: '$total' }, orderType: { $first: '$orderType' }, eventList: { $first: '$eventList' }, transactionId: { $first: '$transactionId' }, address: { $first: '$address' }, createdAt: { $first: '$createdAt' }, updatedAt: { $first: '$updatedAt' }, itemList: { $push: { _id: '$itemList._id', quantity: '$itemList.quantity', size: '$itemList.size', toppings: '$itemList.toppings', price: '$itemList.price', note: '$itemList.note', name: '$itemList.productInfo.name', _id: '$itemList.productInfo._id' } } }}",
             "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
             "{$unwind: '$transaction'}",
-            "{$project: {'transactionId': 0}}",
+            "{$project: {'transactionId': 0}}"
     })
     GetOrderDetailsResponse getOrderDetailsById(String id);
     @Aggregation(pipeline = {
             "{$match: {userId: ?0}}",
-            "{$addFields: {'lastEventLog': {$slice: ['$eventLogs', -1]}}}",
-            "{$addFields: {'productQuantity': {$size: '$products'}}}",
+            "{$addFields: {'lastEventLog': {$slice: ['$eventList', -1]}}}",
+            "{$addFields: {'productQuantity': {$size: '$itemList'}}}",
             "{$match: {'lastEventLog.orderStatus': ?1}}",
             "{$unwind: '$lastEventLog'}",
-            "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
-            "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $first: '$products.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
-            "{ $unwind: '$productName' }",
+            "{$unwind: '$itemList'}",
+            "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
+            "{ $unwind: '$itemList.productSample' }",
+            "{$group: {_id: '$_id', code: {$first: '$code'}, total: {$first: '$total'}, productQuantity: {$first: '$productQuantity'}, orderType: {$first: '$orderType'}, productName: { $first: '$itemList.productSample.name'}, statusLastEvent: { $last: '$lastEventLog.orderStatus'}, timeLastEvent: { $last: '$lastEventLog.time'}}}",
+            "{$unwind: '$productName' }",
             "{$sort: {'timeLastEvent': -1}}",
             "{$skip: ?2}",
             "{$limit: ?3}",
@@ -78,66 +80,49 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
 
 
     @Aggregation(pipeline = {
-            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
-            "{$addFields: {'productQuantity': {$size: '$products'}}}",
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
+            "{$addFields: {'productQuantity': {$size: '$itemList'}}}",
             "{$match: {'lastEventLog.orderStatus': ?0}}",
             "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
             "{ $unwind: '$user' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: '$code'}, orderType: {$first: '$orderType'}, createdAt: {$first: '$createdAt'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
-            "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
-            "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: 'c$ode'}, orderType: {$first: '$orderType'}, createdAt: {$first: '$createdAt'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: '$code'}, orderType: {$first: '$orderType'}, productQuantity: {$first: '$productQuantity'}, itemList: {$push: '$itemList'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
+            "{$unwind: '$itemList'}",
+            "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
+            "{ $unwind: '$itemList.productSample' }",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: '$code'}, orderType: {$first: '$orderType'},  phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {'timeLastEvent': -1}}",
             "{$skip: ?1}",
             "{$limit: ?2}",
     })
-    List<GetOrderHistoryPageForEmployeeResponse> getAllOrderHistoryForEmployee(OrderStatus orderStatus, int skip, int limit);
+    List<GetOrderHistoryForEmployeeResponse> getAllOrderHistoryForEmployee(OrderStatus orderStatus, int skip, int limit);
 
     @Aggregation(pipeline = {
-            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
             "{$match: {$and: [{'lastEventLog.orderStatus': ?0}, {'lastEventLog.time': {$gte: ?1, $lt: ?2}}]}}",
             "{$group: {_id: null, orderQuantity: {$sum: 1}}}"
     })
     GetOrderQuantityByStatusResponse getOrderQuantityByStatus(OrderStatus orderStatus, Date from, Date to);
 
-    @Aggregation(pipeline = {
-            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
-            "{$addFields: {'productQuantity': {$size: '$products'}} }",
-            "{$match: {'lastEventLog.orderStatus': ?0}}",
-            "{$lookup: {from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}",
-            "{ $unwind: '$user' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, orderType: {$first: '$orderType'}, productQuantity: {$first: '$productQuantity'}, products: {$push: '$products'}, statusLastEvent: {$last: '$lastEventLog.orderStatus'}, timeLastEvent: {$last: '$lastEventLog.time'}, phoneNumber: {$first: '$address.phoneNumber'}, customerName: {$first: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}}",
-            "{$unwind: '$products'}",
-            "{$lookup: {from: 'product', localField: 'products.productId', foreignField: '_id', as: 'products.productSample'}}",
-            "{ $unwind: '$products.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: 'code'}, orderType: {$first: '$orderType'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$products.productSample.name'}, productThumbnail: {$first: '$products.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
-            "{$match: {$or: [{ $expr: { $regexMatch: { input: { $toString: \"$_id\" }, regex: ?1, options: 'i' } } }, {customerName: {$regex: ?1, $options: 'i'}}, {phoneNumber: {$regex: ?1, $options: 'i'}}]}}",
-            "{$sort: {timeLastEvent: -1}}",
-            "{$skip: ?2}",
-            "{$limit: ?3}",
-    })
-    List<GetOrderHistoryPageForEmployeeResponse> searchOrderHistoryForEmployee(OrderStatus orderStatus, String key, int skip, int limit);
 
     @Aggregation(pipeline = {
-            "{ $addFields: { lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]} } },",
-            "{ $match: { 'lastEventLog.orderStatus': 'SUCCEED' } },",
-            "{ $unwind: '$products' },",
-            "{ $group: { _id: '$products.productId', totalQuantity: { $sum: '$products.quantity' } } },",
-            "{ $lookup: { from: 'product', localField: '_id', foreignField: '_id', as: 'product' } },",
-            "{ $unwind: '$product' },",
-            "{ $group: { _id: '$_id', totalQuantity: { $first: '$totalQuantity' }, status: { $first: '$product.status' }, name: { $first: '$product.name' }, description: { $first: '$product.description' }, sizeList: { $first: '$product.sizeList' }, thumbnail: { $first: '$product.thumbnail.url' } } },",
-            "{ $match: { status: {$ne: 'HIDDEN'} }",
-            "{ $sort: { totalQuantity: -1 } },",
-            "{ $project: { _id: 1, name: 1, status: 1, price: {$min: '$sizeList.price'}, description: 1, thumbnail: 1 } },",
-            "{ $limit: ?0 }"
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
+            "{$match: {'lastEventLog.orderStatus': 'SUCCEED'}}",
+            "{$unwind: '$itemList'}",
+            "{$group: {_id: '$itemList.productId', totalQuantity: { $sum: '$itemList.quantity' }}}",
+            "{$lookup: {from: 'product', localField: '_id', foreignField: '_id', as: 'product'}}",
+            "{$unwind: '$product'}",
+            "{$group: {_id: '$_id', totalQuantity: { $first: '$totalQuantity' }, price: { $first: '$product.price' }, code: { $first: '$product.code' }, status: { $first: '$product.status' }, name: { $first: '$product.name' }, description: { $first: '$product.description' }, sizeList: { $first: '$product.sizeList' }, thumbnail: { $first: '$product.thumbnail.url' } }}",
+            "{$match: {'status': 'AVAILABLE'}}",
+            "{$sort: { totalQuantity: -1 }}",
+            "{$project: {_id: 1, price: 1, code: 1, status: 1, name: 1, description: 1, thumbnail: 1}}",
+            "{$limit: ?0}"
     })
     List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int top);
 
     @Aggregation(pipeline = {
-            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventLogs', -1]}, 0]}}}",
-            "{$addFields: {productQuantity: {$size: '$products'}}}",
+            "{$addFields: {lastEventLog: {$arrayElemAt: [{$slice: ['$eventList', -1]}, 0]}}}",
+            "{$addFields: {productQuantity: {$size: '$itemList'}}}",
             "{$match: {orderType: 'SHIPPING', createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?2}}"
     })
-    List<OrderCollection> getAllOrderByStatusLastAndTimeCreated(Date from, Date to, OrderStatus orderStatus);
+    List<OrderCollection> getShippingOrdersByStatusLastAndDateTimeCreated(Date from, Date to, OrderStatus orderStatus);
 }

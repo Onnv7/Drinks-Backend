@@ -36,7 +36,6 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CloudinaryUtils cloudinaryUtils;
     private final CategoryService categoryService;
-    private final ImageUtils imageUtils;
     private final ModelMapperUtils modelMapperUtils;
     private final SequenceService sequenceService;
     private final ProductSearchService productSearchService;
@@ -50,8 +49,8 @@ public class ProductService implements IProductService {
                 .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
 
-    public static double getMinPrice(List<SizeEmbedded> sizeList) {
-        double min = sizeList.get(0).getPrice();
+    public static long getMinPrice(List<SizeEmbedded> sizeList) {
+        long min = sizeList.get(0).getPrice();
         for (SizeEmbedded item : sizeList) {
             if(min > item.getPrice()) {
                 min = item.getPrice();
@@ -73,8 +72,8 @@ public class ProductService implements IProductService {
         byte[] originalImage = new byte[0];
         try {
             originalImage = image.getBytes();
-            byte[] newImage = imageUtils.resizeImage(originalImage, 200, 200);
-            byte[] newThumbnail = imageUtils.resizeImage(originalImage, 200, 200);
+            byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
+            byte[] newThumbnail = ImageUtils.resizeImage(originalImage, 200, 200);
 
             categoryService.getById(data.getCategoryId().toString());
 
@@ -100,6 +99,7 @@ public class ProductService implements IProductService {
         }
         data.setStatus(ProductStatus.HIDDEN);
         data.setCode(sequenceService.generateCode(ProductCollection.SEQUENCE_NAME, ProductCollection.PREFIX_CODE, ProductCollection.LENGTH_NUMBER));
+        data.setPrice(getMinPrice(data.getSizeList()));
         ProductCollection dataSaved = productRepository.save(data);
         productSearchService.createProduct(dataSaved);
     }
@@ -179,12 +179,12 @@ public class ProductService implements IProductService {
 
                 byte[] originalImage = data.getImage().getBytes();
 
-                byte[] newImage = imageUtils.resizeImage(originalImage, 200, 200);
+                byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
                 HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH, data.getName(), newImage);
                 ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
                 product.setImage(imageEmbedded);
 
-                byte[] thumbnailImage = imageUtils.resizeImage(originalImage, 200, 200);
+                byte[] thumbnailImage = ImageUtils.resizeImage(originalImage, 200, 200);
                 HashMap<String, String> thumbnailUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH, data.getName(), thumbnailImage);
                 ImageEmbedded thumbnailEmbedded = new ImageEmbedded(thumbnailUploaded.get(CloudinaryConstant.PUBLIC_ID), thumbnailUploaded.get(CloudinaryConstant.URL_PROPERTY));
                 product.setThumbnail(thumbnailEmbedded);
@@ -193,9 +193,9 @@ public class ProductService implements IProductService {
             }
 
         }
+        product.setPrice(getMinPrice(product.getSizeList()));
 
         productRepository.save(product);
-
         productSearchService.upsertProduct(product);
     }
 

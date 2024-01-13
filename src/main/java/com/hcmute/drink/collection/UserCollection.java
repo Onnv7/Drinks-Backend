@@ -62,4 +62,8 @@ public class UserCollection {
     @LastModifiedDate
     private Date updatedAt;
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
 }

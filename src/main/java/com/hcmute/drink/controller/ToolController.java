@@ -1,9 +1,13 @@
 package com.hcmute.drink.controller;
 
+import com.hcmute.drink.collection.OrderCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.model.elasticsearch.ProductIndex;
+import com.hcmute.drink.repository.database.OrderRepository;
 import com.hcmute.drink.repository.database.ProductRepository;
+import com.hcmute.drink.repository.elasticsearch.OrderSearchRepository;
 import com.hcmute.drink.repository.elasticsearch.ProductSearchRepository;
+import com.hcmute.drink.service.elasticsearch.OrderSearchService;
 import com.hcmute.drink.service.elasticsearch.ProductSearchService;
 import com.hcmute.drink.utils.ModelMapperUtils;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,16 +28,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ToolController {
     private final ProductSearchRepository productSearchRepository;
+    private final OrderSearchService orderSearchService;
     private final ProductRepository productRepository;
     private final ProductSearchService productSearchService;
+    private final OrderSearchRepository orderSearchRepository;
+    private final OrderRepository orderRepository;
     private final ModelMapperUtils modelMapperUtils;
 
-    @GetMapping("/add-db-to-elasticsearch")
+    @GetMapping("/sync-product")
     public String addElasticSearch() {
         productSearchRepository.deleteAll();
         List<ProductCollection> productList = productRepository.findAll();
         for (ProductCollection item : productList) {
             productSearchService.createProduct(item);
+        }
+        return "okokok";
+    }
+    @GetMapping("/sync-order")
+    public String syncOrder() {
+        orderSearchRepository.deleteAll();
+        List<OrderCollection> productList = orderRepository.findAll();
+        for (OrderCollection item : productList) {
+            orderSearchService.createOrder(item);
         }
         return "okokok";
     }
@@ -43,7 +59,8 @@ public class ToolController {
             @Parameter(name = "key", description = "Key is order's id, customer name or phone number", required = false, example = "65439a55e9818f43f8b8e02c")
             @RequestParam("key") String key) {
         Pageable page = PageRequest.of(0, 3);
-        List<ProductIndex> lst = productSearchRepository.searchVisibleProduct(key, page).getContent();
-        return lst;
+//        List<ProductIndex> lst = productSearchRepository.searchVisibleProduct(key, page).getContent();
+//        return lst;
+        return null;
     }
 }

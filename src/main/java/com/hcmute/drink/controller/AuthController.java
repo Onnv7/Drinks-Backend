@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -52,7 +51,7 @@ public class AuthController {
 
     @Operation(summary = AUTH_REGISTER_SUM)
     @PostMapping(POST_AUTH_REGISTER_SUB_PATH)
-    public ResponseEntity<ResponseAPI> registerUser(@RequestBody @Valid RegisterRequest body) {
+    public ResponseEntity<ResponseAPI> registerUser(@RequestBody @Valid RegisterUserRequest body) {
         RegisterResponse resDate = authService.registerUser(body);
 
         ResponseAPI res = ResponseAPI.builder()

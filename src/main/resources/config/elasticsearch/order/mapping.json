@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "customerName": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "customerCode": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "phoneNumber": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "recipientName": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "code": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "ngram_analyzer"
+    }
+  }
+}

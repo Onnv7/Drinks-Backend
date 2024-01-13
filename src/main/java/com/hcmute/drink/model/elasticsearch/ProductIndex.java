@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Mapping;
 import org.springframework.data.elasticsearch.annotations.Setting;
@@ -17,6 +18,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @Mapping(mappingPath = "/config/elasticsearch/product/mapping.json")
 @Document(indexName = "product")
 public class ProductIndex {
+    @Id
     private String id;
     private String code;
     private String name;

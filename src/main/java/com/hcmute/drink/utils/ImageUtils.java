@@ -7,10 +7,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@Component
 public class ImageUtils {
 
-    public byte[] resizeImage(byte[] originalImage, int height, int width) throws IOException {
+    public static byte[] resizeImage(byte[] originalImage, int height, int width) throws IOException {
         ByteArrayOutputStream outputStreamThumb = new ByteArrayOutputStream();
 
         Thumbnails.of(new ByteArrayInputStream(originalImage))

@@ -1,16 +1,13 @@
 package com.hcmute.drink.dto.request;
 
-import com.hcmute.drink.common.SizeModel;
-import com.hcmute.drink.common.ToppingModel;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
+import com.hcmute.drink.common.SizeDto;
+import com.hcmute.drink.common.ToppingDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.bson.types.ObjectId;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -29,14 +26,14 @@ public class CreateProductRequest {
 
     @Schema(description = NOT_EMPTY_DES)
     @NotEmpty
-    private List<SizeModel> sizeList;
+    private List<SizeDto> sizeList;
 
     @Schema(example = PRODUCT_DESCRIPTION_EX, description = NOT_BLANK_DES)
     @NotBlank
     private String description;
 
     @Schema(description = OPTIONAL_DES)
-    private List<ToppingModel> toppingList;
+    private List<ToppingDto> toppingList;
 
     @Schema(example = OBJECT_ID_EX, description = NOT_BLANK_DES)
     @NotNull

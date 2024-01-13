@@ -30,8 +30,8 @@ public class UpdateUserRequest {
     @NotNull
     private Gender gender;
 
-//    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
-//    @NotBlank
-//    @Pattern(regexp = PHONE_NUMBER_REGEX)
-//    private String phoneNumber;
+    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
+    @NotBlank
+    @Pattern(regexp = PHONE_NUMBER_REGEX)
+    private String phoneNumber;
 }

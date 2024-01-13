@@ -30,7 +30,6 @@ public class CategoryService implements ICategoryService {
     private final SequenceService sequenceService;
     private final CategoryRepository categoryRepository;
     private final CloudinaryUtils cloudinaryUtils;
-    private final ImageUtils imageUtils;
     private final ModelMapperUtils modelMapperUtils;
 
     Date currentDate = new Date();
@@ -55,7 +54,7 @@ public class CategoryService implements ICategoryService {
         byte[] originalImage = new byte[0];
         try {
             originalImage = body.getImage().getBytes();
-            byte[] newImage = imageUtils.resizeImage(originalImage, 200, 200);
+            byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
             HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, cgrName + "_" + currentTimeMillis, newImage);
             ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
             CategoryCollection category = CategoryCollection.builder()
@@ -95,7 +94,7 @@ public class CategoryService implements ICategoryService {
             try {
                 cloudinaryUtils.deleteImage(category.getImage().getId());
                 byte[] originalImage = data.getImage().getBytes();
-                byte[] newImage = imageUtils.resizeImage(originalImage, 200, 200);
+                byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
 
                 HashMap<String, String> fileUploaded = cloudinaryUtils.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, data.getName() + "_" + currentTimeMillis, newImage);
                 ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));

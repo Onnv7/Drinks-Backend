@@ -3,14 +3,12 @@ package com.hcmute.drink.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hcmute.drink.enums.OrderStatus;
-import com.hcmute.drink.enums.OrderType;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
-public class GetAllOrdersByStatusResponse {
+public class GetShippingOrderQueueResponse {
     private String id;
     private String phoneNumber;
     private String productName;

@@ -2,8 +2,6 @@ package com.hcmute.drink.service.elasticsearch;
 
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.constant.ErrorConstant;
-import com.hcmute.drink.dto.response.GetAllVisibleProductResponse;
-import com.hcmute.drink.dto.response.GetAllProductsResponse;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.elasticsearch.ProductIndex;
 import com.hcmute.drink.repository.elasticsearch.ProductSearchRepository;
@@ -39,14 +37,17 @@ public class ProductSearchService {
     }
 
     public void upsertProduct(ProductCollection data) {
-        ProductIndex product = ProductIndex.builder()
-                .id(data.getId())
-                .name(data.getName())
-                .thumbnail(data.getThumbnail().getUrl())
-                .code(data.getCode())
-                .status(data.getStatus())
-                .build();
-        productSearchRepository.save(product);
+        ProductIndex product = productSearchRepository.findById(data.getId()).orElse(null);
+        if(product != null) {
+            product.setName(data.getName());
+            product.setThumbnail(data.getThumbnail().getUrl());
+            product.setStatus(data.getStatus());
+            product.setPrice(data.getPrice());
+            product.setDescription(data.getDescription());
+            productSearchRepository.save(product);
+        } else {
+            createProduct(data);
+        }
     }
 
     public void deleteProduct(String id) {
