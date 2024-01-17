@@ -11,11 +11,11 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class CreateCategoryRequest {
-    @Schema(description = NOT_NULL_DES)
+    @Schema()
     @NotNull
     private MultipartFile image;
 
-    @Schema(example = CATEGORY_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = CATEGORY_NAME_EX)
     @NotBlank
     private String name;
 }

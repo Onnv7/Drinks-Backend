@@ -7,7 +7,7 @@ import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.AddressRepository;
 import com.hcmute.drink.service.database.IAddressService;
-import com.hcmute.drink.utils.ModelMapperUtils;
+import com.hcmute.drink.service.common.ModelMapperService;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,14 @@ import static com.hcmute.drink.constant.ErrorConstant.NOT_FOUND;
 @RequiredArgsConstructor
 public class AddressService implements IAddressService {
     private final AddressRepository addressRepository;
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
 
     public AddressCollection getAddressById(String id) {
         return addressRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND + id));
     }
     @Override
     public AddressCollection createAddressToUser(CreateAddressRequest body, String userId)  {
-        AddressCollection data = modelMapperUtils.mapClass(body, AddressCollection.class);
+        AddressCollection data = modelMapperService.mapClass(body, AddressCollection.class);
         List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
         if(addresses.size() >= 5) {
             throw new CustomException(ErrorConstant.OVER_FIVE_ADDRESS);
@@ -44,7 +44,7 @@ public class AddressService implements IAddressService {
 
     @Override
     public void updateAddressById(UpdateAddressRequest body, String addressId) {
-        AddressCollection data = modelMapperUtils.mapClass(body, AddressCollection.class);
+        AddressCollection data = modelMapperService.mapClass(body, AddressCollection.class);
         AddressCollection address = addressRepository.findById(addressId).orElse(null);
         if (address == null) {
             throw new CustomException(NOT_FOUND + addressId);
@@ -59,7 +59,7 @@ public class AddressService implements IAddressService {
             address.setDefault(true);
             addressRepository.save(address);
         }
-        modelMapperUtils.mapNotNull(data, address);
+        modelMapperService.mapNotNull(data, address);
         addressRepository.save(address);
     }
 

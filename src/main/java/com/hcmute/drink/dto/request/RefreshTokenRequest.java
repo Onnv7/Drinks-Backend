@@ -10,7 +10,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.REFRESH_TOKEN_EX;
 @Data
 public class RefreshTokenRequest {
 
-    @Schema(example = REFRESH_TOKEN_EX, description = NOT_BLANK_DES)
+    @Schema(example = REFRESH_TOKEN_EX)
     @NotBlank
     private String refreshToken;
 }

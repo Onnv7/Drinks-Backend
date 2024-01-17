@@ -1,4 +1,4 @@
-package com.hcmute.drink.common;
+package com.hcmute.drink.dto.common;
 
 import com.hcmute.drink.enums.OrderStatus;
 import lombok.Data;

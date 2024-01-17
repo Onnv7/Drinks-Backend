@@ -12,10 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Date;
@@ -29,7 +32,13 @@ import static com.hcmute.drink.constant.ErrorConstant.INVALID_TOKEN;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver exceptionResolver;
 
+//    public JwtAuthenticationFilter(HandlerExceptionResolver exceptionResolver) {
+//        this.exceptionResolver = exceptionResolver;
+//    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -41,21 +50,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .map(UserPrincipalAuthenticationToken::new)
                     .ifPresent(authentication -> SecurityContextHolder.getContext().setAuthentication(authentication));
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
+        }
+        catch (RuntimeException   e) {
             e.printStackTrace();
-            String message = INVALID_TOKEN;
-            if (e.getClass() == TokenExpiredException.class) {
-                message = EXPIRED_TOKEN;
-            }
-            ObjectMapper objectMapper = new ObjectMapper();
-            ErrorResponse resData = ErrorResponse.builder()
-                    .message(message)
-                    .timestamp(new Date())
-                    .build();
-            String jsonResponse = objectMapper.writeValueAsString(resData);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write(jsonResponse);
+//            String message = INVALID_TOKEN;
+//            if (e.getClass() == TokenExpiredException.class) {
+//                message = EXPIRED_TOKEN;
+//            }
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            ErrorResponse resData = ErrorResponse.builder()
+//                    .message(message)
+//                    .timestamp(new Date())
+//                    .build();
+//            String jsonResponse = objectMapper.writeValueAsString(resData);
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("application/json");
+//            response.getWriter().write(jsonResponse);
+            exceptionResolver.resolveException(request, response, null, e);
         }
     }
 

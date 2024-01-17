@@ -43,8 +43,15 @@ public class OrderCollection {
     private List<OrderItemEmbedded> itemList;
     private String note;
 
-    private long total;
+    private Long shippingFee;
+    private Long total;
     private OrderType orderType;
+
+    private String orderCouponCode;
+    private Long orderDiscount;
+
+    private String shippingCouponCode;
+    private Long shippingDiscount;
 
     private List<OrderEventEmbedded> eventList;
 

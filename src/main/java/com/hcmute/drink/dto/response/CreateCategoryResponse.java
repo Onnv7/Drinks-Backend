@@ -1,6 +1,6 @@
 package com.hcmute.drink.dto.response;
 
-import com.hcmute.drink.common.ImageDto;
+import com.hcmute.drink.dto.common.ImageDto;
 import lombok.Data;
 
 @Data

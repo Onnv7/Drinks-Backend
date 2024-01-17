@@ -1,6 +1,7 @@
 package com.hcmute.drink.collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hcmute.drink.enums.EmployeeStatus;
 import com.hcmute.drink.enums.Gender;
 import com.hcmute.drink.enums.Role;
 import lombok.AllArgsConstructor;
@@ -53,7 +54,7 @@ public class EmployeeCollection {
     private ObjectId branchId;
 
     @Builder.Default
-    private boolean enabled = true;
+    private EmployeeStatus status = EmployeeStatus.ACTIVE;
 
     @CreatedDate
     private Date createdAt;

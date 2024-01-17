@@ -15,16 +15,16 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Builder
 public class UpdateTransactionRequest {
 
-    @Schema(example = INVOICE_NOTE_EX, description = NOT_BLANK_DES)
+    @Schema(example = INVOICE_NOTE_EX)
     @NotBlank
     private String invoiceCode;
 
     // xem có cần trường này không
-    @Schema(description = OPTIONAL_DES)
+    @Schema()
     @Builder.Default
     private PaymentStatus status = PaymentStatus.UNPAID;
 
-    @Schema(example = TOTAL_PAID_EX, description = NOT_NULL_DES)
+    @Schema(example = TOTAL_PAID_EX)
     @NotNull
     private double totalPaid;
 

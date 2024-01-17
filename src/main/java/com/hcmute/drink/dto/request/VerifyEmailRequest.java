@@ -8,10 +8,10 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class VerifyEmailRequest {
-    @Schema(example = EMAIL_EX, description = NOT_BLANK_DES)
+    @Schema(example = EMAIL_EX)
     @NotBlank
     private String email;
-    @Schema(example = CODE_EX, description = NOT_BLANK_DES)
+    @Schema(example = CODE_EX)
     @NotBlank
     private String code;
 }

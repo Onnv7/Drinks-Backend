@@ -2,6 +2,7 @@ package com.hcmute.drink.collection;
 
 
 import com.hcmute.drink.collection.embedded.ImageEmbedded;
+import com.hcmute.drink.enums.CategoryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,7 +40,14 @@ public class CategoryCollection {
     private ImageEmbedded image;
 
     @Builder.Default
-    private boolean enabled = true;
+    private CategoryStatus status = CategoryStatus.HIDDEN;
+
+    // TODO: check chỗ update product thay category khác thì có thể set lại canDelete = true
+    @Builder.Default
+    private boolean canDelete = true;
+
+    @Builder.Default
+    private boolean isDeleted = false;
 
     @CreatedDate
     private Date createdAt;

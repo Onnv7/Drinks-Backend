@@ -9,12 +9,12 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class VerifyPhoneNumberRequest {
-    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
+    @Schema(example = PHONE_NUMBER_EX)
     @NotBlank
     @Pattern(regexp = PHONE_NUMBER_REGEX)
     private String phoneNumber;
 
-    @Schema(example = VERIFY_NUMBER_MSG_EX, description = NOT_BLANK_DES)
+    @Schema(example = VERIFY_NUMBER_MSG_EX)
     @NotBlank
     private String message;
 }

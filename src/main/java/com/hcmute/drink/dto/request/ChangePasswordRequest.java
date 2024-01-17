@@ -10,11 +10,11 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Data
 public class ChangePasswordRequest {
 
-    @Schema(example = EMAIL_EX, description = NOT_BLANK_DES)
+    @Schema(example = EMAIL_EX)
     @NotBlank
     private String email;
 
-    @Schema(example = PASSWORD_EMPLOYEE_EX, description = PASSWORD_DES)
+    @Schema(example = PASSWORD_EMPLOYEE_EX)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;

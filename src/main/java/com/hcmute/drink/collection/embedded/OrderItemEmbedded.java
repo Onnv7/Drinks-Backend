@@ -1,5 +1,6 @@
 package com.hcmute.drink.collection.embedded;
 
+import com.hcmute.drink.enums.DiscountUnitType;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
@@ -14,8 +15,10 @@ public class OrderItemEmbedded {
     private String size;
 
     private List<ToppingEmbedded> toppingList;
-
-    private long price;
-
+    private Long price;
     private String note;
+    private String couponProductCode;
+
+    private Long moneyDiscount;
+    private ProductGiftEmbedded productGift;
 }

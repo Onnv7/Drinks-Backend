@@ -6,7 +6,9 @@ public class RouterConstant {
     public static final String ADDRESS_BASE_PATH = "/api/address";
     public static final String BRANCH_BASE_PATH = "/api/branch";
     public static final String AUTH_BASE_PATH = "/api/auth";
+    public static final String BANNER_BASE_PATH = "/api/banner";
     public static final String CATEGORY_BASE_PATH = "/api/category";
+    public static final String COUPON_BASE_PATH = "/api/coupon";
     public static final String PRODUCT_BASE_PATH = "/api/product";
     public static final String EMPLOYEE_BASE_PATH = "/api/employee";
     public static final String ORDER_BASE_PATH = "/api/order";
@@ -18,12 +20,15 @@ public class RouterConstant {
     public static final String PRODUCT_ALL_PATH = PRODUCT_BASE_PATH + "/**";
     public static final String ORDER_ALL_PATH = PRODUCT_BASE_PATH + "/**";
     // ID PATH =================================================================
+    public static final String COUPON_ID_PATH = "/{couponId}";
+    public static final String COUPON_ID = "couponId";
 
     public static final String CATEGORY_ID_PATH = "/{categoryId}";
     public static final String CATEGORY_ID = "categoryId";
     public static final String PRODUCT_ID_PATH = "/{productId}";
     public static final String PRODUCT_ID = "productId";
-
+    public static final String BANNER_ID_PATH = "/{bannerId}";
+    public static final String BANNER_ID = "bannerId";
     public static final String USER_ID_PATH = "/{userId}";
     public static final String USER_ID = "userId";
     public static final String ADDRESS_ID_PATH = "/{addressId}";
@@ -68,14 +73,16 @@ public class RouterConstant {
     public static final String GET_PRODUCT_ENABLED_BY_ID_PATH = PRODUCT_BASE_PATH + GET_PRODUCT_ENABLED_BY_ID_SUB_PATH;
     public static final String GET_PRODUCT_BY_CATEGORY_ID_SUB_PATH = "/category" + CATEGORY_ID_PATH;
     public static final String GET_PRODUCT_BY_CATEGORY_ID_PATH = PRODUCT_BASE_PATH + GET_PRODUCT_BY_CATEGORY_ID_SUB_PATH;
-    public static final String GET_PRODUCT_ALL_ENABLED_SUB_PATH = "/visible";
-    public static final String GET_PRODUCT_ALL_ENABLED_PATH = PRODUCT_BASE_PATH + GET_PRODUCT_ALL_ENABLED_SUB_PATH;
+    public static final String GET_PRODUCT_ALL_VISIBLE_SUB_PATH = "/visible";
+    public static final String GET_PRODUCT_ALL_VISIBLE_PATH = PRODUCT_BASE_PATH + GET_PRODUCT_ALL_VISIBLE_SUB_PATH;
     public static final String GET_PRODUCT_ALL_SUB_PATH = "";
     public static final String GET_PRODUCT_ALL_PATH = PRODUCT_BASE_PATH + GET_PRODUCT_ALL_SUB_PATH;
     public static final String PUT_PRODUCT_UPDATE_BY_ID_SUB_PATH = PRODUCT_ID_PATH;
     public static final String PUT_PRODUCT_UPDATE_BY_ID_PATH = PRODUCT_BASE_PATH + PUT_PRODUCT_UPDATE_BY_ID_SUB_PATH;
     public static final String DELETE_PRODUCT_BY_ID_SUB_PATH = PRODUCT_ID_PATH;
     public static final String DELETE_PRODUCT_BY_ID_PATH = PRODUCT_BASE_PATH + DELETE_PRODUCT_BY_ID_SUB_PATH;
+    public static final String DELETE_SOME_PRODUCT_BY_ID_SUB_PATH = "";
+    public static final String DELETE_SOME_PRODUCT_BY_ID_PATH = PRODUCT_BASE_PATH + DELETE_SOME_PRODUCT_BY_ID_SUB_PATH;
     public static final String POST_PRODUCT_CREATE_SUB_PATH = "";
     public static final String POST_PRODUCT_CREATE_PATH = PRODUCT_BASE_PATH + POST_PRODUCT_CREATE_SUB_PATH;
     public static final String GET_PRODUCT_TOP_QUANTITY_ORDER_SUB_PATH = "/top/{itemQuantity}";
@@ -182,5 +189,33 @@ public class RouterConstant {
     public static final String DELETE_BRANCH_UPDATE_PATH = BRANCH_BASE_PATH + DELETE_BRANCH_UPDATE_SUB_PATH;
     public static final String GET_BRANCH_ALL_SUB_PATH = "";
     public static final String GET_BRANCH_ALL_PATH = BRANCH_BASE_PATH + GET_BRANCH_ALL_SUB_PATH;
+
+    // ENDPOINT URL BANNER =================================================================
+    public static final String POST_BANNER_CREATE_SUB_PATH = "";
+    public static final String POST_BANNER_CREATE_PATH = BANNER_BASE_PATH + POST_BANNER_CREATE_SUB_PATH;
+    public static final String PUT_BANNER_UPDATE_BY_ID_SUB_PATH = BANNER_ID_PATH;
+    public static final String PUT_BANNER_UPDATE_BY_ID_PATH = BANNER_BASE_PATH + PUT_BANNER_UPDATE_BY_ID_SUB_PATH;
+    public static final String DELETE_BANNER_BY_ID_SUB_PATH = BANNER_ID_PATH;
+    public static final String DELETE_BANNER_BY_ID_PATH = BANNER_BASE_PATH + DELETE_BANNER_BY_ID_SUB_PATH;
+    public static final String GET_BANNER_LIST_SUB_PATH = "";
+    public static final String GET_BANNER_LIST_PATH = BANNER_BASE_PATH + GET_BANNER_LIST_SUB_PATH;
+    public static final String GET_BANNER_VISIBLE_LIST_SUB_PATH = "/visible";
+    public static final String GET_BANNER_VISIBLE_LIST_PATH = BANNER_BASE_PATH + GET_BANNER_VISIBLE_LIST_SUB_PATH;
+    public static final String GET_BANNER_DETAILS_BY_ID_SUB_PATH = BANNER_ID_PATH + "/details";
+    public static final String GET_BANNER_DETAILS_BY_ID_PATH = BANNER_BASE_PATH + GET_BANNER_DETAILS_BY_ID_SUB_PATH;
+
+    // ENDPOINT URL COUPON =================================================================
+    public static final String POST_COUPON_CREATE_SUB_PATH = "/{couponType}";
+    public static final String POST_COUPON_CREATE_PATH = BANNER_BASE_PATH + POST_COUPON_CREATE_SUB_PATH;
+    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH = "/buy-get";
+    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_PATH = BANNER_BASE_PATH + POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH;
+    public static final String PUT_COUPON_UPDATE_BY_ID_SUB_PATH = COUPON_ID_PATH;
+    public static final String PUT_COUPON_UPDATE_BY_ID_PATH = BANNER_BASE_PATH + PUT_COUPON_UPDATE_BY_ID_SUB_PATH;
+    public static final String DELETE_COUPON_BY_ID_SUB_PATH = COUPON_ID_PATH;
+    public static final String DELETE_COUPON_BY_ID_PATH = BANNER_BASE_PATH + DELETE_COUPON_BY_ID_SUB_PATH;
+    public static final String GET_COUPON_RELEASE_LIST_SUB_PATH = "/status/release";
+    public static final String GET_COUPON_RELEASE_LIST_PATH = BANNER_BASE_PATH + GET_COUPON_RELEASE_LIST_SUB_PATH;
+    public static final String GET_COUPON_RELEASE_BY_ID_SUB_PATH = COUPON_ID_PATH + "/release";
+    public static final String GET_COUPON_RELEASE_BY_ID_PATH = BANNER_BASE_PATH + GET_COUPON_RELEASE_BY_ID_SUB_PATH;
 
 }

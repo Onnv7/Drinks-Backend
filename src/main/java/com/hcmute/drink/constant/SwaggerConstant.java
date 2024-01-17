@@ -49,8 +49,9 @@ public class SwaggerConstant {
     public static final String PRODUCT_GET_ENABLED_BY_ID_SUM = "Get a product enabled by product id";
     public static final String PRODUCT_GET_BY_CATEGORY_ID_SUM = "Get products by category id";
     public static final String PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM = "Get all or search products which have enabled";
-    public static final String PRODUCT_GET_ALL_SUM = "Get all products";
+    public static final String PRODUCT_GET_ALL_SUM = "Get product list or search product list by code, name, description or filter by category id, status and then paging";
     public static final String PRODUCT_DELETE_BY_ID_SUM = "Delete a product by product id";
+    public static final String PRODUCT_SOME_DELETE_BY_ID_SUM = "Delete some products by product id";
 
     public static final String PRODUCT_UPDATE_BY_ID_SUM = "Update product's information by product id";
     public static final String PRODUCT_GET_TOP_ORDER_QUANTITY_SUM = "Get top products and sort by quantity order";
@@ -108,7 +109,22 @@ public class SwaggerConstant {
     public static final String BRANCH_DELETE_BY_ID_SUM = "Delete branch's information by id";
     public static final String BRANCH_GET_ALL_SUM = "Get branch list";
 
+    // For banner =================================================================
+    public static final String BANNER_CONTROLLER_TITLE = "BANNER MANAGEMENT";
+    public static final String BANNER_CREATE_SUM = "Create a new banner";
+    public static final String BANNER_UPDATE_BY_ID_SUM = "Update a banner by id";
+    public static final String BANNER_DELETE_BY_ID_SUM = "Delete a banner by id";
+    public static final String BANNER_GET_LIST_SUM = "Get banner list";
+    public static final String BANNER_GET_VISIBLE_LIST_SUM = "Get visible banner list";
+    public static final String BANNER_GET_DETAILS_BY_ID_LIST_SUM = "Get banner's details by id";
 
+    // For banner =================================================================
+    public static final String COUPON_CONTROLLER_TITLE = "COUPON MANAGEMENT";
+    public static final String COUPON_CREATE_SUM = "Create a new coupon";
+    public static final String COUPON_UPDATE_BY_ID_SUM = "Update a coupon by id";
+    public static final String COUPON_DELETE_BY_ID_SUM = "Delete a coupon by id";
+    public static final String COUPON_GET_RELEASE_LIST_SUM = "Get release coupon list";
+    public static final String COUPON_GET_RELEASE_BY_ID_SUM = "Get a release coupon by id";
 
 
     // For schema properties =====================================================
@@ -136,6 +152,7 @@ public class SwaggerConstant {
     public static final String TOPPING_NAME_EX = "Ca cao" ;
 
     public static final String OBJECT_ID_EX = "3504503451AV8405345" ;
+    public static final String OBJECT_ID_ARRAY_EX = "[\"3504503451AV8405345\", \"3504503451AV8405345\"]" ;
     public static final String TOPPING_PRICE_EX = TOPPING_PRICE_MIN + 1000 + "" ;
     public static final String EMAIL_EX = "nva@gmail.com" ;
     public static final String FIRST_NAME_EX = "An" ;
@@ -173,4 +190,21 @@ public class SwaggerConstant {
     public static final String WARD_EX = "Tan Binh";
     public static final String DISTRICT_EX = "Di An";
     public static final String ADDRESS_DETAILS_EX = "Nguyen Thi Tuoi - tan hiep";
+    public static final String EMPLOYEE_STATUS_EX = "ACTIVE";
+    public static final String CATEGORY_STATUS_EX = "VISIBLE";
+    public static final String BANNER_NAME_EX = "New Product 2024";
+    public static final String BANNER_STATUS_EX = "VISIBLE";
+    public static final String COUPON_CODE_EX = "XUAN2024";
+    public static final String COUPON_CODE_LIST_EX = "[\"XUAN2024\", \"XUAN2025\"]" ;
+    public static final String COUPON_DESCRIPTION_EX = "Sieu sale";
+    public static final String COUPON_STATUS_EX = "UNRELEASED";
+    public static final String COUPON_CONDITION_DESCRIPTION_EX = "Giam cho don tu 500k";
+    public static final String COUPON_CONDITION_TYPE_EX = "TOTAL_BILL";
+    public static final String COUPON_UNIT_EX = "MONEY";
+    public static final String DISCOUNT_TARGET_EX = "ORDER_BILL";
+    public static final String COUPON_MAX_REDUCTION_EX = "5000";
+    public static final String DISCOUNT_VALUE_EX = "5000";
+    public static final String OPERATOR_EX = "GREATER";
+    public static final String SHIPPING_FEE_EX = "15000";
+    public static final String DATE_ISO_EX = "2024-01-14T08:38:00.715Z";
 }

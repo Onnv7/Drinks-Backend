@@ -3,6 +3,7 @@ package com.hcmute.drink.constant;
 public class CloudinaryConstant {
     public static final String CATEGORY_PATH = "drinks category";
     public static final String PRODUCT_PATH = "drinks product";
+    public static final String BANNER_PATH = "drinks banner";
 
 
     public static final String UPLOAD_PRESET = "upload_preset";

@@ -14,23 +14,23 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Data
 @Builder
 public class UpdateUserRequest {
-    @Schema(example = FIRST_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = FIRST_NAME_EX)
     @NotBlank
     private String firstName;
 
-    @Schema(example = LAST_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = LAST_NAME_EX)
     @NotBlank
     private String lastName;
 
-    @Schema(example = BIRTH_DATE_EX, description = NOT_NULL_DES)
+    @Schema(example = BIRTH_DATE_EX)
     @NotNull
     private Date birthDate;
 
-    @Schema(example = GENDER_EX, description = NOT_NULL_DES)
+    @Schema(example = GENDER_EX)
     @NotNull
     private Gender gender;
 
-    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
+    @Schema(example = PHONE_NUMBER_EX)
     @NotBlank
     @Pattern(regexp = PHONE_NUMBER_REGEX)
     private String phoneNumber;

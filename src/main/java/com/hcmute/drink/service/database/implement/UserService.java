@@ -10,7 +10,7 @@ import com.hcmute.drink.dto.response.UpdateUserResponse;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.UserRepository;
 import com.hcmute.drink.service.database.IUserService;
-import com.hcmute.drink.utils.ModelMapperUtils;
+import com.hcmute.drink.service.common.ModelMapperService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
     private final UserRepository userRepository;
     @Lazy
     @Autowired
@@ -87,12 +87,12 @@ public class UserService implements IUserService {
 
     @Override
     public UpdateUserResponse updateUserProfile(String userId, UpdateUserRequest body) {
-        UserCollection data = modelMapperUtils.mapClass(body, UserCollection.class);
+        UserCollection data = modelMapperService.mapClass(body, UserCollection.class);
         UserCollection user = getById(userId);
-        modelMapperUtils.map(data, user);
+        modelMapperService.map(data, user);
         user.setUpdatedAt(new Date());
         UserCollection updatedUser = userRepository.save(user);
-        return modelMapperUtils.mapClass(updatedUser, UpdateUserResponse.class);
+        return modelMapperService.mapClass(updatedUser, UpdateUserResponse.class);
     }
 
     @Override

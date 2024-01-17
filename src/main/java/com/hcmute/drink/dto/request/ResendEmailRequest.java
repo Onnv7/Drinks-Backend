@@ -10,7 +10,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.NOT_BLANK_DES;
 
 @Data
 public class ResendEmailRequest {
-    @Schema(example = EMAIL_EX, description = NOT_BLANK_DES)
+    @Schema(example = EMAIL_EX)
     @Email
     @NotBlank
     private String email;

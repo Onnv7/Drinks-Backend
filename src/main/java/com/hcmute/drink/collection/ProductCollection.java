@@ -54,6 +54,12 @@ public class ProductCollection{
 //    private boolean enabled = true;
     private ProductStatus status;
 
+    @Builder.Default
+    private boolean canDelete = true;
+
+    @Builder.Default
+    private boolean isDeleted = false;
+
     @CreatedDate
     private Date createdAt;
 

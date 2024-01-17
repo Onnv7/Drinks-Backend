@@ -10,7 +10,7 @@ import static com.hcmute.drink.constant.SwaggerConstant.PASSWORD_LENGTH_MAX;
 
 @Data
 public class UpdatePasswordEmployeeRequest {
-    @Schema(example = PASSWORD_EX, description = PASSWORD_DES)
+    @Schema(example = PASSWORD_EX)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;

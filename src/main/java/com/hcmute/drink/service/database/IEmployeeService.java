@@ -6,16 +6,16 @@ import com.hcmute.drink.dto.request.UpdateEmployeeRequest;
 import com.hcmute.drink.dto.request.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.dto.response.GetAllEmployeeResponse;
 import com.hcmute.drink.dto.response.GetEmployeeByIdResponse;
-import com.hcmute.drink.dto.response.UpdateEmployeeResponse;
+import com.hcmute.drink.dto.response.UpdateEmployeeForAdminResponse;
 
 import java.util.List;
 
 public interface IEmployeeService {
 
-    List<GetAllEmployeeResponse> getAllEmployees();
+    List<GetAllEmployeeResponse> getAllOrSearchByKey(String key, int page, int size);
     GetEmployeeByIdResponse getEmployeeById(String id);
     void registerEmployee(CreateEmployeeRequest body);
-    UpdateEmployeeResponse updateEmployee(UpdateEmployeeRequest data, String id);
+    UpdateEmployeeForAdminResponse updateEmployeeForAdmin(UpdateEmployeeRequest data, String id);
     void updatePasswordByAdmin(UpdatePasswordEmployeeRequest data, String id);
     void deleteEmployeeById(String id);
     void changePasswordProfile(ChangePasswordEmployeeRequest data, String emplId);

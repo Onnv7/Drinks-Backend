@@ -19,12 +19,13 @@ public class GetOrderDetailsResponse {
     private User recipientInfo;
 
     private Date createdAt;
-    private List<Product> products;
+    private List<Product> itemList;
 
     private Transaction transaction;
     private Review review;
     private Date receiveTime;
-
+    private Long shippingDiscount;
+    private Long orderDiscount;
     @Data
     private static class Review {
         private int rating;
@@ -49,14 +50,24 @@ public class GetOrderDetailsResponse {
     }
     
     @Data
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private static class Product {
         private int quantity;
-        private List<Topping> toppings;
+        private List<Topping> toppingList;
         private String size;
         private double price;
         private String note;
         private String id;
         private String name;
+        private Long moneyDiscount;
+        private ProductGift productGift;
+
+        @Data
+        static class ProductGift {
+            private String productName;
+            private String size;
+            private Integer quantity;
+        }
 
         @Data
         public static class Topping {

@@ -2,8 +2,7 @@ package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.*;
 import com.hcmute.drink.collection.embedded.*;
-import com.hcmute.drink.common.OrderItemDto;
-import com.hcmute.drink.common.ToppingDto;
+import com.hcmute.drink.dto.common.OrderItemDto;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.request.CreateOnsiteOrderRequest;
 import com.hcmute.drink.dto.request.CreateShippingOrderRequest;
@@ -12,6 +11,7 @@ import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.enums.*;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.elasticsearch.OrderIndex;
+import com.hcmute.drink.service.common.ModelMapperService;
 import com.hcmute.drink.service.database.IOrderService;
 import com.hcmute.drink.service.elasticsearch.OrderSearchService;
 import com.hcmute.drink.utils.*;
@@ -36,12 +36,14 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final ProductService productService;
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
     private final SequenceService sequenceService;
     private final OrderSearchService orderSearchService;
     private final BranchService branchService;
     private final AddressService addressService;
     private final EmployeeService employeeService;
+    private final CouponService couponService;
+    private final UserCouponService userCouponService;
 
     @Autowired
     @Lazy
@@ -57,35 +59,87 @@ public class OrderService implements IOrderService {
                 .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
 
-    public long calculateOrderBill(List<OrderItemDto> products) {
+    public Map<String, Object> calculateOrderBill(List<OrderItemDto> productList, List<OrderItemEmbedded> itemList) {
         long totalPrice = 0;
-        for (OrderItemDto item : products) {
+        List<String> couponUsedList = new ArrayList<>();
+        Map<String, Object> result = new HashMap<String, Object>();
+        int itemSize = productList.size();
+
+        Boolean isMultiple = null;
+        Boolean prevMultiple = null;
+        Boolean currentMultiple = null;
+        for (int i = 0; i < itemSize; i++) {
+            OrderItemDto productDto = productList.get(i);
+            OrderItemEmbedded item = itemList.get(i);
             double totalPriceToppings = 0;
-            ProductCollection productInfo = productService.getById(item.getProductId().toString()); //productRepository.findById(product.getProductId().toString()).orElse(null);
-
-            List<ToppingEmbedded> toppingList = productInfo.getToppingList() != null ? productInfo.getToppingList() : new ArrayList<>();
-            List<ToppingDto> toppingDtoList = item.getToppingList() != null ? item.getToppingList() : new ArrayList<>();
-            for (ToppingDto topping : toppingDtoList) {
-                ToppingEmbedded toppingInfo = toppingList.stream()
-                        .filter(i -> i.getName().equals(topping.getName()))
-                        .findFirst()
-                        .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + topping.getName()));
-                if (topping.getPrice() != toppingInfo.getPrice()) {
-                    throw new CustomException(ErrorConstant.TOPPING_PRICE_INVALID);
-                }
-
-                totalPriceToppings += topping.getPrice();
+            ProductCollection productInfo = productService.getById(productDto.getProductId().toString());
+            if (productInfo.isCanDelete()) {
+                productInfo.setCanDelete(false);
+                productService.saveProduct(productInfo);
             }
+            List<ToppingEmbedded> toppingList = productInfo.getToppingList() != null ? productInfo.getToppingList() : new ArrayList<>();
+            List<String> toppingNameList = productDto.getToppingNameList() != null ? productDto.getToppingNameList() : new ArrayList<>();
+
+            // TODO: vieét query tìm topping price
+            if (!toppingList.isEmpty()) {
+                item.setToppingList(new ArrayList<>());
+            }
+            for (String topping : toppingNameList) {
+                ToppingEmbedded toppingInfo = toppingList.stream()
+                        .filter(it -> it.getName().equals(topping))
+                        .findFirst()
+                        .orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + topping));
+                totalPriceToppings += toppingInfo.getPrice();
+                item.getToppingList().add(toppingInfo);
+            }
+
             SizeEmbedded sizeInfo = productInfo.getSizeList()
                     .stream()
-                    .filter(it -> it.getSize().equals(item.getSize()))
-                    .findFirst().orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + item.getSize()));
-            if (item.getPrice() != sizeInfo.getPrice()) {
-                throw new CustomException(ErrorConstant.SIZE_PRICE_INVALID);
+                    .filter(it -> it.getSize().equals(productDto.getSize()))
+                    .findFirst().orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + productDto.getSize()));
+
+
+            totalPrice += (long) ((sizeInfo.getPrice() + totalPriceToppings) * productDto.getQuantity());
+
+            item.setPrice(sizeInfo.getPrice());
+
+            if (productDto.getCouponProductCode() != null) {
+                if(couponUsedList.contains(productDto.getCouponProductCode())) {
+                    throw new CustomException(ErrorConstant.COUPON_DUPLICATED);
+                }
+                CouponCollection couponCollection = couponService.getByCode(productDto.getCouponProductCode());
+                if(couponCollection.getStatus() != CouponStatus.RELEASED) {
+                    throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+                }
+                if ((isMultiple != null && !isMultiple)
+                        || (Boolean.TRUE.equals(isMultiple) && !couponCollection.isCanMultiple())
+                        || couponCollection.getCouponType() == CouponType.ORDER
+                        || couponCollection.getCouponType() == CouponType.SHIPPING
+                ) {
+                    throw new CustomException(ErrorConstant.COUPON_INVALID);
+                }
+                isMultiple = couponCollection.isCanMultiple();
+
+                if (couponCollection.getCouponType() == CouponType.PRODUCT) {
+                    MoneyDiscountEmbedded discount = couponService.checkMoneyCouponProduct(couponCollection, productDto.getProductId().toString());
+                    if (discount.getUnit() == DiscountUnitType.MONEY) {
+                        totalPrice -= ((Number) discount.getValue()).longValue();
+                        item.setMoneyDiscount(discount.getValue());
+                    } else if (discount.getUnit() == DiscountUnitType.PERCENTAGE) {
+                        totalPrice -= item.getPrice() * ((Number) discount.getValue()).longValue() / 100;
+                        item.setMoneyDiscount(item.getPrice() * ((Number) discount.getValue()).longValue() / 100);
+                    }
+                } else if (couponCollection.getCouponType() == CouponType.BUY_PRODUCT_GET_PRODUCT) {
+                    ProductGiftEmbedded discount = couponService.checkBuyGetCouponProduct(couponCollection, productDto.getProductId().toString());
+                    item.setProductGift(discount);
+                }
+                couponUsedList.add(couponCollection.getCode());
             }
-            totalPrice += (long) ((sizeInfo.getPrice() + totalPriceToppings) * item.getQuantity());
         }
-        return totalPrice;
+        result.put("total", totalPrice);
+        result.put("isMultiple", isMultiple);
+        result.put("couponUsedList", couponUsedList);
+        return result;
     }
 
     private Map<String, Object> buildTransaction(PaymentType paymentType, HttpServletRequest request, long totalPrice) {
@@ -103,7 +157,7 @@ public class OrderService implements IOrderService {
                 throw new RuntimeException(e);
             }
             transData = TransactionCollection.builder()
-                    .invoiceCode(paymentData.get(VNP_TXN_REF_KEY).toString())
+                    .invoiceCode(paymentData.get(VNP_TXN_REF_KEY))
                     .timeCode(paymentData.get(VNP_CREATE_DATE_KEY))
                     .status(PaymentStatus.UNPAID)
                     .paymentType(paymentType)
@@ -117,59 +171,128 @@ public class OrderService implements IOrderService {
     public BranchCollection getNearestBranches(AddressCollection address) {
         List<BranchCollection> allBranches = branchService.getAllBranch();
 
-        // Sắp xếp danh sách theo khoảng cách
         allBranches.sort(Comparator.comparingDouble(branch ->
                 CalculateUtils.calculateDistance(address.getLatitude(), address.getLongitude(), branch.getLatitude(), branch.getLongitude())));
 
-        // Trả về số lượng chi nhánh cần thiết
         return allBranches.subList(0, Math.min(1, allBranches.size())).get(0);
 
     }
-    // SERVICES =================================================================
 
-    @Override
-    @Transactional
-    public CreateShippingOrderResponse createShippingOrder(CreateShippingOrderRequest body, HttpServletRequest request) {
-        PaymentType paymentType = body.getPaymentType();
-        OrderCollection data = modelMapperUtils.mapClass(body, OrderCollection.class);
-        userService.getById(data.getUserId().toString());
+    private void saveCouponUsed(List<?> couponUsedList, String userId) {
+        if (couponUsedList != null && !couponUsedList.isEmpty()) {
+            for (Object couponCode : couponUsedList) {
+                userCouponService.saveUserCoupon(UserCouponCollection.builder()
+                        .userId(new ObjectId(userId))
+                        .couponCode(couponCode.toString())
+                        .build());
+            }
+        }
+    }
 
-        long totalPrice = calculateOrderBill(body.getItemList());
-        data.setTotal(totalPrice);
-
-        Map<String, Object> transactionMap = buildTransaction(paymentType, request, totalPrice);
-        TransactionCollection transData = (TransactionCollection) transactionMap.get("transaction");
-
-        TransactionCollection transSaved = transactionService.saveTransaction(transData);
-
-        data.setOrderType(OrderType.SHIPPING);
-        data.setTransactionId(new ObjectId(transSaved.getId()));
-        String makerId = SecurityUtils.getCurrentUserId();
+    private List<OrderEventEmbedded> createOrderCreateEvent(String userId) {
         OrderEventEmbedded log = OrderEventEmbedded.builder()
                 .orderStatus(OrderStatus.CREATED)
                 .description("You have successfully created an order")
                 .isEmployee(false)
-                .makerId(new ObjectId(makerId))
+                .makerId(new ObjectId(userId))
                 .time(new Date()).build();
-        data.setEventList(new ArrayList<>(Arrays.<OrderEventEmbedded>asList(log)));
-        data.setCode(sequenceService.generateCode(OrderCollection.SEQUENCE_NAME, OrderCollection.PREFIX_CODE_SHIPPING, OrderCollection.LENGTH_NUMBER));
+        return new ArrayList<>(Collections.<OrderEventEmbedded>singletonList(log));
+    }
 
-        AddressCollection addressDelivering = addressService.getAddressById(body.getAddressId());
-        RecipientInfoEmbedded recipientInfo = modelMapperUtils.mapClass(addressDelivering, RecipientInfoEmbedded.class);
-
-        BranchCollection branch = getNearestBranches(addressDelivering);
-        BranchEmbedded branchEmbedded = BranchEmbedded.builder()
+    private BranchEmbedded createBranchEmbedded(String branchId) {
+        BranchCollection branch = branchService.getBranchById(branchId);
+        return BranchEmbedded.builder()
                 .id(new ObjectId(branch.getId()))
                 .address(branch.getFullAddress())
                 .latitude(branch.getLatitude())
                 .longitude(branch.getLongitude())
                 .build();
-        data.setBranch(branchEmbedded);
+    }
+    // SERVICES =================================================================
+
+    @Override
+    @Transactional
+    public CreateOrderResponse createShippingOrder(CreateShippingOrderRequest body, HttpServletRequest request) {
+        long totalPrice = 0L;
+        String userId = SecurityUtils.getCurrentUserId();
+        OrderCollection data = modelMapperService.mapClass(body, OrderCollection.class);
+
+        data.setOrderType(OrderType.SHIPPING);
+        userService.getById(userId);
+        data.setUserId(new ObjectId(userId));
+
+
+        Map<String, Object> resultCalculate = calculateOrderBill(body.getItemList(), data.getItemList());
+        totalPrice = (Long) resultCalculate.get("total");
+        Boolean isMultiple = (Boolean) resultCalculate.get("isMultiple");
+        List<?> couponUsedList = (List<?>) resultCalculate.get("couponUsedList");
+
+
+        if (isMultiple != null && (!isMultiple && (body.getShippingCouponCode() != null || body.getOrderCouponCode() != null))) {
+            throw new CustomException(ErrorConstant.COUPON_INVALID);
+        }
+        if (body.getOrderCouponCode() != null) {
+            CouponCollection coupon = couponService.getByCode(body.getOrderCouponCode());
+            if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.ORDER) {
+                throw new CustomException(ErrorConstant.COUPON_INVALID);
+            }
+            if(coupon.getStatus() != CouponStatus.RELEASED) {
+                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+            }
+            MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
+            long moneyDiscount = ((Number) discount.getValue()).longValue();
+            totalPrice -= moneyDiscount;
+            data.setOrderDiscount(moneyDiscount);
+        }
+        if (body.getShippingCouponCode() != null) {
+            CouponCollection coupon = couponService.getByCode(body.getShippingCouponCode());
+            if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.SHIPPING) {
+                throw new CustomException(ErrorConstant.COUPON_INVALID);
+            }
+            if(coupon.getStatus() != CouponStatus.RELEASED) {
+                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+            }
+            MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
+            long moneyDiscount = 0;
+            if(discount.getUnit() == DiscountUnitType.MONEY) {
+                moneyDiscount = ((Number) discount.getValue()).longValue();
+            } else if(discount.getUnit() == DiscountUnitType.PERCENTAGE) {
+                moneyDiscount = body.getShippingFee() * ((Number) discount.getValue()).longValue() / 100;
+            }
+
+            long shippingFee = body.getShippingFee() - moneyDiscount;
+            totalPrice += shippingFee > 0 ? shippingFee : 0;
+            data.setShippingDiscount(moneyDiscount);
+        } else {
+            totalPrice += body.getShippingFee();
+        }
+
+        if (totalPrice != body.getTotal()) {
+            throw new CustomException(ErrorConstant.TOTAL_ORDER_INVALID);
+        }
+        data.setTotal(totalPrice);
+
+        Map<String, Object> transactionMap = buildTransaction(body.getPaymentType(), request, totalPrice);
+        TransactionCollection transData = (TransactionCollection) transactionMap.get("transaction");
+        TransactionCollection transSaved = transactionService.saveTransaction(transData);
+        data.setTransactionId(new ObjectId(transSaved.getId()));
+
+
+        data.setEventList(createOrderCreateEvent(userId));
+        data.setCode(sequenceService.generateCode(OrderCollection.SEQUENCE_NAME, OrderCollection.PREFIX_CODE_SHIPPING, OrderCollection.LENGTH_NUMBER));
+
+        AddressCollection addressDelivering = addressService.getAddressById(body.getAddressId());
+        RecipientInfoEmbedded recipientInfo = modelMapperService.mapClass(addressDelivering, RecipientInfoEmbedded.class);
         data.setRecipientInfo(recipientInfo);
+
+        BranchCollection branch = getNearestBranches(addressDelivering);
+        BranchEmbedded branchEmbedded = createBranchEmbedded(branch.getId());
+        data.setBranch(branchEmbedded);
+        saveCouponUsed( couponUsedList, userId);
 
         OrderCollection order = orderRepository.save(data);
 
-        CreateShippingOrderResponse resData = CreateShippingOrderResponse.builder()
+        CreateOrderResponse resData = CreateOrderResponse.builder()
                 .orderId(order.getId())
                 .transactionId(transSaved.getId())
                 .build();
@@ -181,51 +304,64 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public CreateShippingOrderResponse createOnsiteOrder(CreateOnsiteOrderRequest body, HttpServletRequest request) {
-        PaymentType paymentType = body.getPaymentType();
-        OrderCollection data = modelMapperUtils.mapClass(body, OrderCollection.class);
-        userService.getById(data.getUserId().toString());
+    public CreateOrderResponse createOnsiteOrder(CreateOnsiteOrderRequest body, HttpServletRequest request) {
+        long totalPrice = 0;
+        String userId = SecurityUtils.getCurrentUserId();
 
-        long totalPrice = calculateOrderBill(body.getItemList());
+        PaymentType paymentType = body.getPaymentType();
+        OrderCollection data = modelMapperService.mapClass(body, OrderCollection.class);
+        data.setOrderType(OrderType.ONSITE);
+
+        UserCollection user = userService.getById(userId);
+        data.setUserId(new ObjectId(userId));
+
+        Map<String, Object> resultCalculate = calculateOrderBill(body.getItemList(), data.getItemList());
+        totalPrice = (Long) resultCalculate.get("total");
+        Boolean isMultiple = (Boolean) resultCalculate.get("isMultiple");
+        List<?> couponUsedList = (List<?>) resultCalculate.get("couponUsedList");
+
+        if (isMultiple != null && !isMultiple && body.getOrderCouponCode() != null) {
+            throw new CustomException(ErrorConstant.COUPON_INVALID);
+        }
+        if (body.getOrderCouponCode() != null) {
+            CouponCollection coupon = couponService.getByCode(body.getOrderCouponCode());
+            if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.ORDER) {
+                throw new CustomException(ErrorConstant.COUPON_INVALID);
+            }
+            if(coupon.getStatus() != CouponStatus.RELEASED) {
+                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+            }
+            MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
+            long moneyDiscount = ((Number) discount.getValue()).longValue();
+            totalPrice -= moneyDiscount;
+            data.setOrderDiscount(moneyDiscount);
+        }
+        if (totalPrice != body.getTotal()) {
+            throw new CustomException(ErrorConstant.TOTAL_ORDER_INVALID);
+        }
         data.setTotal(totalPrice);
 
         Map<String, Object> transactionMap = buildTransaction(paymentType, request, totalPrice);
         TransactionCollection transData = (TransactionCollection) transactionMap.get("transaction");
         TransactionCollection transSaved = transactionService.saveTransaction(transData);
 
-        data.setOrderType(OrderType.ONSITE);
         data.setTransactionId(new ObjectId(transSaved.getId()));
 
-        String makerId = SecurityUtils.getCurrentUserId();
-        OrderEventEmbedded log = OrderEventEmbedded.builder()
-                .orderStatus(OrderStatus.CREATED)
-                .description("You have successfully created an order")
-                .isEmployee(false)
-                .makerId(new ObjectId(makerId))
-                .time(new Date()).build();
-        data.setEventList(new ArrayList<>(Arrays.<OrderEventEmbedded>asList(log)));
+        data.setEventList(createOrderCreateEvent(userId));
         data.setCode(sequenceService.generateCode(OrderCollection.SEQUENCE_NAME, OrderCollection.PREFIX_CODE_ONSITE, OrderCollection.LENGTH_NUMBER));
 
-
-        BranchCollection branch = branchService.getBranchById(body.getBranchId().toString());
-
-        BranchEmbedded branchEmbedded = BranchEmbedded.builder()
-                .id(new ObjectId(branch.getId()))
-                .address(branch.getFullAddress())
-                .latitude(branch.getLatitude())
-                .longitude(branch.getLongitude())
-                .build();
-
+        BranchEmbedded branchEmbedded = createBranchEmbedded(body.getBranchId().toString());
         data.setBranch(branchEmbedded);
-        UserCollection user = userService.getById(makerId);
+
         RecipientInfoEmbedded recipientInfo = RecipientInfoEmbedded.builder()
                 .recipientName(user.getFullName())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
         data.setRecipientInfo(recipientInfo);
+
         OrderCollection order = orderRepository.save(data);
 
-        CreateShippingOrderResponse resData = CreateShippingOrderResponse.builder()
+        CreateOrderResponse resData = CreateOrderResponse.builder()
                 .orderId(order.getId())
                 .transactionId(transSaved.getId())
                 .build();
@@ -233,7 +369,7 @@ public class OrderService implements IOrderService {
             resData.setPaymentUrl(transactionMap.get(VNP_URL_KEY).toString());
         }
 
-
+        saveCouponUsed( couponUsedList, userId);
         orderSearchService.createOrder(order);
         return resData;
     }
@@ -256,7 +392,6 @@ public class OrderService implements IOrderService {
     }
 
 
-
     @Override
     public List<GetShippingOrderQueueResponse> getShippingOrderQueueToday(OrderStatus orderStatus, int page, int size) {
         String employeeId = SecurityUtils.getCurrentUserId();
@@ -267,8 +402,7 @@ public class OrderService implements IOrderService {
         int skip = (page - 1) * size;
         int limit = size;
 
-        List<GetShippingOrderQueueResponse> data = orderRepository.getShippingOrderQueueToday(branchId, DateUtils.createBeginingOfDate(), DateUtils.createEndOfDate(), skip, limit, orderStatus);
-        return data;
+        return orderRepository.getShippingOrderQueueToday(branchId, DateUtils.createBeginingOfDate(), DateUtils.createEndOfDate(), skip, limit, orderStatus);
     }
 
     @Override
@@ -280,9 +414,8 @@ public class OrderService implements IOrderService {
 
         int skip = (page - 1) * size;
         int limit = size;
-        List<GetOnsiteOrderQueueResponse> data = orderRepository.getOnsiteOrderQueueToday(branchId, DateUtils.createBeginingOfDate(), DateUtils.createEndOfDate(), skip, limit, orderStatus);
 
-        return data;
+        return orderRepository.getOnsiteOrderQueueToday(branchId, DateUtils.createBeginingOfDate(), DateUtils.createEndOfDate(), skip, limit, orderStatus);
     }
 
     @Override
@@ -308,7 +441,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public void createReviewForOrder(CreateReviewRequest body, String id) {
-        ReviewEmbedded data = modelMapperUtils.mapClass(body, ReviewEmbedded.class);
+        ReviewEmbedded data = modelMapperService.mapClass(body, ReviewEmbedded.class);
         OrderCollection order = getByOrderId(id);
         if (order.getEventList().get(order.getEventList().size() - 1).getOrderStatus() != OrderStatus.SUCCEED) {
             throw new CustomException(ErrorConstant.ORDER_NOT_COMPLETED);
@@ -323,7 +456,7 @@ public class OrderService implements IOrderService {
         List<GetOrderStatusLineResponse> resData = new ArrayList<GetOrderStatusLineResponse>();
         List<OrderEventEmbedded> logs = order.getEventList();
         for (OrderEventEmbedded log : logs) {
-            resData.add(modelMapperUtils.mapClass(log, GetOrderStatusLineResponse.class));
+            resData.add(modelMapperService.mapClass(log, GetOrderStatusLineResponse.class));
         }
         return resData;
     }
@@ -361,7 +494,7 @@ public class OrderService implements IOrderService {
     @Override
     public List<GetOrderHistoryForEmployeeResponse> searchOrderHistoryForEmployee(OrderStatus orderStatus, String key, int page, int size) {
         List<OrderIndex> orderList = orderSearchService.searchOrder(key, orderStatus, page, size);
-        return modelMapperUtils.mapList(orderList, GetOrderHistoryForEmployeeResponse.class);
+        return modelMapperService.mapList(orderList, GetOrderHistoryForEmployeeResponse.class);
     }
 
     public List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int top) {
@@ -372,10 +505,8 @@ public class OrderService implements IOrderService {
         Date startDatePrev = DateUtils.createDateTimeByToday(0, 0, 0, 0, -1);
         Date endDatePrev = DateUtils.createDateTimeByToday(23, 59, 59, 999, 0);
         List<OrderCollection> orderList = orderRepository.getShippingOrdersByStatusLastAndDateTimeCreated(startDatePrev, endDatePrev, orderStatus);
-        Iterator<OrderCollection> itr = orderList.iterator();
 
-        while (itr.hasNext()) {
-            OrderCollection order = itr.next();
+        for (OrderCollection order : orderList) {
             List<OrderEventEmbedded> orderStatusList = order.getEventList();
             orderStatusList.add(OrderEventEmbedded.builder()
                     .orderStatus(OrderStatus.CANCELED)

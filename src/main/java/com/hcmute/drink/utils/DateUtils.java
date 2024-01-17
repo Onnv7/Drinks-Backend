@@ -30,4 +30,10 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND, millisecond);
         return calendar.getTime();
     }
+    public static boolean isDateInRange(Date target, Date startPoint, Date endPoint) {
+        if(endPoint == null) {
+            return !target.before(startPoint);
+        }
+        return !target.before(startPoint) && !target.after(endPoint);
+    }
 }

@@ -1,5 +1,6 @@
 package com.hcmute.drink.dto.request;
 
+import com.hcmute.drink.enums.CategoryStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,11 +15,11 @@ public class UpdateCategoryRequest {
     private MultipartFile image;
 
 
-    @Schema(example = CATEGORY_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = CATEGORY_NAME_EX)
     @NotBlank
     private String name;
 
-    @Schema(example = BOOLEAN_EX, description = NOT_NULL_DES)
+    @Schema(example = CATEGORY_STATUS_EX)
     @NotNull
-    private boolean enabled;
+    private CategoryStatus status;
 }

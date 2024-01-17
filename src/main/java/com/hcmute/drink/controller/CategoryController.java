@@ -4,10 +4,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.request.CreateCategoryRequest;
 import com.hcmute.drink.dto.request.UpdateCategoryRequest;
-import com.hcmute.drink.dto.response.CreateCategoryResponse;
-import com.hcmute.drink.dto.response.GetAllCategoriesWithoutDisabledResponse;
-import com.hcmute.drink.dto.response.GetAllCategoryResponse;
-import com.hcmute.drink.dto.response.UpdateCategoryResponse;
+import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.ICategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,11 +31,10 @@ public class CategoryController {
     @Operation(summary = CATEGORY_CREATE_SUM)
     @PostMapping(path = POST_CATEGORY_CREATE_SUB_PATH, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseAPI> createCategory(@ModelAttribute @Valid CreateCategoryRequest body) {
-        CreateCategoryResponse resData = categoryService.createCategory(body);
+        categoryService.createCategory(body);
 
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
-                .data(resData)
                 .message(SuccessConstant.CREATED)
                 .build();
         return new ResponseEntity<>(res, StatusCode.CREATED);
@@ -47,7 +43,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_GET_BY_ID_SUM)
     @GetMapping(GET_CATEGORY_BY_SUB_ID_PATH)
     public ResponseEntity<ResponseAPI> getCategoryById(@PathVariable(CATEGORY_ID) String categoryId) {
-        GetAllCategoryResponse resData = categoryService.getCategoryById(categoryId);
+        GetCategoryByIdResponse resData = categoryService.getCategoryById(categoryId);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .message(SuccessConstant.GET)
@@ -72,7 +68,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_GET_ALL_WITHOUT_DELETED_SUM)
     @GetMapping(path = GET_CATEGORY_ALL_WITHOUT_DELETED_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllCategoriesWithoutDeleted() {
-        List<GetAllCategoriesWithoutDisabledResponse> resData = categoryService.getAllCategoriesWithoutDeleted();
+        List<GetVisibleCategoryListResponse> resData = categoryService.getVisibleCategoryList();
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .message(SuccessConstant.GET)
@@ -86,11 +82,10 @@ public class CategoryController {
     public ResponseEntity<ResponseAPI> updateCategory(
             @ModelAttribute @Valid UpdateCategoryRequest body,
             @PathVariable(CATEGORY_ID) String id) {
-        UpdateCategoryResponse resData = categoryService.updateCategory(body, id);
+        categoryService.updateCategory(body, id);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .message(SuccessConstant.UPDATED)
-                .data(resData)
                 .build();
         return new ResponseEntity<>(res, StatusCode.OK);
     }

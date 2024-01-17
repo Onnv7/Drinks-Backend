@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -122,6 +123,7 @@ public class WebSecurityConfig {
         // set route sẽ ăn từ trên xuống (ưu tiên cái đầu tiên)
 
         http
+
                 .cors(Customizer.withDefaults())
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -178,6 +180,7 @@ public class WebSecurityConfig {
 
 
                                 .anyRequest().authenticated()
+
                 );
 
         return http.build();

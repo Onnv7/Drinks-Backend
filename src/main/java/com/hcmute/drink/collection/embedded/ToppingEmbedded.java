@@ -10,5 +10,5 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Data
 public class ToppingEmbedded {
     private String name;
-    private long price;
+    private Long price;
 }

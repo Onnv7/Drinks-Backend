@@ -7,6 +7,7 @@ import com.hcmute.drink.collection.UserCollection;
 import com.hcmute.drink.dto.kafka.CodeEmailDto;
 import com.hcmute.drink.dto.request.*;
 import com.hcmute.drink.dto.response.*;
+import com.hcmute.drink.enums.EmployeeStatus;
 import com.hcmute.drink.enums.Role;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.kafka.KafkaMessagePublisher;
@@ -21,7 +22,7 @@ import com.hcmute.drink.service.database.IAuthService;
 import com.hcmute.drink.service.redis.EmployeeRefreshTokenRedisService;
 import com.hcmute.drink.service.redis.UserRefreshTokenRedisService;
 import com.hcmute.drink.utils.JwtUtils;
-import com.hcmute.drink.utils.ModelMapperUtils;
+import com.hcmute.drink.service.common.ModelMapperService;
 import com.hcmute.drink.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class AuthService implements IAuthService {
     private final EmployeeService employeeService;
     private final UserRefreshTokenRedisService userRefreshTokenRedisService;
     private final EmployeeRefreshTokenRedisService employeeRefreshTokenRedisService;
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
 
     @Override
     public LoginResponse userLogin(String email, String password) {
@@ -95,7 +96,7 @@ public class AuthService implements IAuthService {
         var principalAuthenticated = (UserPrincipal) authentication.getPrincipal();
         EmployeeCollection employee = employeeService.findByUsername(principalAuthenticated.getUsername());
 
-        if (!employee.isEnabled()) {
+        if (employee.getStatus() == EmployeeStatus.INACTIVE) {
             throw new CustomException(ErrorConstant.ACCOUNT_BLOCKED);
         }
 
@@ -114,14 +115,14 @@ public class AuthService implements IAuthService {
     @Override
     public RegisterResponse registerUser(RegisterUserRequest body) {
 
-        UserCollection data = modelMapperUtils.mapClass(body, UserCollection.class);
+        UserCollection data = modelMapperService.mapClass(body, UserCollection.class);
         UserCollection existedUser = userService.findByEmail(data.getEmail());
 
         if (existedUser != null) {
             throw new CustomException(ErrorConstant.REGISTERED_EMAIL);
         }
         RegisterResponse resData = new RegisterResponse();
-        modelMapperUtils.map(data, resData);
+        modelMapperService.map(data, resData);
 
         data.setRoles(new Role[]{Role.ROLE_USER});
         data.setPassword(passwordEncoder.encode(data.getPassword()));

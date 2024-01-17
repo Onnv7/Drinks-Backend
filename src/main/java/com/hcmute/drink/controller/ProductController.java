@@ -3,11 +3,13 @@ package com.hcmute.drink.controller;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.request.CreateProductRequest;
+import com.hcmute.drink.dto.request.DeleteSomeProductRequest;
 import com.hcmute.drink.dto.request.UpdateProductRequest;
 import com.hcmute.drink.dto.response.*;
+import com.hcmute.drink.enums.ProductStatus;
+import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.IProductService;
-import com.hcmute.drink.service.elasticsearch.ProductSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -85,7 +87,7 @@ public class ProductController {
     }
 
     @Operation(summary = PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM)
-    @GetMapping(path = GET_PRODUCT_ALL_ENABLED_SUB_PATH)
+    @GetMapping(path = GET_PRODUCT_ALL_VISIBLE_SUB_PATH)
     protected ResponseEntity<ResponseAPI> getAllProductsEnabled(
             @Parameter(name = "key", description = "Key is name or description or id", required = false, example = "name or description")
             @RequestParam(name = "key", required = false) String key,
@@ -96,7 +98,7 @@ public class ProductController {
     ) {
         List<GetAllVisibleProductResponse> resData = new ArrayList<>();
         if (key == null) {
-            resData = productService.getAllProductsVisible(page, size);
+            resData = productService. getAllProductsVisible(page, size);
         } else {
             resData =  productService.searchProductVisible(key, page, size);
         }
@@ -117,14 +119,11 @@ public class ProductController {
             @Parameter(name = "page", required = true, example = "1")
             @RequestParam("page") @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
-            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size) {
-        List<GetAllProductsResponse> resData = new ArrayList<>();
-        if (key == null) {
-            resData = productService.getAllProducts(page, size);
-        } else {
-            resData = productService.searchProduct(key, page, size);
-        }
-
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size,
+            @RequestParam(name = CATEGORY_ID, required = false) String categoryId,
+            @RequestParam(name = "productStatus", required = false) ProductStatus productStatus
+    ) {
+        GetProductListResponse resData = productService.getProductList(key, page, size, categoryId, productStatus);
         ResponseAPI res = ResponseAPI.builder()
                 .message(SuccessConstant.GET)
                 .timestamp(new Date())
@@ -139,6 +138,18 @@ public class ProductController {
     @DeleteMapping(path = DELETE_PRODUCT_BY_ID_SUB_PATH)
     protected ResponseEntity<ResponseAPI> deleteProductById(@PathVariable("productId") String id) {
         productService.deleteProductById(id);
+
+        ResponseAPI res = ResponseAPI.builder()
+                .message(SuccessConstant.DELETED)
+                .timestamp(new Date())
+                .build();
+        return new ResponseEntity<>(res, StatusCode.OK);
+    }
+
+    @Operation(summary = PRODUCT_SOME_DELETE_BY_ID_SUM)
+    @DeleteMapping(path = DELETE_SOME_PRODUCT_BY_ID_SUB_PATH)
+    protected ResponseEntity<ResponseAPI> deleteSomeProductById(@RequestBody @Valid DeleteSomeProductRequest body) {
+        productService.deleteSomeProductById(body.getProductIdList());
 
         ResponseAPI res = ResponseAPI.builder()
                 .message(SuccessConstant.DELETED)

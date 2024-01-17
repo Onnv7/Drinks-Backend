@@ -8,10 +8,10 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class CreateReviewRequest {
-    @Schema(example = RATING_EX, description = NOT_NULL_DES)
+    @Schema(example = RATING_EX)
     @NotNull
     private int rating;
 
-    @Schema(example = REVIEW_DES_EX, description = OPTIONAL_DES)
+    @Schema(example = REVIEW_DES_EX)
     private String content;
 }

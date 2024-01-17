@@ -13,9 +13,11 @@ public class SecurityConstant {
             "/IPN/**",
             "/openapi/**", "/v3/api-docs/**", "/openapi/swagger-config/**",
             "/v3/api-docs.yaml", "/swagger-ui/**", "/swagger-ui.html",
-            GET_PRODUCT_ALL_ENABLED_PATH, GET_PRODUCT_BY_CATEGORY_ID_PATH, GET_PRODUCT_ENABLED_BY_ID_PATH, GET_PRODUCT_TOP_QUANTITY_ORDER_PATH,
+            GET_PRODUCT_ALL_VISIBLE_PATH, GET_PRODUCT_BY_CATEGORY_ID_PATH, GET_PRODUCT_ENABLED_BY_ID_PATH, GET_PRODUCT_TOP_QUANTITY_ORDER_PATH,
             GET_CATEGORY_BY_ID_PATH,
-            USER_CHECK_EXISTED_PATH, GET_CATEGORY_ALL_WITHOUT_DELETED_PATH, "/tool/**"
+            USER_CHECK_EXISTED_PATH, GET_CATEGORY_ALL_WITHOUT_DELETED_PATH, "/tool/**",
+            GET_BANNER_VISIBLE_LIST_PATH, GET_COUPON_RELEASE_LIST_PATH,
+            GET_COUPON_RELEASE_BY_ID_PATH
 
 
     };
@@ -61,18 +63,21 @@ public class SecurityConstant {
             USER_GET_ALL_PATH, GET_EMPLOYEE_ALL_PATH,
             GET_CATEGORY_ALL_PATH, GET_PRODUCT_ALL_PATH,
             GET_TRANSACTION_REVENUE_BY_TIME_PATH, GET_TRANSACTION_REVENUE_CURRENT_DATE_PATH,
-            GET_BRANCH_ALL_PATH
+            GET_BRANCH_ALL_PATH, GET_BANNER_LIST_PATH, GET_BANNER_DETAILS_BY_ID_PATH,
 
     };
     public static final String[] PUT_ADMIN_PATH = {
             PUT_PRODUCT_UPDATE_BY_ID_PATH,
-            PUT_CATEGORY_UPDATE_BY_ID_PATH, PUT_BRANCH_UPDATE_PATH
+            PUT_CATEGORY_UPDATE_BY_ID_PATH, PUT_BRANCH_UPDATE_PATH,
+            PUT_EMPLOYEE_UPDATE_BY_ID_PATH, PUT_BANNER_UPDATE_BY_ID_PATH,
+            PUT_COUPON_UPDATE_BY_ID_PATH
     };
     public static final String[] POST_ADMIN_PATH = {
             POST_PRODUCT_CREATE_PATH,
             POST_EMPLOYEE_REGISTER_PATH,
             POST_CATEGORY_CREATE_PATH,
-            POST_BRANCH_CREATE_PATH,
+            POST_BRANCH_CREATE_PATH, POST_BANNER_CREATE_PATH,
+            POST_COUPON_CREATE_PATH, POST_COUPON_CREATE_BUY_GET_TYPE_PATH
     };
     public static final String[] PATCH_ADMIN_PATH = {
     };
@@ -80,7 +85,9 @@ public class SecurityConstant {
     public static final String[] DELETE_ADMIN_PATH = {
             DELETE_PRODUCT_BY_ID_PATH,
             DELETE_EMPLOYEE_BY_ID_PATH,
-            DELETE_CATEGORY_BY_ID_PATH, DELETE_BRANCH_UPDATE_PATH
+            DELETE_CATEGORY_BY_ID_PATH, DELETE_BRANCH_UPDATE_PATH,
+            DELETE_SOME_PRODUCT_BY_ID_PATH, DELETE_BANNER_BY_ID_PATH,
+            DELETE_COUPON_BY_ID_PATH
     };
 
     // Only EMPLOYEE =================================================================
@@ -101,7 +108,6 @@ public class SecurityConstant {
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {
-            PUT_EMPLOYEE_UPDATE_BY_ID_PATH,
     };
     public static final String[] PATCH_ADMIN_EMPLOYEE_PATH = {
             PATCH_EMPLOYEE_UPDATE_PASSWORD_BY_ID_PATH

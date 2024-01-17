@@ -1,4 +1,4 @@
-package com.hcmute.drink.utils;
+package com.hcmute.drink.service.common;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,7 +14,7 @@ import static com.hcmute.drink.constant.BeanConstant.MODEL_MAPPER_NOT_NULL;
 
 @Component
 @RequiredArgsConstructor
-public class ModelMapperUtils {
+public class ModelMapperService {
     private final ModelMapper modelMapper;
     @Autowired
     @Qualifier(MODEL_MAPPER_NOT_NULL)

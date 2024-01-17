@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class SizeEmbedded {
     private String size;
-    private long price;
+    private Long price;
 }

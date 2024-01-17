@@ -7,7 +7,7 @@ import com.hcmute.drink.dto.request.UpdateBranchRequest;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.BranchRepository;
 import com.hcmute.drink.service.database.IBranchService;
-import com.hcmute.drink.utils.ModelMapperUtils;
+import com.hcmute.drink.service.common.ModelMapperService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class BranchService implements IBranchService {
     private final BranchRepository branchRepository;
     private final SequenceService sequenceService;
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
 
     public List<BranchCollection> getAllBranch() {
         return branchRepository.findAll();
@@ -26,7 +26,7 @@ public class BranchService implements IBranchService {
 
     @Override
     public void createBranch(CreateBranchRequest body) {
-        BranchCollection branch = modelMapperUtils.mapClass(body, BranchCollection.class);
+        BranchCollection branch = modelMapperService.mapClass(body, BranchCollection.class);
         branch.setCode(sequenceService.generateCode(BranchCollection.SEQUENCE_NAME, BranchCollection.PREFIX_CODE, BranchCollection.LENGTH_NUMBER));
         branchRepository.save(branch);
     }
@@ -34,7 +34,7 @@ public class BranchService implements IBranchService {
     @Override
     public void updateBranchById(UpdateBranchRequest body, String id) {
         BranchCollection branch = branchRepository.findById(id).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
-        modelMapperUtils.map(body, branch);
+        modelMapperService.map(body, branch);
         branchRepository.save(branch);
     }
 

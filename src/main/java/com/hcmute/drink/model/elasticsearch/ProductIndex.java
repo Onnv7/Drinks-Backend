@@ -26,4 +26,5 @@ public class ProductIndex {
     private String description;
     private double price;
     private ProductStatus status;
+    private String categoryId;
 }

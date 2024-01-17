@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends MongoRepository<ProductCollection, String> {
@@ -20,21 +21,18 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
 
     @Aggregation(pipeline = {
             "{$match: { status: {$ne: 'HIDDEN'} }}",
-            "{$project: {_id: 1, name: 1, description: 1, status: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}",
+            "{$project: {_id: 1, name: 1, code: 1, description: 1, status: 1, price: 1, thumbnail: '$thumbnail.url'}}",
             "{$skip: ?0}",
             "{$limit: ?1}",
     })
     List<GetAllVisibleProductResponse> getAllProductsEnabled(int skip, int limit);
 
     @Aggregation(pipeline = {
-            "{ $project: { _id: 1, name: 1, description: 1, code: 1, price: { $min: '$sizeList.price' }, imageUrl: '$image.url', thumbnail: '$thumbnail.url', status: 1, } } "
+            "{$facet: {products: [{$addFields: {categoryIdString: { $toString: '$categoryId' }}}, {$match: {$and: [{isDeleted: false}, {categoryIdString: {$regex: ?2, $options: 'i'}}, {status: {$regex: ?3, $options: 'i'}}]}}, {$project: {_id: 1, code: 1, name: 1, description: 1, enabled: 1, status: 1, price: { $min: '$sizeList.price' }, thumbnail: '$thumbnail.url'}}, {$skip: 0}, {$limit: 2}], totalCount: [{$addFields: {categoryIdString: { $toString: '$categoryId' }}}, {$match: {$and: [{isDeleted: false}, {categoryIdString: {$regex: ?2, $options: 'i'}}, {status: {$regex: ?3, $options: 'i'}}]}}, {$count: 'total'}]}}",
+            "{$project: {totalPage: {$ceil: {$divide: [{$toDouble: {$ifNull: [{$first: '$totalCount.total'}, 0]}}, 2]}}, productList: '$products'}}"
     })
-    List<GetAllProductsResponse> getAllProducts(int skip, int limit);
+    GetProductListResponse getProductList(int skip, int limit, String categoryIdRegex, String productStatusRegex);
 
-//    @Aggregation(pipeline = {
-//            "{$match: {_id: ?0, enabled: true}}",
-//            "{$project: {_id: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: '$image.url'}}"
-//    })
     @Query(value = "{$and : [{_id: ?0, status: {$ne: 'HIDDEN'}}]}", fields = "{_id: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: '$image.url', status: 1}}")
     GetProductEnabledByIdResponse getProductEnabledById(String id);
     @Query(value = "{$and : [{_id: ?0}]}", fields = "{_id: 1, code: 1, name: 1, sizeList: 1, toppingList: 1, description: 1, image: 1, categoryId: 1, status: 1}}")
@@ -61,5 +59,15 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
             "{$limit: ?2}",
             "{$project: {_id: 1, name: 1, code: 1, status: 1,  description: 1, price: {$min: '$sizeList.price'}, thumbnail: '$thumbnail.url'}}"
     })
-    List<GetAllProductsResponse> searchProduct(String key, int skip, int limit);
+    List<GetProductListResponse> searchProduct(String key, int skip, int limit);
+
+    @Aggregation(pipeline = {
+            "{$match:  { isDeleted: false' } }",
+    })
+    List<ProductCollection> getAll();
+
+    @Aggregation(pipeline = {
+            "{$match:  { $and: [ { _id: ?0 }, { isDeleted: false }] } }",
+    })
+    Optional<ProductCollection> getById(String id);
 }

@@ -41,7 +41,7 @@ public class OrderController {
     @Operation(summary = ORDER_CREATE_SHIPPING_SUM)
     @PostMapping(path = POST_ORDER_CREATE_SHIPPING_SUB_PATH)
     public ResponseEntity<ResponseAPI> createShippingOrder(HttpServletRequest request, @RequestBody @Valid CreateShippingOrderRequest body) {
-        CreateShippingOrderResponse resData = orderService.createShippingOrder(body, request);
+        CreateOrderResponse resData = orderService.createShippingOrder(body, request);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(resData)
@@ -54,7 +54,7 @@ public class OrderController {
     @PostMapping(path = POST_ORDER_CREATE_ONSITE_SUB_PATH)
     public ResponseEntity<ResponseAPI> createOnsiteOrder(HttpServletRequest request, @RequestBody @Valid CreateOnsiteOrderRequest body) {
 //        throw new CustomException("ádasd");
-        CreateShippingOrderResponse resData = orderService.createOnsiteOrder(body, request);
+        CreateOrderResponse resData = orderService.createOnsiteOrder(body, request);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(resData)

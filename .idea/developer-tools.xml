@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DeveloperToolsToolWindowSettingsV1" lastSelectedContentNodeId="text-format-converter">
+    <developerToolsConfigurations>
+      <developerToolConfiguration developerToolId="text-format-converter" id="1539034a-f276-4bc2-bf1f-2d7bf2d9d998" name="Workbench">
+        <properties>
+          <property key="sourceText" type="INPUT" value="kotlin.String|{&#10;&quot;asd&quot;:12&#10;}" />
+          <property key="secondLanguage" type="CONFIGURATION" value="dev.turingcomplete.intellijdevelopertoolsplugins._internal.tool.converter.CodeFormattingConverter$Language|JSON" />
+          <property key="targetText" type="INPUT" value="kotlin.String|{&#13;&#10;  &quot;asd&quot;:12&#13;&#10;}" />
+        </properties>
+      </developerToolConfiguration>
+      <developerToolConfiguration developerToolId="base64-encoder-decoder" id="5fce3eec-e380-438f-85a2-a65ebc5b9831" name="Workbench">
+        <properties>
+          <property key="liveConversion" type="CONFIGURATION" value="kotlin.Boolean|false" />
+          <property key="targetText" type="INPUT" value="kotlin.String|NDU1NDQ1NDU0" />
+        </properties>
+      </developerToolConfiguration>
+      <developerToolConfiguration developerToolId="json-text-escape" id="4b3d76fb-9db7-4093-8238-385c8f1b28b5" name="Workbench">
+        <properties>
+          <property key="sourceText" type="INPUT" value="kotlin.String|&#9;{&#10;&#9;&#9;$match: { $and: [ {status: 'RELEASE', {isDeleted: false} }]}&#10;&#9;},&#10;&#9;{&#10;&#9;&#9;$project: {&#10;&#9;&#9;&#9;_id: 1,&#10;&#9;&#9;&#9;description: 1&#10;&#9;&#9;}&#10;&#9;}" />
+          <property key="targetText" type="INPUT" value="kotlin.String|\t{\n\t\t$match: { $and: [ {status: 'RELEASE', {isDeleted: false} }]}\n\t},\n\t{\n\t\t$project: {\n\t\t\t_id: 1,\n\t\t\tdescription: 1\n\t\t}\n\t}" />
+        </properties>
+      </developerToolConfiguration>
+      <developerToolConfiguration developerToolId="html-entities-escape" id="3fdedf6d-ecec-4c76-bb3a-b6bca0b5692d" name="Workbench">
+        <properties>
+          <property key="sourceText" type="INPUT" value="kotlin.String|14123" />
+          <property key="targetText" type="INPUT" value="kotlin.String|14123" />
+        </properties>
+      </developerToolConfiguration>
+    </developerToolsConfigurations>
+    <expandedGroupNodeIds>
+      <expandedGroupNodeId value="text-escape" />
+      <expandedGroupNodeId value="cryptography" />
+      <expandedGroupNodeId value="formatting" />
+    </expandedGroupNodeIds>
+  </component>
+</project>

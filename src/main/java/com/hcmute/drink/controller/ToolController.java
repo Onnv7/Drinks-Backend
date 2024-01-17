@@ -9,7 +9,7 @@ import com.hcmute.drink.repository.elasticsearch.OrderSearchRepository;
 import com.hcmute.drink.repository.elasticsearch.ProductSearchRepository;
 import com.hcmute.drink.service.elasticsearch.OrderSearchService;
 import com.hcmute.drink.service.elasticsearch.ProductSearchService;
-import com.hcmute.drink.utils.ModelMapperUtils;
+import com.hcmute.drink.service.common.ModelMapperService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +33,12 @@ public class ToolController {
     private final ProductSearchService productSearchService;
     private final OrderSearchRepository orderSearchRepository;
     private final OrderRepository orderRepository;
-    private final ModelMapperUtils modelMapperUtils;
+    private final ModelMapperService modelMapperService;
 
     @GetMapping("/sync-product")
     public String addElasticSearch() {
         productSearchRepository.deleteAll();
-        List<ProductCollection> productList = productRepository.findAll();
+        List<ProductCollection> productList = productRepository.getAll();
         for (ProductCollection item : productList) {
             productSearchService.createProduct(item);
         }

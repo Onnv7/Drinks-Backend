@@ -22,5 +22,14 @@ public class ErrorConstant {
     public static final String INVALID_PASSWORD = "INVALID PASSWORD";
     public static final String REQUEST_BODY_INVALID = "Request body is invalid";
     public static final String TOPPING_PRICE_INVALID = "Topping's price is invalid";
-    public static final String SIZE_PRICE_INVALID = "Size's price is invalid";
+    public static final String SIZE_PRODUCT_INVALID = "Size's product is invalid";
+    public static final String CANT_DELETE = "Cant delete";
+    public static final String CONDITION_VALUE_INVALID = "Condition's value is invalid";
+    public static final String COUPON_INVALID = "Coupon's value is invalid";
+    public static final String COUPON_UNRELEASED = "Coupon is not released";
+    public static final String COUPON_IS_USED = "One coupon has been used";
+    public static final String COUPON_DUPLICATED = "Coupon duplicate";
+    public static final String COUPON_TYPE_INVALID = "Coupon type is not suitable for this discount";
+    public static final String TOTAL_ORDER_INVALID = "Total order is invalid";
+    public static final String COUPON_STATUS_UNRELEASED = "Actions cannot be performed on the coupon when it is in the UNRELEASED state";
 }

@@ -10,9 +10,9 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class UpdateOrderStatusRequest {
-    @Schema(example = ORDER_STATUS_EX, description = NOT_NULL_DES)
+    @Schema(example = ORDER_STATUS_EX)
     @NotNull
     private OrderStatus orderStatus;
-    @Schema(example = ORDER_STATUS_DES_EX, description = OPTIONAL_DES)
+    @Schema(example = ORDER_STATUS_DES_EX)
     private String description;
 }

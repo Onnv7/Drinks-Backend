@@ -10,25 +10,25 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 @Data
 @Builder
 public class RegisterUserRequest {
-    @Schema(example = EMAIL_EX, description = NOT_BLANK_DES)
+    @Schema(example = EMAIL_EX)
     @Email
     @NotBlank
     private String email;
 
-    @Schema(example = PASSWORD_EX, description = PASSWORD_DES)
+    @Schema(example = PASSWORD_EX)
     @NotBlank
     @Size(min = PASSWORD_LENGTH_MIN, max = PASSWORD_LENGTH_MAX)
     private String password;
 
-    @Schema(example = FIRST_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = FIRST_NAME_EX)
     @NotBlank
     private String firstName;
 
-    @Schema(example = LAST_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = LAST_NAME_EX)
     @NotBlank
     private String lastName;
 
-    @Schema(example = PHONE_NUMBER_EX, description = REGEX_DES)
+    @Schema(example = PHONE_NUMBER_EX)
     @NotBlank
     @Pattern(regexp = PHONE_NUMBER_REGEX)
     private String phoneNumber;

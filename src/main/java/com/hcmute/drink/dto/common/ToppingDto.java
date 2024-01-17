@@ -1,4 +1,4 @@
-package com.hcmute.drink.common;
+package com.hcmute.drink.dto.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -9,11 +9,11 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class ToppingDto {
-    @Schema(example = TOPPING_NAME_EX, description = NOT_BLANK_DES)
+    @Schema(example = TOPPING_NAME_EX)
     @NotBlank
     private String name;
 
-    @Schema(example = TOPPING_PRICE_EX, description = MIN_VALUE_DES + TOPPING_PRICE_MIN)
-    @Min(TOPPING_PRICE_MIN)
-    private double price;
+//    @Schema(example = TOPPING_PRICE_EX)
+//    @Min(TOPPING_PRICE_MIN)
+//    private Long price;
 }

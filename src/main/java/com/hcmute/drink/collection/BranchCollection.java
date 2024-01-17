@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -26,6 +27,8 @@ public class BranchCollection {
     public static final int LENGTH_NUMBER = 2;
     @Id
     private String id;
+
+    @Indexed(unique = true)
     private String code;
     private String province;
     private String district;

@@ -1,13 +1,12 @@
-package com.hcmute.drink.utils;
+package com.hcmute.drink.service.common;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.hcmute.drink.constant.CloudinaryConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ import static com.hcmute.drink.constant.CloudinaryConstant.*;
 
 @Component
 @RequiredArgsConstructor
-public class CloudinaryUtils {
+public class CloudinaryService {
     private final Cloudinary cloudinary;
 
     // TODO: co the xoas

@@ -1,10 +1,12 @@
 package com.hcmute.drink.exception;
 
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.ErrorResponse;
 import com.hcmute.drink.model.FieldError;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +18,16 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static com.hcmute.drink.constant.ErrorConstant.*;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ExceptionHandlerController {
     @Value("spring.profile.active")
@@ -44,22 +48,37 @@ public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         ex.printStackTrace();
-
-        ErrorResponse res = ErrorResponse.builder()
-                .message(ErrorConstant.REQUEST_BODY_INVALID)
-                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
-                .build();
-        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpStatus httpStatus =  HttpStatus.INTERNAL_SERVER_ERROR;
+        ErrorResponse res = new ErrorResponse();
+        if(ex instanceof  BadCredentialsException) {
+            res.setMessage(ex.getMessage());
+            httpStatus = HttpStatus.UNAUTHORIZED;
+        } else if(ex instanceof AccessDeniedException) {
+            res.setMessage(ex.getMessage());
+            httpStatus = HttpStatus.FORBIDDEN;
+        } else if(ex instanceof SignatureVerificationException) {
+            res.setMessage(ex.getMessage());
+            httpStatus = HttpStatus.FORBIDDEN;
+        } else if(ex instanceof ExpiredJwtException) {
+            res.setMessage(ex.getMessage());
+            httpStatus = HttpStatus.FORBIDDEN;
+        } else {
+            res = ErrorResponse.builder()
+                    .message(ex.getMessage())
+                    .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+                    .build();
+        }
+        return new ResponseEntity<>(res, httpStatus);
     }
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
-        ex.printStackTrace();
-        ErrorResponse res = ErrorResponse.builder()
-                .message(ex.getMessage())
-                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
-                .build();
-        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+//        ex.printStackTrace();
+//        ErrorResponse res = ErrorResponse.builder()
+//                .message(ex.getMessage())
+//                .stack(environment.equals(dev) ? Arrays.toString(ex.getStackTrace()) : null)
+//                .build();
+//        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {

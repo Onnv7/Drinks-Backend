@@ -8,12 +8,14 @@ import com.hcmute.drink.dto.request.UpdateEmployeeRequest;
 import com.hcmute.drink.dto.request.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.dto.response.GetAllEmployeeResponse;
 import com.hcmute.drink.dto.response.GetEmployeeByIdResponse;
-import com.hcmute.drink.dto.response.UpdateEmployeeResponse;
+import com.hcmute.drink.dto.response.UpdateEmployeeForAdminResponse;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.IEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,15 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_GET_ALL_SUM)
     @GetMapping(path = GET_EMPLOYEE_ALL_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllEmployees() {
-        List<GetAllEmployeeResponse> resData = employeeService.getAllEmployees();
+    public ResponseEntity<ResponseAPI> getAllEmployees(
+            @Parameter(name = "key", description = "Key is order's id, customer name or phone number", required = false, example = "65439a55e9818f43f8b8e02c")
+            @RequestParam(name = "key", required = false) String key,
+            @Parameter(name = "page", required = true, example = "1")
+            @RequestParam("page") @Min(value = 1, message = "Page must be greater than 0") int page,
+            @Parameter(name = "size", required = true, example = "10")
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size
+    ) {
+        List<GetAllEmployeeResponse> resData = employeeService.getAllOrSearchByKey(key, page, size);
 
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
@@ -75,8 +84,8 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_UPDATE_BY_ID_SUM)
     @PutMapping(path = PUT_EMPLOYEE_UPDATE_BY_ID_SUB_PATH)
-    public ResponseEntity<ResponseAPI> updateEmployeeById(@PathVariable(EMPLOYEE_ID) String id, @RequestBody @Valid UpdateEmployeeRequest body) {
-        UpdateEmployeeResponse resData = employeeService.updateEmployee(body, id);
+    public ResponseEntity<ResponseAPI> updateEmployeeForAdmin(@PathVariable(EMPLOYEE_ID) String id, @RequestBody @Valid UpdateEmployeeRequest body) {
+        UpdateEmployeeForAdminResponse resData = employeeService.updateEmployeeForAdmin(body, id);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(resData)

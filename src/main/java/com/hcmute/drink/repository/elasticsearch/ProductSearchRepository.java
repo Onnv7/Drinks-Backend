@@ -1,6 +1,5 @@
 package com.hcmute.drink.repository.elasticsearch;
 
-import com.hcmute.drink.dto.response.GetAllProductsResponse;
 import com.hcmute.drink.model.elasticsearch.ProductIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,13 +28,13 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
     @Query("""
             {
                 "bool": {
-                  "should": [
-                    { "match": { "name": "?0" }},
-                    { "match": { "description": "?0" }},
-                    { "match": { "code": "?0" }}
-                  ]
+                   "must": [
+                        { "multi_match": { "query": "?0", "fields": ["name", "description", "code"] }},
+                        { "regexp": { "categoryId": "?1" } },
+                        { "regexp": { "status": "?2" } }
+                   ]
                 }
             }
             """)
-    Page<ProductIndex> searchProduct(String key, Pageable page);
+    Page<ProductIndex> searchProduct(String key, String categoryIdRegex, String productStatusRegex, Pageable page);
 }
