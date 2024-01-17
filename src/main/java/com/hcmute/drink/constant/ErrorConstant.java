@@ -27,6 +27,7 @@ public class ErrorConstant {
     public static final String CONDITION_VALUE_INVALID = "Condition's value is invalid";
     public static final String COUPON_INVALID = "Coupon's value is invalid";
     public static final String COUPON_UNRELEASED = "Coupon is not released";
+    public static final String COUPON_OUT_OF_QUANTITY = "Coupon is out of quantity";
     public static final String COUPON_IS_USED = "One coupon has been used";
     public static final String COUPON_DUPLICATED = "Coupon duplicate";
     public static final String COUPON_TYPE_INVALID = "Coupon type is not suitable for this discount";

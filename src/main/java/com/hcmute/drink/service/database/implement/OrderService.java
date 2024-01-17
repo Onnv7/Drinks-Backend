@@ -107,10 +107,8 @@ public class OrderService implements IOrderService {
                 if(couponUsedList.contains(productDto.getCouponProductCode())) {
                     throw new CustomException(ErrorConstant.COUPON_DUPLICATED);
                 }
-                CouponCollection couponCollection = couponService.getByCode(productDto.getCouponProductCode());
-                if(couponCollection.getStatus() != CouponStatus.RELEASED) {
-                    throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
-                }
+                CouponCollection couponCollection = couponService.getAndCheckValidCoupon(productDto.getCouponProductCode());
+
                 if ((isMultiple != null && !isMultiple)
                         || (Boolean.TRUE.equals(isMultiple) && !couponCollection.isCanMultiple())
                         || couponCollection.getCouponType() == CouponType.ORDER
@@ -228,29 +226,29 @@ public class OrderService implements IOrderService {
         List<?> couponUsedList = (List<?>) resultCalculate.get("couponUsedList");
 
 
-        if (isMultiple != null && (!isMultiple && (body.getShippingCouponCode() != null || body.getOrderCouponCode() != null))) {
+        if (isMultiple != null && !isMultiple && (body.getShippingCouponCode() != null || body.getOrderCouponCode() != null)) {
             throw new CustomException(ErrorConstant.COUPON_INVALID);
         }
         if (body.getOrderCouponCode() != null) {
-            CouponCollection coupon = couponService.getByCode(body.getOrderCouponCode());
+            CouponCollection coupon = couponService.getAndCheckValidCoupon(body.getOrderCouponCode());
             if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.ORDER) {
                 throw new CustomException(ErrorConstant.COUPON_INVALID);
-            }
-            if(coupon.getStatus() != CouponStatus.RELEASED) {
-                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+            } else if(isMultiple == null) {
+                isMultiple = coupon.isCanMultiple();
             }
             MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
             long moneyDiscount = ((Number) discount.getValue()).longValue();
             totalPrice -= moneyDiscount;
             data.setOrderDiscount(moneyDiscount);
         }
+        // tới đây chỉ có tể là isMultiple true  hoặc null hoặc false vì có tể vào order coupon ở trên
+        if(isMultiple != null  && !isMultiple && body.getOrderCouponCode() != null) {
+            throw new CustomException(ErrorConstant.COUPON_INVALID);
+        }
         if (body.getShippingCouponCode() != null) {
-            CouponCollection coupon = couponService.getByCode(body.getShippingCouponCode());
+            CouponCollection coupon = couponService.getAndCheckValidCoupon(body.getShippingCouponCode());
             if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.SHIPPING) {
                 throw new CustomException(ErrorConstant.COUPON_INVALID);
-            }
-            if(coupon.getStatus() != CouponStatus.RELEASED) {
-                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
             }
             MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
             long moneyDiscount = 0;
@@ -324,12 +322,9 @@ public class OrderService implements IOrderService {
             throw new CustomException(ErrorConstant.COUPON_INVALID);
         }
         if (body.getOrderCouponCode() != null) {
-            CouponCollection coupon = couponService.getByCode(body.getOrderCouponCode());
+            CouponCollection coupon = couponService.getAndCheckValidCoupon(body.getOrderCouponCode());
             if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.ORDER) {
                 throw new CustomException(ErrorConstant.COUPON_INVALID);
-            }
-            if(coupon.getStatus() != CouponStatus.RELEASED) {
-                throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
             }
             MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
             long moneyDiscount = ((Number) discount.getValue()).longValue();

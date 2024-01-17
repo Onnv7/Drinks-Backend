@@ -33,7 +33,11 @@ public class CreateBuyGetCouponRequest {
     private List<CouponConditionDto> conditionList;
 
     @Schema(example = BOOLEAN_EX)
+    @NotNull
     private boolean canMultiple;
+
+    @Schema(example = COUPON_QUANTITY_EX)
+    private Integer quantity;
 
     @Schema(example = DATE_ISO_EX)
     @NotNull

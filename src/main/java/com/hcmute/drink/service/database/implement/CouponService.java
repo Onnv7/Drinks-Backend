@@ -60,6 +60,15 @@ public class CouponService implements ICouponService {
     public CouponCollection getByCode(String couponCode) {
         return couponRepository.getByCode(couponCode).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + couponCode));
     }
+    public CouponCollection getAndCheckValidCoupon(String couponCode) {
+        CouponCollection coupon = couponRepository.getByCode(couponCode).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + couponCode));
+        if(coupon.getStatus() != CouponStatus.RELEASED) {
+            throw new CustomException(ErrorConstant.COUPON_UNRELEASED);
+        } else if(coupon.getQuantity() != null && coupon.getQuantity() > 0) {
+            throw new CustomException(ErrorConstant.COUPON_OUT_OF_QUANTITY);
+        }
+        return coupon;
+    }
 
 
     public MoneyDiscountEmbedded checkMoneyCouponOrderBill(CouponCollection coupon, Long total) {

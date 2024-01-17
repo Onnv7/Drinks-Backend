@@ -171,6 +171,7 @@ public class SwaggerConstant {
     public static final String ORDER_STATUS_EX = "CREATED";
     public static final String ORDER_STATUS_DES_EX = "Order is created";
     public static final String PRODUCT_QUANTITY_EX = "3";
+    public static final String COUPON_QUANTITY_EX = "3";
     public static final String PRODUCT_NOTE_EX = "This is note";
     public static final String INVOICE_NOTE_EX = "23654128";
     public static final String TOTAL_PAID_EX = "10234";
