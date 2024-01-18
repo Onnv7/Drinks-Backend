@@ -11,6 +11,7 @@ import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.UserRepository;
 import com.hcmute.drink.service.database.IUserService;
 import com.hcmute.drink.service.common.ModelMapperService;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -57,6 +58,7 @@ public class UserService implements IUserService {
 
     @Override
     public GetUserByIdResponse getUserProfileById(String userId) {
+        SecurityUtils.checkUserId(userId);
         GetUserByIdResponse user = userRepository.getUserProfileById(userId);
         if (user == null) {
             throw new CustomException(ErrorConstant.USER_NOT_FOUND);
@@ -66,7 +68,7 @@ public class UserService implements IUserService {
 
     @Override
     public void changePasswordProfile(String userId, UpdatePasswordRequest data) {
-
+        SecurityUtils.checkUserId(userId);
         UserCollection user = getById(userId);
 
         boolean isValid = passwordEncoder.matches(data.getOldPassword(), user.getPassword());
@@ -87,6 +89,7 @@ public class UserService implements IUserService {
 
     @Override
     public UpdateUserResponse updateUserProfile(String userId, UpdateUserRequest body) {
+        SecurityUtils.checkUserId(userId);
         UserCollection data = modelMapperService.mapClass(body, UserCollection.class);
         UserCollection user = getById(userId);
         modelMapperService.map(data, user);

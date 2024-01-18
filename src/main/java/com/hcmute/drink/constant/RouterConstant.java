@@ -43,16 +43,16 @@ public class RouterConstant {
     public static final String BRANCH_ID = "branchId";
 
     // ENDPOINT URL USER =================================================================
-    public static final String USER_UPDATE_BY_ID_SUB_PATH = USER_ID_PATH;
-    public static final String USER_UPDATE_BY_ID_PATH = USER_BASE_PATH + USER_UPDATE_BY_ID_SUB_PATH;
-    public static final String USER_CHANGE_PASSWORD_SUB_PATH = USER_ID_PATH + "/change-password";
-    public static final String USER_CHANGE_PASSWORD_PATH = USER_BASE_PATH + USER_CHANGE_PASSWORD_SUB_PATH;
-    public static final String USER_GET_BY_ID_SUB_PATH = USER_ID_PATH + "/view";
-    public static final String USER_GET_BY_ID_PATH = USER_BASE_PATH + USER_GET_BY_ID_SUB_PATH;
-    public static final String USER_GET_ALL_SUB_PATH = "";
-    public static final String USER_GET_ALL_PATH = USER_BASE_PATH + USER_GET_ALL_SUB_PATH;
-    public static final String USER_CHECK_EXISTED_SUB_PATH = "/registered";
-    public static final String USER_CHECK_EXISTED_PATH = USER_BASE_PATH + USER_CHECK_EXISTED_SUB_PATH;
+    public static final String PUT_USER_UPDATE_BY_ID_SUB_PATH = USER_ID_PATH;
+    public static final String PUT_USER_UPDATE_BY_ID_PATH = USER_BASE_PATH + PUT_USER_UPDATE_BY_ID_SUB_PATH;
+    public static final String PATCH_USER_CHANGE_PASSWORD_SUB_PATH = USER_ID_PATH + "/change-password";
+    public static final String PATCH_USER_CHANGE_PASSWORD_PATH = USER_BASE_PATH + PATCH_USER_CHANGE_PASSWORD_SUB_PATH;
+    public static final String GET_USER_BY_ID_SUB_PATH = USER_ID_PATH + "/view";
+    public static final String GET_USER_BY_ID_PATH = USER_BASE_PATH + GET_USER_BY_ID_SUB_PATH;
+    public static final String GET_USER_ALL_SUB_PATH = "";
+    public static final String GET_USER_ALL_PATH = USER_BASE_PATH + GET_USER_ALL_SUB_PATH;
+    public static final String GET_USER_CHECK_EXISTED_SUB_PATH = "/registered";
+    public static final String GET_USER_CHECK_EXISTED_PATH = USER_BASE_PATH + GET_USER_CHECK_EXISTED_SUB_PATH;
 
     // ENDPOINT URL ADDRESS =================================================================
     public static final String POST_ADDRESS_CREATE_SUB_PATH = "/user" + USER_ID_PATH;
@@ -206,16 +206,22 @@ public class RouterConstant {
 
     // ENDPOINT URL COUPON =================================================================
     public static final String POST_COUPON_CREATE_SUB_PATH = "/{couponType}";
-    public static final String POST_COUPON_CREATE_PATH = BANNER_BASE_PATH + POST_COUPON_CREATE_SUB_PATH;
-    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH = "/buy-get";
-    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_PATH = BANNER_BASE_PATH + POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH;
-    public static final String PUT_COUPON_UPDATE_BY_ID_SUB_PATH = COUPON_ID_PATH;
-    public static final String PUT_COUPON_UPDATE_BY_ID_PATH = BANNER_BASE_PATH + PUT_COUPON_UPDATE_BY_ID_SUB_PATH;
+    public static final String POST_COUPON_CREATE_PATH = COUPON_BASE_PATH + POST_COUPON_CREATE_SUB_PATH;
+    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH = "/product-gift";
+    public static final String POST_COUPON_CREATE_BUY_GET_TYPE_PATH = COUPON_BASE_PATH + POST_COUPON_CREATE_BUY_GET_TYPE_SUB_PATH;
+    public static final String PUT_COUPON_UPDATE_MONEY_BY_ID_SUB_PATH = COUPON_ID_PATH + "/{couponType}";
+    public static final String PUT_COUPON_UPDATE_MONEY_BY_ID_PATH = COUPON_BASE_PATH + PUT_COUPON_UPDATE_MONEY_BY_ID_SUB_PATH;
+    public static final String PUT_COUPON_UPDATE_PRODUCT_GIFT_BY_ID_SUB_PATH = COUPON_ID_PATH + "/product-gift";
+    public static final String PUT_COUPON_UPDATE_PRODUCT_GIFT_BY_ID_PATH = COUPON_BASE_PATH + PUT_COUPON_UPDATE_PRODUCT_GIFT_BY_ID_SUB_PATH;
     public static final String DELETE_COUPON_BY_ID_SUB_PATH = COUPON_ID_PATH;
-    public static final String DELETE_COUPON_BY_ID_PATH = BANNER_BASE_PATH + DELETE_COUPON_BY_ID_SUB_PATH;
+    public static final String DELETE_COUPON_BY_ID_PATH = COUPON_BASE_PATH + DELETE_COUPON_BY_ID_SUB_PATH;
     public static final String GET_COUPON_RELEASE_LIST_SUB_PATH = "/status/release";
-    public static final String GET_COUPON_RELEASE_LIST_PATH = BANNER_BASE_PATH + GET_COUPON_RELEASE_LIST_SUB_PATH;
+    public static final String GET_COUPON_RELEASE_LIST_PATH = COUPON_BASE_PATH + GET_COUPON_RELEASE_LIST_SUB_PATH;
     public static final String GET_COUPON_RELEASE_BY_ID_SUB_PATH = COUPON_ID_PATH + "/release";
-    public static final String GET_COUPON_RELEASE_BY_ID_PATH = BANNER_BASE_PATH + GET_COUPON_RELEASE_BY_ID_SUB_PATH;
+    public static final String GET_COUPON_RELEASE_BY_ID_PATH = COUPON_BASE_PATH + GET_COUPON_RELEASE_BY_ID_SUB_PATH;
+    public static final String GET_COUPON_LIST_SUB_PATH =  "";
+    public static final String GET_COUPON_LIST_PATH = COUPON_BASE_PATH + GET_COUPON_LIST_SUB_PATH;
+    public static final String GET_COUPON_BY_ID_SUB_PATH =  COUPON_ID_PATH + "/details";
+    public static final String GET_COUPON_BY_ID_PATH = COUPON_BASE_PATH + GET_COUPON_BY_ID_SUB_PATH;
 
 }

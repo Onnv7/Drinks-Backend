@@ -120,11 +120,15 @@ public class SwaggerConstant {
 
     // For banner =================================================================
     public static final String COUPON_CONTROLLER_TITLE = "COUPON MANAGEMENT";
-    public static final String COUPON_CREATE_SUM = "Create a new coupon";
-    public static final String COUPON_UPDATE_BY_ID_SUM = "Update a coupon by id";
+    public static final String COUPON_CREATE_MONEY_DISCOUNT_SUM = "Create a new coupon to get money discount";
+    public static final String COUPON_CREATE_BUY_GET_PRODUCT_GIFT_SUM = "Create a new coupon to buy a product and get free products";
+    public static final String COUPON_UPDATE_MONEY_BY_ID_SUM = "Update a money coupon by id";
+    public static final String COUPON_UPDATE_PRODUCT_GIFT_BY_ID_SUM = "Update a product gift coupon by id";
     public static final String COUPON_DELETE_BY_ID_SUM = "Delete a coupon by id";
     public static final String COUPON_GET_RELEASE_LIST_SUM = "Get release coupon list";
     public static final String COUPON_GET_RELEASE_BY_ID_SUM = "Get a release coupon by id";
+    public static final String COUPON_GET_LIST_SUM = "Get coupon list";
+    public static final String COUPON_GET_BY_ID_SUM = "Get coupon's details by id";
 
 
     // For schema properties =====================================================

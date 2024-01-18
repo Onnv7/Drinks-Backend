@@ -211,6 +211,7 @@ public class OrderService implements IOrderService {
     @Override
     @Transactional
     public CreateOrderResponse createShippingOrder(CreateShippingOrderRequest body, HttpServletRequest request) {
+        SecurityUtils.checkUserId(body.getUserId());
         long totalPrice = 0L;
         String userId = SecurityUtils.getCurrentUserId();
         OrderCollection data = modelMapperService.mapClass(body, OrderCollection.class);
@@ -303,6 +304,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public CreateOrderResponse createOnsiteOrder(CreateOnsiteOrderRequest body, HttpServletRequest request) {
+        SecurityUtils.checkUserId(body.getUserId());
         long totalPrice = 0;
         String userId = SecurityUtils.getCurrentUserId();
 
@@ -424,6 +426,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public List<GetAllOrderHistoryByUserIdResponse> getOrdersHistoryByUserId(String userId, OrderStatus orderStatus, int page, int size) {
+        SecurityUtils.checkUserId(userId);
         int skip = (page - 1) * size;
         int limit = size;
         List<GetAllOrderHistoryByUserIdResponse> order = orderRepository.getOrdersHistoryByUserIdAndOrderStatus(new ObjectId(userId), orderStatus, skip, limit);

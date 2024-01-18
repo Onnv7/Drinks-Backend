@@ -33,4 +33,7 @@ public class ErrorConstant {
     public static final String COUPON_TYPE_INVALID = "Coupon type is not suitable for this discount";
     public static final String TOTAL_ORDER_INVALID = "Total order is invalid";
     public static final String COUPON_STATUS_UNRELEASED = "Actions cannot be performed on the coupon when it is in the UNRELEASED state";
+    public static final String USER_ID_INVALID = "User ID is invalid";
+    public static final String COUPON_NOT_RIGHT_TYPE = "Coupon is not the right type";
+    public static final String PRINCIPAL_INVALID = "Principle is invalid";
 }

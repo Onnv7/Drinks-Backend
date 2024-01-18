@@ -4,6 +4,7 @@ import com.hcmute.drink.dto.common.OrderItemDto;
 import com.hcmute.drink.enums.PaymentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,9 +15,9 @@ import static com.hcmute.drink.constant.SwaggerConstant.*;
 
 @Data
 public class CreateShippingOrderRequest {
-//    @Schema(example = OBJECT_ID_EX)
-//    @NotNull
-//    private ObjectId userId;
+    @Schema(example = OBJECT_ID_EX)
+    @NotBlank
+    private String userId;
 
     @Schema(description = NOT_EMPTY_DES)
     @NotEmpty

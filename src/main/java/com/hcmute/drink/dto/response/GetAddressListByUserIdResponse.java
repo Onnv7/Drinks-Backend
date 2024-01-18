@@ -3,7 +3,7 @@ package com.hcmute.drink.dto.response;
 import lombok.Data;
 
 @Data
-public class GetAddressByUserIdResponse {
+public class GetAddressListByUserIdResponse {
     private String id;
     private String details;
     private String recipientName;

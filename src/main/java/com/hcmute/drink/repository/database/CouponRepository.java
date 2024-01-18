@@ -1,6 +1,8 @@
 package com.hcmute.drink.repository.database;
 
 import com.hcmute.drink.collection.CouponCollection;
+import com.hcmute.drink.dto.response.GetCouponDetailsByIdResponse;
+import com.hcmute.drink.dto.response.GetCouponListResponse;
 import com.hcmute.drink.dto.response.GetReleaseCouponByIdResponse;
 import com.hcmute.drink.dto.response.GetReleaseCouponListResponse;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -35,4 +37,15 @@ public interface CouponRepository extends MongoRepository<CouponCollection, Stri
             "{$group: {_id: '$_id', conditionList: {$push: '$conditionList.description'}, code: {$first: '$code'}, description: {$first: '$description'}, startDate: {$first: '$startDate'}, expirationDate: {$first: '$expirationDate'}}}"
     })
     List<GetReleaseCouponByIdResponse> getReleaseCouponById(String couponId);
+
+    @Aggregation(pipeline = {
+            "{$match: {isDeleted: false}}",
+            "{$addFields: {isExpired: {$cond: {if: {$lt: ['$expirationDate', new Date()]}, then: true, else: false}}}}"
+    })
+    List<GetCouponListResponse> getCouponList();
+
+    @Aggregation(pipeline = {
+            "{$match: { $and: [{ _id: ?0 }, { isDeleted: false }]}}",
+    })
+    GetCouponDetailsByIdResponse getCouponById(String couponId);
 }

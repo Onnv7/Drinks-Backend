@@ -4,7 +4,7 @@ import com.hcmute.drink.constant.StatusCode;
 import com.hcmute.drink.constant.SuccessConstant;
 import com.hcmute.drink.dto.request.CreateAddressRequest;
 import com.hcmute.drink.dto.request.UpdateAddressRequest;
-import com.hcmute.drink.dto.response.GetAddressByUserIdResponse;
+import com.hcmute.drink.dto.response.GetAddressListByUserIdResponse;
 import com.hcmute.drink.dto.response.GetAddressDetailsByIdResponse;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.IAddressService;
@@ -74,7 +74,7 @@ public class AddressController {
     @GetMapping(path = GET_ADDRESS_BY_USER_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAddressByUserId(@PathVariable(USER_ID) String userId) {
 
-        List<GetAddressByUserIdResponse> resData = addressService.getAddressByUserId(userId);
+        List<GetAddressListByUserIdResponse> resData = addressService.getAddressListByUserId(userId);
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())
                 .data(resData)

@@ -4,9 +4,13 @@ import com.hcmute.drink.collection.CouponCollection;
 import com.hcmute.drink.collection.ProductCollection;
 import com.hcmute.drink.collection.embedded.*;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.common.ProductGiftDto;
 import com.hcmute.drink.dto.request.CreateBuyGetCouponRequest;
 import com.hcmute.drink.dto.request.CreateCouponRequest;
-import com.hcmute.drink.dto.request.UpdateCouponRequest;
+import com.hcmute.drink.dto.request.UpdateMoneyCouponRequest;
+import com.hcmute.drink.dto.request.UpdateProductGiftCouponRequest;
+import com.hcmute.drink.dto.response.GetCouponDetailsByIdResponse;
+import com.hcmute.drink.dto.response.GetCouponListResponse;
 import com.hcmute.drink.dto.response.GetReleaseCouponByIdResponse;
 import com.hcmute.drink.dto.response.GetReleaseCouponListResponse;
 import com.hcmute.drink.enums.*;
@@ -57,9 +61,6 @@ public class CouponService implements ICouponService {
         return couponRepository.getById(id).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
 
-    public CouponCollection getByCode(String couponCode) {
-        return couponRepository.getByCode(couponCode).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + couponCode));
-    }
     public CouponCollection getAndCheckValidCoupon(String couponCode) {
         CouponCollection coupon = couponRepository.getByCode(couponCode).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + couponCode));
         if(coupon.getStatus() != CouponStatus.RELEASED) {
@@ -166,12 +167,33 @@ public class CouponService implements ICouponService {
     }
 
     @Override
-    public void updateCoupon(UpdateCouponRequest body, String couponId) {
+    public void updateMoneyCoupon(UpdateMoneyCouponRequest body, String couponId, CouponType couponType) {
         CouponCollection couponCollection = getById(couponId);
+        if(couponType == CouponType.BUY_PRODUCT_GET_PRODUCT || couponType != couponCollection.getCouponType()) {
+            throw new CustomException(ErrorConstant.COUPON_NOT_RIGHT_TYPE);
+        }
         if(couponCollection.getStatus() == CouponStatus.UNRELEASED) {
             throw new CustomException(ErrorConstant.COUPON_STATUS_UNRELEASED);
         }
+
         modelMapperService.map(body, couponCollection);
+
+        setConditionList(couponCollection.getConditionList());
+        couponRepository.save(couponCollection);
+    }
+
+    @Override
+    public void updateProductGiftCoupon(UpdateProductGiftCouponRequest body, String couponId, CouponType couponType) {
+        CouponCollection couponCollection = getById(couponId);
+        if(couponType != CouponType.BUY_PRODUCT_GET_PRODUCT || couponType != couponCollection.getCouponType()) {
+            throw new CustomException(ErrorConstant.COUPON_NOT_RIGHT_TYPE);
+        }
+        if(couponCollection.getStatus() == CouponStatus.UNRELEASED) {
+            throw new CustomException(ErrorConstant.COUPON_STATUS_UNRELEASED);
+        }
+
+        modelMapperService.map(body, couponCollection);
+
         setConditionList(couponCollection.getConditionList());
         couponRepository.save(couponCollection);
     }
@@ -196,5 +218,19 @@ public class CouponService implements ICouponService {
         return couponRepository.getReleaseCouponById(couponId);
     }
 
+    @Override
+    public List<GetCouponListResponse> getCouponList() {
+        return couponRepository.getCouponList();
+    }
 
+    @Override
+    public GetCouponDetailsByIdResponse getCouponById(String couponId) {
+        GetCouponDetailsByIdResponse couponDetails = couponRepository.getCouponById(couponId);
+        couponDetails.getConditionList().forEach(condition -> {
+            if(condition.getValue() instanceof ObjectId) {
+                condition.setValue(condition.getValue().toString());
+            }
+        });
+        return couponDetails;
+    }
 }

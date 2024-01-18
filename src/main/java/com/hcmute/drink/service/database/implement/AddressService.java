@@ -2,12 +2,14 @@ package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.AddressCollection;
 import com.hcmute.drink.constant.ErrorConstant;
+import com.hcmute.drink.dto.database.GetUserIdFromAddressDto;
 import com.hcmute.drink.dto.request.*;
 import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.AddressRepository;
 import com.hcmute.drink.service.database.IAddressService;
 import com.hcmute.drink.service.common.ModelMapperService;
+import com.hcmute.drink.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
@@ -27,28 +29,28 @@ public class AddressService implements IAddressService {
     public AddressCollection getAddressById(String id) {
         return addressRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND + id));
     }
+    private void checkUserIdFromAddressId(String addressId) {
+        GetUserIdFromAddressDto user = addressRepository.getUserIdFromAddressId(addressId).orElseThrow(() -> new CustomException(NOT_FOUND + " user of address"));
+        SecurityUtils.checkUserId(user.getUserId());
+    }
     @Override
     public AddressCollection createAddressToUser(CreateAddressRequest body, String userId)  {
+        SecurityUtils.checkUserId(userId);
         AddressCollection data = modelMapperService.mapClass(body, AddressCollection.class);
-        List<GetAddressByUserIdResponse> addresses = addressRepository.getAddressByUserId(new ObjectId(userId));
+        data.setUserId(new ObjectId(userId));
+        List<GetAddressListByUserIdResponse> addresses = addressRepository.getAddressListByUserId(new ObjectId(userId));
         if(addresses.size() >= 5) {
             throw new CustomException(ErrorConstant.OVER_FIVE_ADDRESS);
         }
-        if (addresses.size() == 0) {
-            data.setDefault(true);
-        } else {
-            data.setDefault(false);
-        }
+        data.setDefault(addresses.isEmpty());
         return addressRepository.save(data);
     }
 
     @Override
     public void updateAddressById(UpdateAddressRequest body, String addressId) {
         AddressCollection data = modelMapperService.mapClass(body, AddressCollection.class);
-        AddressCollection address = addressRepository.findById(addressId).orElse(null);
-        if (address == null) {
-            throw new CustomException(NOT_FOUND + addressId);
-        }
+        AddressCollection address = getAddressById(addressId);
+        checkUserIdFromAddressId(addressId);
         if (data.isDefault()){
             ObjectId userId = address.getUserId();
             List<AddressCollection> addresses = addressRepository.findByUserId(userId);
@@ -65,17 +67,23 @@ public class AddressService implements IAddressService {
 
     @Override
     public void deleteAddressById(String addressId)  {
-        addressRepository.deleteById(addressId);
+        if(addressRepository.existsById(addressId)) {
+            checkUserIdFromAddressId(addressId);
+            addressRepository.deleteById(addressId);
+            return;
+        }
+        throw new CustomException(NOT_FOUND + addressId);
     }
 
 
     @Override
-    public List<GetAddressByUserIdResponse> getAddressByUserId(String userId)  {
+    public List<GetAddressListByUserIdResponse> getAddressListByUserId(String userId)  {
+        SecurityUtils.checkUserId(userId);
 
-        List<GetAddressByUserIdResponse> list = addressRepository.getAddressByUserId(new ObjectId(userId));
-        Collections.sort(list, new Comparator<GetAddressByUserIdResponse>() {
+        List<GetAddressListByUserIdResponse> list = addressRepository.getAddressListByUserId(new ObjectId(userId));
+        Collections.sort(list, new Comparator<GetAddressListByUserIdResponse>() {
             @Override
-            public int compare(GetAddressByUserIdResponse address1, GetAddressByUserIdResponse address2) {
+            public int compare(GetAddressListByUserIdResponse address1, GetAddressListByUserIdResponse address2) {
                 if (address1.isDefault() && !address2.isDefault()) {
                     return -1;
                 } else if (!address1.isDefault() && address2.isDefault()) {
@@ -89,8 +97,12 @@ public class AddressService implements IAddressService {
     }
 
     @Override
-    public GetAddressDetailsByIdResponse getAddressDetailsById(String id)  {
-        return addressRepository.getAddressDetailsById(id);
+    public GetAddressDetailsByIdResponse getAddressDetailsById(String addressId)  {
+        if(addressRepository.existsById(addressId)) {
+            checkUserIdFromAddressId(addressId);
+            return addressRepository.getAddressDetailsById(addressId);
+        }
+        throw new CustomException(NOT_FOUND + addressId);
     }
 
 }

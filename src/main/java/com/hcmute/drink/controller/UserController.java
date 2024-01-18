@@ -10,12 +10,10 @@ import com.hcmute.drink.dto.response.GetUserByIdResponse;
 import com.hcmute.drink.dto.response.UpdateUserResponse;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.implement.UserService;
-import com.hcmute.drink.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +31,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = USER_GET_ALL_SUM)
-    @GetMapping(path = USER_GET_ALL_SUB_PATH)
+    @GetMapping(path = GET_USER_ALL_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllUser() {
         List<GetAllUserResponse> resData = userService.getAllUsers();
 
@@ -46,7 +44,7 @@ public class UserController {
     }
 
     @Operation(summary = USER_GET_BY_ID_SUM)
-    @GetMapping(path = USER_GET_BY_ID_SUB_PATH)
+    @GetMapping(path = GET_USER_BY_ID_SUB_PATH)
     public ResponseEntity<ResponseAPI> getUserProfileById(@PathVariable(USER_ID) String userId) {
         GetUserByIdResponse resData = userService.getUserProfileById(userId);
 
@@ -58,7 +56,7 @@ public class UserController {
     }
 
     @Operation(summary = USER_CHANGE_PWD_SUM)
-    @PatchMapping(path = USER_CHANGE_PASSWORD_SUB_PATH)
+    @PatchMapping(path = PATCH_USER_CHANGE_PASSWORD_SUB_PATH)
     public ResponseEntity<ResponseAPI> changePasswordProfile(
             @PathVariable(USER_ID) String userId,
             @RequestBody @Valid UpdatePasswordRequest body
@@ -73,7 +71,7 @@ public class UserController {
     }
 
     @Operation(summary = USER_UPDATE_BY_ID_SUM)
-    @PutMapping(path = USER_UPDATE_BY_ID_SUB_PATH)
+    @PutMapping(path = PUT_USER_UPDATE_BY_ID_PATH)
     public ResponseEntity<ResponseAPI> updateUserProfile(
             @PathVariable(USER_ID) String userId,
             @RequestBody @Valid UpdateUserRequest body
@@ -90,7 +88,7 @@ public class UserController {
     }
 
     @Operation(summary = USER_CHECK_EXISTED_BY_EMAIL_SUM)
-    @GetMapping(path = USER_CHECK_EXISTED_SUB_PATH)
+    @GetMapping(path = GET_USER_CHECK_EXISTED_SUB_PATH)
     public ResponseEntity<ResponseAPI> checkExistedUserByEmail(@RequestParam("email") String email) {
         String result = userService.checkExistedUserByEmail(email);
         ResponseAPI res = ResponseAPI.builder()
