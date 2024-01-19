@@ -9,6 +9,7 @@ import com.hcmute.drink.dto.request.UpdatePasswordEmployeeRequest;
 import com.hcmute.drink.dto.response.GetAllEmployeeResponse;
 import com.hcmute.drink.dto.response.GetEmployeeByIdResponse;
 import com.hcmute.drink.dto.response.UpdateEmployeeForAdminResponse;
+import com.hcmute.drink.enums.EmployeeStatus;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.IEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,15 +36,17 @@ public class EmployeeController {
 
     @Operation(summary = EMPLOYEE_GET_ALL_SUM)
     @GetMapping(path = GET_EMPLOYEE_ALL_SUB_PATH)
-    public ResponseEntity<ResponseAPI> getAllEmployees(
-            @Parameter(name = "key", description = "Key is order's id, customer name or phone number", required = false, example = "65439a55e9818f43f8b8e02c")
+    public ResponseEntity<ResponseAPI> getEmployeeList(
+            @Parameter(name = "key", description = "Key is employee's code, username", required = false, example = "nav611")
             @RequestParam(name = "key", required = false) String key,
             @Parameter(name = "page", required = true, example = "1")
             @RequestParam("page") @Min(value = 1, message = "Page must be greater than 0") int page,
             @Parameter(name = "size", required = true, example = "10")
-            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size
+            @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size,
+            @Parameter(name = "status")
+            @RequestParam(name = "status", required = false) EmployeeStatus status
     ) {
-        List<GetAllEmployeeResponse> resData = employeeService.getAllOrSearchByKey(key, page, size);
+        List<GetAllEmployeeResponse> resData = employeeService.getEmployeeList(key, page, size, status);
 
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())

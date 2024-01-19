@@ -55,12 +55,13 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$itemList'}",
             "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productInfo'}}",
             "{$unwind: '$itemList.productInfo'}",
-            "{$group: {_id: '$_id', userId: {$first: '$userId'}, code: {$first: 'code'}, shippingDiscount: {$first: '$shippingDiscount'}, orderDiscount: {$first: '$orderDiscount'}, receiveTime: {$first: '$receiveTime'}, note: {$first: '$note'}, review: {$first: '$review'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventList: {$first: '$eventList'}, transactionId: {$first: '$transactionId'}, recipientInfo: {$first: '$recipientInfo'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, itemList: {$push: {productGift: '$itemList.productGift', moneyDiscount: '$itemList.moneyDiscount', quantity: '$itemList.quantity', discount: '$itemList.discount', size: '$itemList.size', toppings: '$itemList.toppings', price: '$itemList.price', note: '$itemList.note', name: '$itemList.productInfo.name', _id: '$itemList.productInfo._id'}}}}",
+            "{$group: {_id: '$_id', userId: {$first: '$userId'}, code: {$first: 'code'}, shippingFee: {$first: '$shippingFee'}, shippingDiscount: {$first: '$shippingDiscount'}, orderDiscount: {$first: '$orderDiscount'}, receiveTime: {$first: '$receiveTime'}, note: {$first: '$note'}, branch: {$first: '$branch'}, review: {$first: '$review'}, total: {$first: '$total'}, orderType: {$first: '$orderType'}, eventList: {$first: '$eventList'}, transactionId: {$first: '$transactionId'}, recipientInfo: {$first: '$recipientInfo'}, createdAt: {$first: '$createdAt'}, updatedAt: {$first: '$updatedAt'}, itemList: {$push: {productGift: '$itemList.productGift', moneyDiscount: '$itemList.moneyDiscount', quantity: '$itemList.quantity', discount: '$itemList.discount', size: '$itemList.size', toppings: '$itemList.toppings', price: '$itemList.price', note: '$itemList.note', name: '$itemList.productInfo.name', _id: '$itemList.productInfo._id'}}}}",
             "{$lookup: {from: 'transaction', localField: 'transactionId', foreignField: '_id', as: 'transaction'}}",
             "{$unwind: '$transaction'}",
-            "{$project: {'transactionId': 0}}"
+            "{$project: {transactionId: 0}}"
     })
-    GetOrderDetailsResponse getOrderDetailsById(String id);
+    GetOrderByIdResponse getOrderDetailsById(String id);
+
     @Aggregation(pipeline = {
             "{$match: {userId: ?0}}",
             "{$addFields: {'lastEventLog': {$slice: ['$eventList', -1]}}}",
@@ -125,4 +126,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$match: {orderType: 'SHIPPING', createdAt: {$gte: ?0, $lte: ?1}, 'lastEventLog.orderStatus': ?2}}"
     })
     List<OrderCollection> getShippingOrdersByStatusLastAndDateTimeCreated(Date from, Date to, OrderStatus orderStatus);
+
+    @Aggregation(pipeline = {
+            "{$facet: {orderList: [{$addFields: {'lastEventLog': {$slice: ['$eventList', -1]}}}, {$unwind: '$lastEventLog'}, {$match: {'lastEventLog.orderStatus': {$regex: ?2, $options: 'i'}}}, {$lookup: { from: 'user', localField: 'userId', foreignField: '_id', as: 'user'}}, {$unwind: '$user'}, {$project: {_id: 1, code: 1, createdAt: 1, total: 1, orderType: 1, statusLastEvent: '$lastEventLog.orderStatus', customerName: {$concat: ['$user.firstName', ' ', '$user.lastName']}}}, {$sort: {createdAt: -1}}, {$skip: ?0}, {$limit: ?1}], totalCount: [{$addFields: {'lastEventLog': {$slice: ['$eventList', -1]}}}, {$unwind: '$lastEventLog'}, {$match: {'lastEventLog.orderStatus': {$regex: ?2, $options: 'i'}}}, {$count: 'total'}]}}",
+            "{$project: {totalPage: {$ceil: {$divide: [{$toDouble: {$ifNull: [{$first: '$totalCount.total'}, 0]}}, ?1]}}, orderList: '$orderList'}}"
+    })
+    GetOrderListResponse getOrderListForAdmin(int skip, int limit, String status);
 }

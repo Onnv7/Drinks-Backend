@@ -62,7 +62,7 @@ public interface ProductRepository extends MongoRepository<ProductCollection, St
     List<GetProductListResponse> searchProduct(String key, int skip, int limit);
 
     @Aggregation(pipeline = {
-            "{$match:  { isDeleted: false' } }",
+            "{$match:  { isDeleted: false } }",
     })
     List<ProductCollection> getAll();
 

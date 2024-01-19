@@ -10,20 +10,22 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductSearchRepository extends ElasticsearchRepository<ProductIndex, String> {
     @Query("""
-            {
-                "bool": {
-                  "should": [
-                    { "match": { "name": "?0" }},
-                    { "match": { "description": "?0" }},
-                    { "match": { "code": "?0" }}
-                  ],
-                  "must_not": [
-                      { "match": { "status": "HIDDEN" }}
-                    ]
-                }
-            }
-            """)
-    Page<ProductIndex> searchVisibleProduct(String key, Pageable page);
+        {
+             "bool": {
+               "must_not": [
+                 { "match": { "status": "HIDDEN" } }
+               ],
+               "should": [
+                 { "match": { "name": "?0 " } },
+                 { "match": { "description": "?0" } },
+                 { "regexp": { "code": "?1" } }
+               ],
+               "minimum_should_match": 1
+             }
+               
+        }
+    """)
+    Page<ProductIndex> searchVisibleProduct(String key, String code, Pageable page);
 
     @Query("""
             {
@@ -36,5 +38,6 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
                 }
             }
             """)
+        // TODO: xem lại chỗ code có nên regex như category id không
     Page<ProductIndex> searchProduct(String key, String categoryIdRegex, String productStatusRegex, Pageable page);
 }

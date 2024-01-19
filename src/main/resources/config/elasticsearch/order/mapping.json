@@ -1,28 +1,19 @@
 {
   "properties": {
-    "customerName": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
+    "code": {
+      "type": "keyword"
     },
     "customerCode": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
+      "type": "keyword"
+    },
+    "email": {
+      "type": "keyword"
     },
     "phoneNumber": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
+      "type": "keyword"
     },
-    "recipientName": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
-    },
-    "code": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
-    },
-    "description": {
-      "type": "text",
-      "analyzer": "ngram_analyzer"
+    "phoneNumberReceiver": {
+      "type": "keyword"
     }
   }
 }

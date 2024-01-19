@@ -7,6 +7,7 @@ import com.hcmute.drink.model.elasticsearch.ProductIndex;
 import com.hcmute.drink.repository.elasticsearch.ProductSearchRepository;
 import com.hcmute.drink.service.database.implement.ProductService;
 import com.hcmute.drink.service.common.ModelMapperService;
+import com.hcmute.drink.utils.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +41,7 @@ public class ProductSearchService {
 
     public void upsertProduct(ProductCollection data) {
         ProductIndex product = productSearchRepository.findById(data.getId()).orElse(null);
-        if(product != null) {
+        if (product != null) {
             product.setName(data.getName());
             product.setThumbnail(data.getThumbnail().getUrl());
             product.setStatus(data.getStatus());
@@ -54,7 +55,7 @@ public class ProductSearchService {
     }
 
     public void deleteProduct(String id) {
-        if(productSearchRepository.existsById(id)) {
+        if (productSearchRepository.existsById(id)) {
             productSearchRepository.deleteById(id);
         } else {
             throw new CustomException(ErrorConstant.NOT_FOUND + id);
@@ -62,11 +63,13 @@ public class ProductSearchService {
     }
 
     public List<ProductIndex> searchVisibleProduct(String key, int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size);
-        return productSearchRepository.searchVisibleProduct(key, pageable).getContent();
+        Pageable pageable = PageRequest.of(page - 1, size);
+        String textRegex = RegexUtils.generateFilterRegexString(key);
+        return productSearchRepository.searchVisibleProduct(key, textRegex, pageable).getContent();
     }
+
     public Page<ProductIndex> searchProduct(String key, String categoryIdRegex, String productStatusRegex, int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         return productSearchRepository.searchProduct(key, categoryIdRegex, productStatusRegex, pageable);
     }
 }

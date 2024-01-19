@@ -88,7 +88,7 @@ public class ProductController {
 
     @Operation(summary = PRODUCT_GET_ALL_OR_SEARCH_ENABLED_SUM)
     @GetMapping(path = GET_PRODUCT_ALL_VISIBLE_SUB_PATH)
-    protected ResponseEntity<ResponseAPI> getAllProductsEnabled(
+    protected ResponseEntity<ResponseAPI> getAllProductsVisible(
             @Parameter(name = "key", description = "Key is name or description or id", required = false, example = "name or description")
             @RequestParam(name = "key", required = false) String key,
             @Parameter(name = "page", required = true, example = "1")
@@ -96,12 +96,7 @@ public class ProductController {
             @Parameter(name = "size", required = true, example = "10")
             @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size
     ) {
-        List<GetAllVisibleProductResponse> resData = new ArrayList<>();
-        if (key == null) {
-            resData = productService. getAllProductsVisible(page, size);
-        } else {
-            resData =  productService.searchProductVisible(key, page, size);
-        }
+        List<GetAllVisibleProductResponse> resData = productService.getAllProductsVisible(page, size, key);
 
         ResponseAPI res = ResponseAPI.builder()
                 .message(SuccessConstant.GET)
@@ -131,7 +126,6 @@ public class ProductController {
                 .build();
         return new ResponseEntity<>(res, StatusCode.OK);
     }
-
 
 
     @Operation(summary = PRODUCT_DELETE_BY_ID_SUM)

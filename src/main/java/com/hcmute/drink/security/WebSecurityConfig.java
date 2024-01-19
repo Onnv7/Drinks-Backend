@@ -67,7 +67,6 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        System.out.println("Pwd");
         return new BCryptPasswordEncoder(7);
     }
 
@@ -116,7 +115,6 @@ public class WebSecurityConfig {
     }
     @Bean
     public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
-        System.out.println("filter chain");
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(myAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 //        http.headers().httpStrictTransportSecurity().disable();
@@ -131,7 +129,7 @@ public class WebSecurityConfig {
                 .formLogin().disable()
                 .securityMatcher("/**")
                 .authorizeHttpRequests(register -> register
-                                .requestMatchers("/**").permitAll()
+//                                .requestMatchers("/**").permitAll()
 //                        .requestMatchers("/socket.io/**").permitAll()
 //                        .requestMatchers("/socket.io").permitAll()
 

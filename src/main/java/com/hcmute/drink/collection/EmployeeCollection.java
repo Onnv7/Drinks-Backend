@@ -56,6 +56,8 @@ public class EmployeeCollection {
     @Builder.Default
     private EmployeeStatus status = EmployeeStatus.ACTIVE;
 
+    @Builder.Default
+    private boolean isDeleted = false;
     @CreatedDate
     private Date createdAt;
 

@@ -61,7 +61,7 @@ public class SecurityConstant {
             GET_CATEGORY_ALL_PATH, GET_PRODUCT_ALL_PATH,
             GET_TRANSACTION_REVENUE_BY_TIME_PATH, GET_TRANSACTION_REVENUE_CURRENT_DATE_PATH,
             GET_BRANCH_ALL_PATH, GET_BANNER_LIST_PATH, GET_BANNER_DETAILS_BY_ID_PATH, GET_COUPON_LIST_PATH,
-            GET_COUPON_BY_ID_PATH
+            GET_COUPON_BY_ID_PATH, GET_ORDER_LIST_PATH
 
     };
     public static final String[] PUT_ADMIN_PATH = {
@@ -90,6 +90,8 @@ public class SecurityConstant {
 
     // Only EMPLOYEE =================================================================
     public static final String[] GET_EMPLOYEE_PATH = {
+            GET_ORDER_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH,
+            GET_ORDER_ALL_IN_QUEUE_PATH,
     };
 
     public static final String[] PATCH_EMPLOYEE_PATH = {
@@ -101,8 +103,7 @@ public class SecurityConstant {
     public static final String[] GET_ADMIN_EMPLOYEE_PATH = {
             GET_EMPLOYEE_BY_ID_PATH,
             GET_ORDER_ALL_SHIPPING_PATH,
-            GET_ORDER_ALL_BY_STATUS_AND_TYPE_PATH,
-            GET_ORDER_ALL_ORDER_HISTORY_FOR_EMPLOYEE_PATH, GET_ORDER_ORDER_QUANTITY_BY_STATUS_PATH
+            GET_ORDER_ORDER_QUANTITY_BY_STATUS_PATH
     };
 
     public static final String[] PUT_ADMIN_EMPLOYEE_PATH = {

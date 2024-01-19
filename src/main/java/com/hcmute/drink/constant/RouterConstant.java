@@ -130,8 +130,10 @@ public class RouterConstant {
     public static final String PATCH_ORDER_UPDATE_STATUS_PATH = ORDER_BASE_PATH + PATCH_ORDER_UPDATE_STATUS_SUB_PATH;
     public static final String GET_ORDER_ALL_SHIPPING_SUB_PATH = "/shipping";
     public static final String GET_ORDER_ALL_SHIPPING_PATH = ORDER_BASE_PATH + GET_ORDER_ALL_SHIPPING_SUB_PATH;
-    public static final String GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH = "/{orderType}";
-    public static final String GET_ORDER_ALL_BY_STATUS_AND_TYPE_PATH = ORDER_BASE_PATH + GET_ORDER_ALL_BY_STATUS_AND_TYPE_SUB_PATH;
+    public static final String GET_ORDER_ALL_IN_QUEUE_SUB_PATH = "/queue";
+    public static final String GET_ORDER_ALL_IN_QUEUE_PATH = ORDER_BASE_PATH + GET_ORDER_ALL_IN_QUEUE_SUB_PATH;
+    public static final String GET_ORDER_LIST_SUB_PATH = "";
+    public static final String GET_ORDER_LIST_PATH = ORDER_BASE_PATH + GET_ORDER_LIST_SUB_PATH;
     public static final String GET_ORDER_DETAILS_BY_ID_SUB_PATH = ORDER_ID_PATH + "/details";
     public static final String GET_ORDER_DETAILS_BY_ID_PATH = ORDER_BASE_PATH + GET_ORDER_DETAILS_BY_ID_SUB_PATH;
     public static final String GET_ORDER_ORDERS_BY_USER_ID_AND_ORDER_STATUS_SUB_PATH = "/history/user" + USER_ID_PATH;

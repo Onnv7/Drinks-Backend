@@ -38,7 +38,7 @@ public class ToolController {
     @GetMapping("/sync-product")
     public String addElasticSearch() {
         productSearchRepository.deleteAll();
-        List<ProductCollection> productList = productRepository.getAll();
+        List<ProductCollection> productList = productRepository.findAll();
         for (ProductCollection item : productList) {
             productSearchService.createProduct(item);
         }

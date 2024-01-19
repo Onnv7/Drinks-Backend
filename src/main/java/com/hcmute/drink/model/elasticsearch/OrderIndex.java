@@ -18,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Builder
-@Setting(settingPath = "/config/elasticsearch/order/setting.json")
+//@Setting(settingPath = "/config/elasticsearch/order/setting.json")
 @Mapping(mappingPath = "/config/elasticsearch/order/mapping.json")
 @Document(indexName = "order")
 public class OrderIndex {
@@ -26,12 +26,15 @@ public class OrderIndex {
     private String id;
     private String code;
     private String customerName;
+    private String email;
     private String customerCode;
     private String phoneNumber;
+    private String phoneNumberReceiver;
     private String recipientName;
     private int productQuantity;
     private String productThumbnail;
     private Date timeLastEvent;
+    private Date createdAt;
     private long total;
     private OrderStatus statusLastEvent;
     private OrderType orderType;

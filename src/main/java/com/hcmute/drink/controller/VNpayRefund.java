@@ -33,7 +33,7 @@ public class VNpayRefund {
     @PostMapping("/{amount}")
     public ResponseEntity createUrl(HttpServletRequest request, @PathVariable int amount) throws UnsupportedEncodingException {
         Map<String, String> parameters = VNPayUtils.createUrlPayment(request, amount, "check");
-        System.out.println(parameters);
+
         ResponseAPI res = ResponseAPI.builder()
                 .data( parameters.get("vnp_url"))
                 .build();
@@ -46,7 +46,7 @@ public class VNpayRefund {
         Date date = format.parse(date1);
         SimpleDateFormat anotherFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String returnString = anotherFormat.format(date);
-        System.out.println(returnString);
+
         return returnString;
     }
 

@@ -139,9 +139,12 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size) {
+    public List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size, String key) {
         int skip = (page - 1) * size;
         int limit = size;
+        if (key != null) {
+            return modelMapperService.mapList(productSearchService.searchVisibleProduct(key, page, size), GetAllVisibleProductResponse.class);
+        }
         return productRepository.getAllProductsEnabled(skip, limit);
     }
 
@@ -154,7 +157,11 @@ public class ProductService implements IProductService {
         if (key == null) {
             return productRepository.getProductList(skip, limit, categoryIdRegex, productStatusRegex);
         } else {
-            return searchProduct(key, page, size, categoryIdRegex, productStatusRegex);
+            Page<ProductIndex> productPage = productSearchService.searchProduct(key, categoryIdRegex, productStatusRegex, page, size);
+            GetProductListResponse resultPage = new GetProductListResponse();
+            resultPage.setTotalPage(productPage.getTotalPages());
+            resultPage.setProductList(modelMapperService.mapList(productPage.getContent(), GetProductListResponse.Product.class));
+            return resultPage;
         }
     }
 
@@ -229,19 +236,6 @@ public class ProductService implements IProductService {
         productSearchService.upsertProduct(product);
     }
 
-    @Override
-    public List<GetAllVisibleProductResponse> searchProductVisible(String key, int page, int size) {
-        return modelMapperService.mapList(productSearchService.searchVisibleProduct(key, page, size), GetAllVisibleProductResponse.class);
-    }
-
-    @Override
-    public GetProductListResponse searchProduct(String key, int page, int size, String categoryIdRegex, String productStatusRegex) {
-        Page<ProductIndex> productPage = productSearchService.searchProduct(key, categoryIdRegex, productStatusRegex, page, size);
-        GetProductListResponse resultPage = new GetProductListResponse();
-        resultPage.setTotalPage(productPage.getTotalPages());
-        resultPage.setProductList(modelMapperService.mapList(productPage.getContent(), GetProductListResponse.Product.class));
-        return resultPage;
-    }
 
     @Override
     public List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int quantity) {

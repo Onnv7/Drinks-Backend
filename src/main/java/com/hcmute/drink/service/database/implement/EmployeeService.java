@@ -15,6 +15,7 @@ import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.repository.database.EmployeeRepository;
 import com.hcmute.drink.service.database.IEmployeeService;
 import com.hcmute.drink.service.common.ModelMapperService;
+import com.hcmute.drink.utils.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -46,13 +47,14 @@ public class EmployeeService implements IEmployeeService {
     // SERVICES =================================================================
 
     @Override
-    public List<GetAllEmployeeResponse> getAllOrSearchByKey(String key, int page, int size) {
+    public List<GetAllEmployeeResponse> getEmployeeList(String key, int page, int size, EmployeeStatus status) {
         int limit = size;
         int skip = (page - 1) * size;
+        String statusRegex = RegexUtils.generateFilterRegexString(status != null ? status.name() : "");
         if (key == null) {
-            return employeeRepository.getAllEmployees(skip, limit);
+            return employeeRepository.getEmployeeList(skip, limit, statusRegex);
         } else {
-            return employeeRepository.searchEmployee(key, skip, limit);
+            return employeeRepository.searchEmployee(key, skip, limit, statusRegex);
         }
     }
 

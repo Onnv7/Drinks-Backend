@@ -13,10 +13,8 @@ public interface IProductService {
     GetProductByIdResponse getProductDetailsById(String id);
     GetProductEnabledByIdResponse getProductEnabledById(String id);
     List<GetProductsByCategoryIdResponse> getProductsByCategoryId(String categoryId);
-    List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size);
-    List<GetAllVisibleProductResponse> searchProductVisible(String key, int page, int size);
+    List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size, String key);
     GetProductListResponse getProductList(String key, int page, int size, String categoryId, ProductStatus productStatus);
-    GetProductListResponse searchProduct(String key, int page, int size, String categoryId, String productStatus);
     void deleteProductById(String id);
     DeleteSomeProductResponse deleteSomeProductById(List<String> productIdList);
     void updateProductById(UpdateProductRequest body, String id);

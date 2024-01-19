@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 @Data
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
-public class GetOrderDetailsResponse {
+public class GetOrderByIdResponse {
     private String id;
     private String code;
     private String note;
@@ -26,6 +26,13 @@ public class GetOrderDetailsResponse {
     private Date receiveTime;
     private Long shippingDiscount;
     private Long orderDiscount;
+    private Long shippingFee;
+    private Branch branch;
+
+    @Data
+    static class Branch {
+        private String address;
+    }
     @Data
     private static class Review {
         private int rating;

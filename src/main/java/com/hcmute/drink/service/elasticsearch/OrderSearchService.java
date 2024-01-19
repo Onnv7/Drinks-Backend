@@ -10,8 +10,10 @@ import com.hcmute.drink.repository.elasticsearch.OrderSearchRepository;
 import com.hcmute.drink.service.database.implement.ProductService;
 import com.hcmute.drink.service.database.implement.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,13 +31,14 @@ public class OrderSearchService {
         ProductCollection product = productService.getById(orderCollection.getItemList().get(0).getProductId().toString());
         int lastIndexEvent = orderCollection.getEventList().size() - 1;
         String recipientName = orderCollection.getRecipientInfo() != null ? orderCollection.getRecipientInfo().getRecipientName() : user.getFullName();
-        String phoneNumber = orderCollection.getRecipientInfo() != null ? orderCollection.getRecipientInfo().getPhoneNumber() : user.getPhoneNumber();
+        String phoneNumberReceiver = orderCollection.getRecipientInfo() != null ? orderCollection.getRecipientInfo().getPhoneNumber() : user.getPhoneNumber();
         OrderIndex orderIndex = OrderIndex.builder()
                 .id(orderCollection.getId())
                 .code(orderCollection.getCode())
                 .customerName(user.getFullName())
                 .recipientName(recipientName)
-                .phoneNumber(phoneNumber)
+                .phoneNumber(user.getPhoneNumber())
+                .phoneNumberReceiver(phoneNumberReceiver)
                 .orderType(orderCollection.getOrderType())
                 .statusLastEvent(OrderStatus.CREATED)
                 .total(orderCollection.getTotal())
@@ -43,6 +46,8 @@ public class OrderSearchService {
                 .productThumbnail(product.getThumbnail().getUrl())
                 .customerCode(user.getCode())
                 .timeLastEvent(orderCollection.getEventList().get(lastIndexEvent).getTime())
+                .createdAt(orderCollection.getCreatedAt())
+                .email(user.getEmail())
                 .build();
         return orderSearchRepository.save(orderIndex);
     }
@@ -70,8 +75,11 @@ public class OrderSearchService {
         }
     }
 
-    public List<OrderIndex> searchOrder(String key, OrderStatus orderStatus, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return orderSearchRepository.searchOrder(key, orderStatus, pageable).getContent();
+
+    public Page<OrderIndex> searchOrderForAdmin(String key, int page, int size, String status) {
+        Sort sort = Sort.by(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        return orderSearchRepository.searchOrderForAdmin(key, status, pageable);
     }
 }

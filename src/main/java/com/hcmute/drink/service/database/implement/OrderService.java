@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +105,7 @@ public class OrderService implements IOrderService {
             item.setPrice(sizeInfo.getPrice());
 
             if (productDto.getCouponProductCode() != null) {
-                if(couponUsedList.contains(productDto.getCouponProductCode())) {
+                if (couponUsedList.contains(productDto.getCouponProductCode())) {
                     throw new CustomException(ErrorConstant.COUPON_DUPLICATED);
                 }
                 CouponCollection couponCollection = couponService.getAndCheckValidCoupon(productDto.getCouponProductCode());
@@ -234,7 +235,7 @@ public class OrderService implements IOrderService {
             CouponCollection coupon = couponService.getAndCheckValidCoupon(body.getOrderCouponCode());
             if ((isMultiple != null && !coupon.isCanMultiple()) || coupon.getCouponType() != CouponType.ORDER) {
                 throw new CustomException(ErrorConstant.COUPON_INVALID);
-            } else if(isMultiple == null) {
+            } else if (isMultiple == null) {
                 isMultiple = coupon.isCanMultiple();
             }
             MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
@@ -243,7 +244,7 @@ public class OrderService implements IOrderService {
             data.setOrderDiscount(moneyDiscount);
         }
         // tới đây chỉ có tể là isMultiple true  hoặc null hoặc false vì có tể vào order coupon ở trên
-        if(isMultiple != null  && !isMultiple && body.getOrderCouponCode() != null) {
+        if (isMultiple != null && !isMultiple && body.getOrderCouponCode() != null) {
             throw new CustomException(ErrorConstant.COUPON_INVALID);
         }
         if (body.getShippingCouponCode() != null) {
@@ -253,9 +254,9 @@ public class OrderService implements IOrderService {
             }
             MoneyDiscountEmbedded discount = couponService.checkMoneyCouponOrderBill(coupon, totalPrice);
             long moneyDiscount = 0;
-            if(discount.getUnit() == DiscountUnitType.MONEY) {
+            if (discount.getUnit() == DiscountUnitType.MONEY) {
                 moneyDiscount = ((Number) discount.getValue()).longValue();
-            } else if(discount.getUnit() == DiscountUnitType.PERCENTAGE) {
+            } else if (discount.getUnit() == DiscountUnitType.PERCENTAGE) {
                 moneyDiscount = body.getShippingFee() * ((Number) discount.getValue()).longValue() / 100;
             }
 
@@ -287,7 +288,7 @@ public class OrderService implements IOrderService {
         BranchCollection branch = getNearestBranches(addressDelivering);
         BranchEmbedded branchEmbedded = createBranchEmbedded(branch.getId());
         data.setBranch(branchEmbedded);
-        saveCouponUsed( couponUsedList, userId);
+        saveCouponUsed(couponUsedList, userId);
 
         OrderCollection order = orderRepository.save(data);
 
@@ -366,7 +367,7 @@ public class OrderService implements IOrderService {
             resData.setPaymentUrl(transactionMap.get(VNP_URL_KEY).toString());
         }
 
-        saveCouponUsed( couponUsedList, userId);
+        saveCouponUsed(couponUsedList, userId);
         orderSearchService.createOrder(order);
         return resData;
     }
@@ -416,8 +417,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public GetOrderDetailsResponse getOrderDetailsById(String id) {
-        GetOrderDetailsResponse order = orderRepository.getOrderDetailsById(id);
+    public GetOrderByIdResponse getOrderDetailsById(String id) {
+        GetOrderByIdResponse order = orderRepository.getOrderDetailsById(id);
         if (order == null) {
             throw new CustomException(ErrorConstant.NOT_FOUND + id);
         }
@@ -460,9 +461,14 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<GetOrderHistoryForEmployeeResponse> getOrderHistoryPageForEmployee(OrderStatus orderStatus, int page, int size) {
+    public List<GetOrderHistoryForEmployeeResponse> getOrderHistoryPageForEmployee(OrderStatus orderStatus, int page, int size, String key) {
         int skip = (page - 1) * size;
         int limit = size;
+        String statusRegex = RegexUtils.generateFilterRegexString(orderStatus != null ? orderStatus.toString() : "");
+        if (key != null) {
+            List<OrderIndex> orderList = orderSearchService.searchOrderForAdmin(key, page, size, statusRegex).getContent();
+            return modelMapperService.mapList(orderList, GetOrderHistoryForEmployeeResponse.class);
+        }
         return orderRepository.getAllOrderHistoryForEmployee(orderStatus, skip, limit);
     }
 
@@ -489,11 +495,6 @@ public class OrderService implements IOrderService {
         return current;
     }
 
-    @Override
-    public List<GetOrderHistoryForEmployeeResponse> searchOrderHistoryForEmployee(OrderStatus orderStatus, String key, int page, int size) {
-        List<OrderIndex> orderList = orderSearchService.searchOrder(key, orderStatus, page, size);
-        return modelMapperService.mapList(orderList, GetOrderHistoryForEmployeeResponse.class);
-    }
 
     public List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int top) {
         return orderRepository.getTopProductQuantityOrder(top);
@@ -514,5 +515,21 @@ public class OrderService implements IOrderService {
             order.setEventList(orderStatusList);
             orderRepository.save(order);
         }
+    }
+
+    @Override
+    public GetOrderListResponse getOrderListForAdmin(int page, int size, String key, OrderStatus status) {
+        int skip = (page - 1) * size;
+        int limit = size;
+        String statusRegex = RegexUtils.generateFilterRegexString(status != null ? status.toString() : "");
+        if (key != null) {
+            Page<OrderIndex> orderPage = orderSearchService.searchOrderForAdmin(key, page, size, statusRegex);
+
+            GetOrderListResponse resultPage = new GetOrderListResponse();
+            resultPage.setTotalPage(orderPage.getTotalPages());
+            resultPage.setOrderList(modelMapperService.mapList(orderPage.getContent(), GetOrderListResponse.Order.class));
+            return resultPage;
+        }
+        return orderRepository.getOrderListForAdmin(skip, limit, statusRegex);
     }
 }

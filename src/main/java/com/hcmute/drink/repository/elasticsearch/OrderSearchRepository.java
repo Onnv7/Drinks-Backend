@@ -11,22 +11,24 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderSearchRepository extends ElasticsearchRepository<OrderIndex, String> {
+
     @Query("""
         {
-            "bool": {
-                "should": [
-                    { "match": { "code": "?0" }},
-                    { "match": { "customerName": "?0" }},
-                    { "match": { "customerCode": "?0" }},
-                    { "match": { "phoneNumber": "?0" }},
-                    { "match": { "recipientName": "?0" }}
-                ],
-                "must": [
-                    { "match": { "statusLastEvent": "?1" }}
-                ]
-            }
+          "bool": {
+            "must": [
+              {"regexp": {"statusLastEvent": "?1"}}
+            ],
+            "should": [
+              {"match": {"code": "?0"}},
+              {"match": {"customerCode": "?0"}},
+              {"match": {"email": "?0"}},
+              {"match": {"phoneNumber": "?0"}},
+              {"match": {"phoneNumberReceiver": "?0"}}
+            ],
+            "minimum_should_match": 1
+          }
         }
         """)
-    Page<OrderIndex> searchOrder(String key, OrderStatus status, Pageable page);
+    Page<OrderIndex> searchOrderForAdmin(String key, String statusFilter, Pageable page);
 
 }
