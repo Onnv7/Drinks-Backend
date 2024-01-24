@@ -60,16 +60,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.springfox</groupId>-->
+        <!--            <artifactId>springfox-boot-starter</artifactId>-->
+        <!--            <version>3.0.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.springfox</groupId>-->
+        <!--            <artifactId>springfox-swagger-ui</artifactId>-->
+        <!--            <version>3.0.0</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -95,27 +95,27 @@
             <artifactId>twilio</artifactId>
             <version>7.34.0</version>
         </dependency>
-<!--        devtool-->
+        <!--        devtool-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-<!--        cloud store-->
+        <!--        cloud store-->
         <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
             <version>1.33.0</version>
         </dependency>
 
-<!--        payment-->
-<!--        <dependency>-->
-<!--            <groupId>io.github.momo-wallet</groupId>-->
-<!--            <artifactId>momopayment</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
-<!--        image-->
+        <!--        payment-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.github.momo-wallet</groupId>-->
+        <!--            <artifactId>momopayment</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+        <!--        image-->
         <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
         <dependency>
             <groupId>net.coobird</groupId>
@@ -131,7 +131,7 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        REDIS-->
+        <!--        REDIS-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -161,17 +161,10 @@
             <version>2.12.3</version>
         </dependency>
 
-        <!--        <dependency>-->
-<!--            <groupId>org.elasticsearch.client</groupId>-->
-<!--            <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-<!--            <version>7.17.16</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.elasticsearch.client</groupId>-->
-<!--            <artifactId>elasticsearch-rest-client</artifactId>-->
-<!--            <version>8.11.3</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 
 
     </dependencies>

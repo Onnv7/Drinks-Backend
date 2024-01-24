@@ -2,7 +2,6 @@ package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.CategoryCollection;
 import com.hcmute.drink.collection.ProductCollection;
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.collection.embedded.SizeEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
@@ -80,7 +79,6 @@ public class ProductService implements IProductService {
         try {
             originalImage = image.getBytes();
             byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
-            byte[] newThumbnail = ImageUtils.resizeImage(originalImage, 200, 200);
 
             CategoryCollection categoryCollection = categoryService.getById(data.getCategoryId().toString());
             if (categoryCollection.isCanDelete()) {
@@ -93,17 +91,10 @@ public class ProductService implements IProductService {
                     StringUtils.generateFileName(body.getName(), "product"),
                     newImage
             );
-            ImageEmbedded imageEmbedded = new ImageEmbedded(imageUploaded.get(CloudinaryConstant.PUBLIC_ID), imageUploaded.get(CloudinaryConstant.URL_PROPERTY));
-            data.setImage(imageEmbedded);
 
-            HashMap<String, String> thumbUploaded = cloudinaryService.uploadFileToFolder(
-                    CloudinaryConstant.PRODUCT_PATH,
-                    StringUtils.generateFileName(body.getName(), "product_thumb"),
-                    newThumbnail
-            );
-
-            ImageEmbedded thumbEmbedded = new ImageEmbedded(thumbUploaded.get(CloudinaryConstant.PUBLIC_ID), thumbUploaded.get(CloudinaryConstant.URL_PROPERTY));
-            data.setThumbnail(thumbEmbedded);
+            data.setImageId(imageUploaded.get(CloudinaryConstant.PUBLIC_ID));
+            data.setImageUrl(imageUploaded.get(CloudinaryConstant.URL_PROPERTY));
+            data.setThumbnailUrl(cloudinaryService.getThumbnailUrl(imageUploaded.get(CloudinaryConstant.PUBLIC_ID)));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -117,20 +108,15 @@ public class ProductService implements IProductService {
 
     @Override
     public GetProductByIdResponse getProductDetailsById(String id) {
-        GetProductByIdResponse product = productRepository.getProductDetailsById(id);
-        if (product == null) {
-            throw new CustomException(PRODUCT_NOT_FOUND);
-        }
+        GetProductByIdResponse product = productRepository.getProductDetailsById(id)
+                .orElseThrow(() -> new CustomException(PRODUCT_NOT_FOUND));
         return product;
     }
 
     @Override
     public GetProductEnabledByIdResponse getProductEnabledById(String id) {
-        GetProductEnabledByIdResponse product = productRepository.getProductEnabledById(id);
-        if (product == null) {
-            throw new CustomException(NOT_FOUND + id);
-        }
-        return product;
+        return productRepository.getProductEnabledById(id)
+                .orElseThrow(() -> new CustomException(NOT_FOUND + id));
     }
 
     @Override
@@ -139,13 +125,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<GetAllVisibleProductResponse> getAllProductsVisible(int page, int size, String key) {
+    public List<GetAllVisibleProductResponse> getVisibleProductList(int page, int size, String key) {
         int skip = (page - 1) * size;
         int limit = size;
         if (key != null) {
             return modelMapperService.mapList(productSearchService.searchVisibleProduct(key, page, size), GetAllVisibleProductResponse.class);
         }
-        return productRepository.getAllProductsEnabled(skip, limit);
+        return productRepository.getVisibleProductList(skip, limit);
     }
 
     @Override
@@ -187,7 +173,7 @@ public class ProductService implements IProductService {
                 deleteProductById(id);
                 successCount++;
             } catch (Exception e) {
-
+                // TODO: xử lý e ở đây
             }
         }
         return DeleteSomeProductResponse.builder().successCount(successCount).build();
@@ -205,26 +191,18 @@ public class ProductService implements IProductService {
         modelMapperService.map(body, product);
 
         if (body.getImage() != null) {
-            ImageEmbedded oldImage = product.getImage();
-            ImageEmbedded oldThumbnail = product.getThumbnail();
-
             try {
-                cloudinaryService.deleteImage(oldImage.getId());
-                cloudinaryService.deleteImage(oldThumbnail.getId());
+                cloudinaryService.deleteImage(product.getImageId());
 
                 byte[] originalImage = body.getImage().getBytes();
 
                 byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
                 HashMap<String, String> fileUploaded = cloudinaryService.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH,
                         StringUtils.generateFileName(body.getName(), "product"), newImage);
-                ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
-                product.setImage(imageEmbedded);
+                product.setImageId(fileUploaded.get(CloudinaryConstant.PUBLIC_ID));
+                product.setImageUrl(fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+                product.setThumbnailUrl(cloudinaryService.getThumbnailUrl(fileUploaded.get(CloudinaryConstant.PUBLIC_ID)));
 
-                byte[] thumbnailImage = ImageUtils.resizeImage(originalImage, 200, 200);
-                HashMap<String, String> thumbnailUploaded = cloudinaryService.uploadFileToFolder(CloudinaryConstant.PRODUCT_PATH,
-                        StringUtils.generateFileName(body.getName(), "product"), thumbnailImage);
-                ImageEmbedded thumbnailEmbedded = new ImageEmbedded(thumbnailUploaded.get(CloudinaryConstant.PUBLIC_ID), thumbnailUploaded.get(CloudinaryConstant.URL_PROPERTY));
-                product.setThumbnail(thumbnailEmbedded);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

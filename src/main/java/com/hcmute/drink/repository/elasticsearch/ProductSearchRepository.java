@@ -12,6 +12,9 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
     @Query("""
         {
              "bool": {
+                "must": [
+                 { "match": { "isDeleted": false } }
+                ],
                "must_not": [
                  { "match": { "status": "HIDDEN" } }
                ],
@@ -33,7 +36,8 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
                    "must": [
                         { "multi_match": { "query": "?0", "fields": ["name", "description", "code"] }},
                         { "regexp": { "categoryId": "?1" } },
-                        { "regexp": { "status": "?2" } }
+                        { "regexp": { "status": "?2" } },
+                        { "match": { "isDeleted": false } }
                    ]
                 }
             }

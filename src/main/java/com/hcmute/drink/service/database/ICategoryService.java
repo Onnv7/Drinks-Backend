@@ -7,9 +7,9 @@ import com.hcmute.drink.dto.response.*;
 import java.util.List;
 
 public interface ICategoryService {
-    CreateCategoryResponse createCategory(CreateCategoryRequest body) ;
+    void createCategory(CreateCategoryRequest body) ;
     GetCategoryByIdResponse getCategoryById(String id);
-    List<GetAllCategoryResponse> getAllCategories();
+    List<GetAllCategoryResponse> getCategoryList();
     List<GetVisibleCategoryListResponse> getVisibleCategoryList();
     void updateCategory(UpdateCategoryRequest body, String id);
     void deleteCategoryById(String id);

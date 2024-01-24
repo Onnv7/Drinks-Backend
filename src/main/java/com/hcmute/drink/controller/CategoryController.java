@@ -55,7 +55,7 @@ public class CategoryController {
     @Operation(summary = CATEGORY_GET_ALL_SUM)
     @GetMapping(path = GET_CATEGORY_ALL_SUB_PATH)
     public ResponseEntity<ResponseAPI> getAllCategories() {
-        List<GetAllCategoryResponse> resData = categoryService.getAllCategories();
+        List<GetAllCategoryResponse> resData = categoryService.getCategoryList();
 
         ResponseAPI res = ResponseAPI.builder()
                 .timestamp(new Date())

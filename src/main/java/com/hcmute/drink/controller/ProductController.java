@@ -7,7 +7,6 @@ import com.hcmute.drink.dto.request.DeleteSomeProductRequest;
 import com.hcmute.drink.dto.request.UpdateProductRequest;
 import com.hcmute.drink.dto.response.*;
 import com.hcmute.drink.enums.ProductStatus;
-import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.ResponseAPI;
 import com.hcmute.drink.service.database.IProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -96,7 +94,7 @@ public class ProductController {
             @Parameter(name = "size", required = true, example = "10")
             @RequestParam("size") @Min(value = 1, message = "Size must be greater than 0") int size
     ) {
-        List<GetAllVisibleProductResponse> resData = productService.getAllProductsVisible(page, size, key);
+        List<GetAllVisibleProductResponse> resData = productService.getVisibleProductList(page, size, key);
 
         ResponseAPI res = ResponseAPI.builder()
                 .message(SuccessConstant.GET)

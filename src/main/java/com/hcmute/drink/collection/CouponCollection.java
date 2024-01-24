@@ -2,7 +2,6 @@ package com.hcmute.drink.collection;
 
 
 import com.hcmute.drink.collection.embedded.CouponConditionEmbedded;
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.collection.embedded.MoneyDiscountEmbedded;
 import com.hcmute.drink.collection.embedded.ProductGiftEmbedded;
 import com.hcmute.drink.enums.CouponStatus;

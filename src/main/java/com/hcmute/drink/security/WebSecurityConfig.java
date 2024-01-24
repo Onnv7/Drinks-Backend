@@ -129,11 +129,12 @@ public class WebSecurityConfig {
                 .formLogin().disable()
                 .securityMatcher("/**")
                 .authorizeHttpRequests(register -> register
-//                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/**").permitAll()
 //                        .requestMatchers("/socket.io/**").permitAll()
 //                        .requestMatchers("/socket.io").permitAll()
 
                                 // ALL
+                                .requestMatchers("/tool/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, GET_AUTH_WHITELIST).permitAll()
                                 .requestMatchers(HttpMethod.POST, POST_AUTH_WHITELIST).permitAll()
                                 .requestMatchers(HttpMethod.PATCH, PATCH_AUTH_WHITELIST).permitAll()

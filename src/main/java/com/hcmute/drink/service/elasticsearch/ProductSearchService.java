@@ -5,6 +5,7 @@ import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.model.CustomException;
 import com.hcmute.drink.model.elasticsearch.ProductIndex;
 import com.hcmute.drink.repository.elasticsearch.ProductSearchRepository;
+import com.hcmute.drink.service.common.CloudinaryService;
 import com.hcmute.drink.service.database.implement.ProductService;
 import com.hcmute.drink.service.common.ModelMapperService;
 import com.hcmute.drink.utils.RegexUtils;
@@ -21,6 +22,7 @@ import java.util.List;
 public class ProductSearchService {
     private final ProductSearchRepository productSearchRepository;
     private final ModelMapperService modelMapperService;
+    private final CloudinaryService cloudinaryService;
 
     public ProductIndex createProduct(ProductCollection data) {
         double price = ProductService.getMinPrice(data.getSizeList());
@@ -28,11 +30,12 @@ public class ProductSearchService {
         ProductIndex dataSearch = ProductIndex.builder()
                 .id(data.getId())
                 .name(data.getName())
-                .thumbnail(data.getThumbnail().getUrl())
+                .thumbnailUrl(cloudinaryService.getThumbnailUrl(data.getImageId()))
                 .code(data.getCode())
                 .description(data.getDescription())
                 .status(data.getStatus())
                 .categoryId(data.getCategoryId().toString())
+                .isDeleted(data.isDeleted())
                 .price(price)
                 .build();
 
@@ -43,10 +46,11 @@ public class ProductSearchService {
         ProductIndex product = productSearchRepository.findById(data.getId()).orElse(null);
         if (product != null) {
             product.setName(data.getName());
-            product.setThumbnail(data.getThumbnail().getUrl());
+            product.setThumbnailUrl(cloudinaryService.getThumbnailUrl(data.getImageId()));
             product.setStatus(data.getStatus());
             product.setPrice(data.getPrice());
             product.setDescription(data.getDescription());
+            product.setDeleted(data.isDeleted());
             product.setCategoryId(data.getCategoryId().toString());
             productSearchRepository.save(product);
         } else {
@@ -55,11 +59,9 @@ public class ProductSearchService {
     }
 
     public void deleteProduct(String id) {
-        if (productSearchRepository.existsById(id)) {
-            productSearchRepository.deleteById(id);
-        } else {
-            throw new CustomException(ErrorConstant.NOT_FOUND + id);
-        }
+        ProductIndex productIndex = productSearchRepository.findById(id).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
+        productIndex.setDeleted(true);
+        productSearchRepository.save(productIndex);
     }
 
     public List<ProductIndex> searchVisibleProduct(String key, int page, int size) {

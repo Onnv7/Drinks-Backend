@@ -1,6 +1,5 @@
 package com.hcmute.drink.collection;
 
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.enums.BannerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,8 @@ public class BannerCollection {
 
     @Indexed(unique = true)
     private String name;
-    private ImageEmbedded image;
+    private String imageId;
+    private String imageUrl;
     private BannerStatus status;
     private boolean isDeleted;
 }

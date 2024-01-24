@@ -1,7 +1,6 @@
 package com.hcmute.drink.collection;
 
 
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.enums.CategoryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +36,9 @@ public class CategoryCollection {
     private String code;
     @Indexed(unique = true)
     private String name;
-    private ImageEmbedded image;
+//    private ImageEmbedded image;
+    private String imageId;
+    private String imageUrl;
 
     @Builder.Default
     private CategoryStatus status = CategoryStatus.HIDDEN;

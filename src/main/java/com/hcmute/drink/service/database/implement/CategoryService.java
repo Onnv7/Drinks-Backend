@@ -1,7 +1,6 @@
 package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.CategoryCollection;
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.request.CreateCategoryRequest;
@@ -37,6 +36,7 @@ public class CategoryService implements ICategoryService {
     public CategoryCollection getById(String id) {
         return categoryRepository.getById(id).orElseThrow(() -> new CustomException(ErrorConstant.NOT_FOUND + id));
     }
+
     public CategoryCollection saveCategory(CategoryCollection data) {
         return categoryRepository.save(data);
     }
@@ -45,7 +45,7 @@ public class CategoryService implements ICategoryService {
     // SERVICES =================================================================================
 
     @Override
-    public CreateCategoryResponse createCategory(CreateCategoryRequest body) {
+    public void createCategory(CreateCategoryRequest body) {
         String cgrName = body.getName();
         CategoryCollection existedCategory = categoryRepository.getByName(cgrName).orElse(null);
         if (existedCategory != null) {
@@ -57,17 +57,18 @@ public class CategoryService implements ICategoryService {
             byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
             HashMap<String, String> fileUploaded = cloudinaryService.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH,
                     StringUtils.generateFileName(body.getName(), "category"), newImage);
-            ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+
             CategoryCollection category = CategoryCollection.builder()
                     .code(sequenceService.generateCode(CategoryCollection.SEQUENCE_NAME, CategoryCollection.PREFIX_CODE, CategoryCollection.LENGTH_NUMBER))
-                    .image(imageEmbedded)
+                    .imageUrl(fileUploaded.get(CloudinaryConstant.URL_PROPERTY))
+                    .imageId(fileUploaded.get(CloudinaryConstant.PUBLIC_ID))
                     .name(body.getName())
                     .status(CategoryStatus.HIDDEN)
                     .canDelete(true)
                     .isDeleted(false)
                     .build();
 
-            return modelMapperService.mapClass(categoryRepository.save(category), CreateCategoryResponse.class);
+            categoryRepository.save(category);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -80,7 +81,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<GetAllCategoryResponse> getAllCategories() {
+    public List<GetAllCategoryResponse> getCategoryList() {
         List<CategoryCollection> categoryList = categoryRepository.getAll();
         return modelMapperService.mapList(categoryList, GetAllCategoryResponse.class);
     }
@@ -95,13 +96,14 @@ public class CategoryService implements ICategoryService {
         CategoryCollection category = getById(id);
         if (body.getImage() != null) {
             try {
-                cloudinaryService.deleteImage(category.getImage().getId());
+                cloudinaryService.deleteImage(category.getImageId());
                 byte[] originalImage = body.getImage().getBytes();
                 byte[] newImage = ImageUtils.resizeImage(originalImage, 200, 200);
 
                 HashMap<String, String> fileUploaded = cloudinaryService.uploadFileToFolder(CloudinaryConstant.CATEGORY_PATH, StringUtils.generateFileName(body.getName(), "category"), newImage);
-                ImageEmbedded imageEmbedded = new ImageEmbedded(fileUploaded.get(CloudinaryConstant.PUBLIC_ID), fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
-                category.setImage(imageEmbedded);
+
+                category.setImageUrl(fileUploaded.get(CloudinaryConstant.URL_PROPERTY));
+                category.setImageId(fileUploaded.get(CloudinaryConstant.PUBLIC_ID));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -115,7 +117,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public void deleteCategoryById(String id) {
         CategoryCollection category = getById(id);
-        if(category.isCanDelete()) {
+        if (category.isCanDelete()) {
             category.setDeleted(true);
             categoryRepository.save(category);
         } else {

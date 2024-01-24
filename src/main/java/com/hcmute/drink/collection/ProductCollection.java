@@ -1,7 +1,6 @@
 package com.hcmute.drink.collection;
 
 
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.collection.embedded.SizeEmbedded;
 import com.hcmute.drink.collection.embedded.ToppingEmbedded;
 import com.hcmute.drink.enums.ProductStatus;
@@ -40,8 +39,14 @@ public class ProductCollection{
     private String code;
     private String name;
 //    private List<ImageEmbedded> imageList;
-    private ImageEmbedded thumbnail;
-    private ImageEmbedded image;
+//    private ImageEmbedded thumbnail;
+//    private ImageEmbedded image;
+
+    // TODO: nếu ko dùng imageId thì xóa
+    private String imageId;
+    private String imageUrl;
+    private String thumbnailUrl;
+
     private long price;
 //    private double price;
     private List<SizeEmbedded> sizeList;

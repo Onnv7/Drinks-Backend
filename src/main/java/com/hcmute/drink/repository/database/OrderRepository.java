@@ -26,7 +26,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$itemList'}",
             "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
             "{$unwind: '$itemList.productSample'}",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnailUrl'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {timeLastEvent: 1}}",
             "{$skip: ?3}",
             "{$limit: ?4}"
@@ -43,7 +43,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$itemList'}",
             "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
             "{$unwind: '$itemList.productSample'}",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, receiveTime: {$first: '$receiveTime'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, receiveTime: {$first: '$receiveTime'}, phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnailUrl'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {timeLastEvent: 1}}",
             "{$skip: ?3}",
             "{$limit: ?4}"
@@ -90,7 +90,7 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$unwind: '$itemList'}",
             "{$lookup: {from: 'product', localField: 'itemList.productId', foreignField: '_id', as: 'itemList.productSample'}}",
             "{ $unwind: '$itemList.productSample' }",
-            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: '$code'}, orderType: {$first: '$orderType'},  phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnail.url'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
+            "{$group: {_id: '$_id', total: {$first: '$total'}, code: {$first: '$code'}, orderType: {$first: '$orderType'},  phoneNumber: {$first: '$phoneNumber'}, productQuantity: {$first: '$productQuantity'}, customerName: {$first: '$customerName'}, productName: {$first: '$itemList.productSample.name'}, productThumbnail: {$first: '$itemList.productSample.thumbnailUrl'}, statusLastEvent: {$first: '$statusLastEvent'}, timeLastEvent: {$first: '$timeLastEvent'}}}",
             "{$sort: {'timeLastEvent': -1}}",
             "{$skip: ?1}",
             "{$limit: ?2}",
@@ -112,10 +112,10 @@ public interface OrderRepository extends MongoRepository<OrderCollection, String
             "{$group: {_id: '$itemList.productId', totalQuantity: { $sum: '$itemList.quantity' }}}",
             "{$lookup: {from: 'product', localField: '_id', foreignField: '_id', as: 'product'}}",
             "{$unwind: '$product'}",
-            "{$group: {_id: '$_id', totalQuantity: { $first: '$totalQuantity' }, price: { $first: '$product.price' }, code: { $first: '$product.code' }, status: { $first: '$product.status' }, name: { $first: '$product.name' }, description: { $first: '$product.description' }, sizeList: { $first: '$product.sizeList' }, thumbnail: { $first: '$product.thumbnail.url' } }}",
+            "{$group: {_id: '$_id', totalQuantity: { $first: '$totalQuantity' }, price: { $first: '$product.price' }, code: { $first: '$product.code' }, status: { $first: '$product.status' }, name: { $first: '$product.name' }, description: { $first: '$product.description' }, sizeList: { $first: '$product.sizeList' }, thumbnailUrl: { $first: '$product.thumbnailUrl' } }}",
             "{$match: {'status': 'AVAILABLE'}}",
             "{$sort: { totalQuantity: -1 }}",
-            "{$project: {_id: 1, price: 1, code: 1, status: 1, name: 1, description: 1, thumbnail: 1}}",
+            "{$project: {_id: 1, price: 1, code: 1, status: 1, name: 1, description: 1, thumbnailUrl: 1}}",
             "{$limit: ?0}"
     })
     List<GetAllVisibleProductResponse> getTopProductQuantityOrder(int top);

@@ -43,7 +43,7 @@ public class OrderSearchService {
                 .statusLastEvent(OrderStatus.CREATED)
                 .total(orderCollection.getTotal())
                 .productQuantity(orderCollection.getItemList().size())
-                .productThumbnail(product.getThumbnail().getUrl())
+                .productThumbnail(product.getThumbnailUrl())
                 .customerCode(user.getCode())
                 .timeLastEvent(orderCollection.getEventList().get(lastIndexEvent).getTime())
                 .createdAt(orderCollection.getCreatedAt())
@@ -66,7 +66,7 @@ public class OrderSearchService {
             order.setStatusLastEvent(lastStatus.getOrderStatus());
             order.setTotal(orderCollection.getTotal());
             order.setProductQuantity(orderCollection.getItemList().size());
-            order.setProductThumbnail(product.getThumbnail().getUrl());
+            order.setProductThumbnail(product.getThumbnailUrl());
             order.setCustomerCode(user.getCode());
             order.setTimeLastEvent(lastStatus.getTime());
             orderSearchRepository.save(order);

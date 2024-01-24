@@ -16,7 +16,7 @@ public interface BannerRepository extends MongoRepository<BannerCollection, Stri
 
     @Aggregation(pipeline = {
             "{$match: { $and: [  {_id: ?0}, {isDeleted: false} ] }}",
-            "{ $project: {_id: 1, status: 1, name: 1, image: '$image.url' } }"
+            "{ $project: {_id: 1, status: 1, name: 1, imageUrl: 1 } }"
     })
     Optional<GetBannerDetailsResponse> getBannerDetailsById(String id);
 
@@ -33,7 +33,7 @@ public interface BannerRepository extends MongoRepository<BannerCollection, Stri
 
     @Aggregation(pipeline = {
             "{$match: {isDeleted: false}}",
-            "{ $project: { _id: 0, imageUrl: '$image.url' } }"
+            "{ $project: { _id: 0, imageUrl: 1 } }"
     })
     List<GetVisibleBannerListResponse> getVisibleBannerList();
 }

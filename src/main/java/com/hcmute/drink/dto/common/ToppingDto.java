@@ -13,7 +13,7 @@ public class ToppingDto {
     @NotBlank
     private String name;
 
-//    @Schema(example = TOPPING_PRICE_EX)
-//    @Min(TOPPING_PRICE_MIN)
-//    private Long price;
+    @Schema(example = TOPPING_PRICE_EX)
+    @Min(TOPPING_PRICE_MIN)
+    private Long price;
 }

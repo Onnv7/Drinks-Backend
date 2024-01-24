@@ -22,9 +22,10 @@ public class ProductIndex {
     private String id;
     private String code;
     private String name;
-    private String thumbnail;
+    private String thumbnailUrl;
     private String description;
     private double price;
     private ProductStatus status;
     private String categoryId;
+    private boolean isDeleted;
 }

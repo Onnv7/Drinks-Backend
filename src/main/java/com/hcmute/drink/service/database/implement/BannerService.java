@@ -1,7 +1,6 @@
 package com.hcmute.drink.service.database.implement;
 
 import com.hcmute.drink.collection.BannerCollection;
-import com.hcmute.drink.collection.embedded.ImageEmbedded;
 import com.hcmute.drink.constant.CloudinaryConstant;
 import com.hcmute.drink.constant.ErrorConstant;
 import com.hcmute.drink.dto.request.CreateBannerRequest;
@@ -43,8 +42,9 @@ public class BannerService implements IBannerService {
                     StringUtils.generateFileName(body.getName(), "banner"),
                     body.getImage().getBytes()
             );
-            ImageEmbedded image = new ImageEmbedded(bannerImage.get(CloudinaryConstant.PUBLIC_ID), bannerImage.get(CloudinaryConstant.URL_PROPERTY));
-            banner.setImage(image);
+
+            banner.setImageUrl(bannerImage.get(CloudinaryConstant.URL_PROPERTY));
+            banner.setImageId(bannerImage.get(CloudinaryConstant.PUBLIC_ID));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -56,18 +56,19 @@ public class BannerService implements IBannerService {
     public void updateBannerById(UpdateBannerRequest body, String bannerId) {
         BannerCollection bannerCollection = getById(bannerId);
         modelMapperService.map(body, bannerCollection);
-        if(bannerCollection.getImage() != null) {
+        if(bannerCollection.getImageId() != null) {
             try {
                 // TODO: kiểm tra lại tính transaction khi xóa thành công -> upload new không thành công
-                cloudinaryService.deleteImage(bannerCollection.getImage().getId());
+                cloudinaryService.deleteImage(bannerCollection.getImageId());
 
                 HashMap<String, String> bannerImage = cloudinaryService.uploadFileToFolder(
                         CloudinaryConstant.BANNER_PATH,
                         StringUtils.generateFileName(body.getName(), "banner"),
                         body.getImage().getBytes()
                 );
-                ImageEmbedded image = new ImageEmbedded(bannerImage.get(CloudinaryConstant.PUBLIC_ID), bannerImage.get(CloudinaryConstant.URL_PROPERTY));
-                bannerCollection.setImage(image);
+
+                bannerCollection.setImageUrl(bannerImage.get(CloudinaryConstant.URL_PROPERTY));
+                bannerCollection.setImageId(bannerImage.get(CloudinaryConstant.PUBLIC_ID));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
